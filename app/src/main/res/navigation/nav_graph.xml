@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/noteListFragment">
+    <fragment
+        android:id="@+id/noteListFragment"
+        android:name="com.davenet.notely.ui.notelist.NoteListFragment"
+        android:label="Notes"
+        tools:layout="@layout/fragment_note_list">
+        <action
+            android:id="@+id/action_noteListFragment_to_editNoteFragment"
+            app:destination="@id/editNoteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editNoteFragment"
+        android:name="com.davenet.notely.ui.editnote.EditNoteFragment"
+        android:label="Add Note"
+        tools:layout="@layout/fragment_edit_note" />
+</navigation>

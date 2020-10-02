@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="editviewmodel"
+            type="com.davenet.notely.viewmodels.EditNoteViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/textNoteTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
+            android:text="@={editviewmodel.noteBeingModified.title}"
+            android:ems="10"
+            android:gravity="start|top"
+            android:hint="Note title"
+            android:inputType="textMultiLine"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/textNoteText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ems="10"
+            android:text="@={editviewmodel.noteBeingModified.text}"
+            android:gravity="start|top"
+            android:hint="Note text"
+            android:inputType="textMultiLine"
+            app:layout_constraintEnd_toEndOf="@+id/textNoteTitle"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/textNoteTitle"
+            app:layout_constraintTop_toBottomOf="@+id/textNoteTitle" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="50dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:maxImageSize="30dp"
+            app:pressedTranslationZ="12dp"
+            app:srcCompat="@drawable/ic_baseline_save_24"
+            app:useCompatPadding="true" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
