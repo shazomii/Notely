@@ -1,12 +1,11 @@
 package com.davenet.notely.ui.notelist
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -33,11 +32,14 @@ class NoteListFragment : Fragment() {
     private lateinit var noteListViewModel: NoteListViewModel
     private lateinit var uiScope: CoroutineScope
     private lateinit var binding: FragmentNoteListBinding
+    private lateinit var coordinator: CoordinatorLayout
+    private lateinit var noteList: LiveData<List<DatabaseNote>>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        setHasOptionsMenu(true)
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_note_list, container, false
         )
@@ -88,8 +90,9 @@ class NoteListFragment : Fragment() {
         }
 
         uiScope = CoroutineScope(Dispatchers.Default)
+        noteList = noteListViewModel.notes
 
-        val coordinator: CoordinatorLayout? = activity?.findViewById(R.id.list_coordinator)
+        coordinator = activity?.findViewById(R.id.list_coordinator)!!
         ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT){
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -101,15 +104,52 @@ class NoteListFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
-                val noteList = noteListViewModel.notes.value
-                val noteToErase = noteList!![position]
-                deleteNote(noteToErase)
-
-                coordinator?.longSnackbar("Note deleted", "Undo") {
+                val noteToErase = noteList.value?.get(position)
+                deleteNote(noteToErase!!)
+                coordinator.longSnackbar("Note deleted", "Undo") {
                     insertNote(noteToErase)
                 }
             }
         }).attachToRecyclerView(binding.noteList)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_main, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_clear -> {
+                deleteAllNotes()
+                undoDeleteNotes(noteList.value!!)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+
+    }
+
+    private fun undoDeleteNotes(noteList: List<DatabaseNote>) {
+        coordinator.longSnackbar("Notes deleted", "Undo") {
+            insertAllNotes(noteList)
+        }
+    }
+
+    private fun insertAllNotes(noteList: List<DatabaseNote>) {
+        uiScope.launch {
+            withContext(Dispatchers.Main) {
+                noteListViewModel.insertAllNotes(noteList)
+            }
+        }
+    }
+
+    private fun deleteAllNotes() {
+        uiScope.launch {
+            withContext(Dispatchers.Main) {
+                noteListViewModel.deleteAllNotes()
+            }
+        }
     }
 
     private fun deleteNote(note: DatabaseNote) {

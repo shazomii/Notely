@@ -28,6 +28,14 @@ class NoteListViewModel(
         _navigateToNoteDetail.value = note
     }
 
+    suspend fun deleteAllNotes() {
+        uiScope.launch {
+            withContext(Dispatchers.IO) {
+                database.deleteAllNotes()
+            }
+        }
+    }
+
     suspend fun deleteNote(note: DatabaseNote) {
         uiScope.launch {
             withContext(Dispatchers.IO) {
@@ -45,6 +53,14 @@ class NoteListViewModel(
             }
         }
         Log.d("notelist", "note replaced into db")
+    }
+
+    suspend fun insertAllNotes(noteList: List<DatabaseNote>) {
+        uiScope.launch {
+            withContext(Dispatchers.IO) {
+                database.insertNotesList(noteList)
+            }
+        }
     }
 }
 
