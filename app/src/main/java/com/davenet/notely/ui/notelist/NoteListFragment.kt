@@ -39,7 +39,6 @@ class NoteListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        setHasOptionsMenu(true)
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_note_list, container, false
         )
@@ -52,6 +51,8 @@ class NoteListFragment : Fragment() {
 
         noteListViewModel = ViewModelProvider(this, viewModelFactory).get(NoteListViewModel::class.java)
 
+
+
         val adapter = NotesAdapter(NoteListener { noteId ->
             noteListViewModel.onNoteClicked(noteId)
         })
@@ -59,6 +60,11 @@ class NoteListFragment : Fragment() {
         noteListViewModel.apply {
             notes.observe(viewLifecycleOwner, {
                 it?.let {
+                    if (it.isNotEmpty()) {
+                        setHasOptionsMenu(true)
+                    } else {
+                        setHasOptionsMenu(false)
+                    }
                     adapter.submitToList(it)
                 }
             })
@@ -90,8 +96,8 @@ class NoteListFragment : Fragment() {
         }
 
         uiScope = CoroutineScope(Dispatchers.Default)
-        noteList = noteListViewModel.notes
 
+        noteList = noteListViewModel.notes
         coordinator = activity?.findViewById(R.id.list_coordinator)!!
         ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT){
             override fun onMove(
