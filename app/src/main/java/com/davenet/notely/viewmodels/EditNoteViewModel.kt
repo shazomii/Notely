@@ -60,11 +60,6 @@ class EditNoteViewModel(private val selectedNote: DatabaseNote?, val database: N
         get() {
             return DatabaseNote(title = "", text = "")
         }
-
-//    var isChanged : Boolean = false
-//        get() = if (mIsEdit) noteBeingModified != selectedNote
-//                    else noteBeingModified != emptyNote
-//        private set
 }
 
 class EditNoteViewModelFactory(
@@ -78,5 +73,4 @@ class EditNoteViewModelFactory(
         }
         throw IllegalArgumentException("Unknown ViewModel Class")
     }
-
 }

@@ -49,8 +49,8 @@ class NoteListFragment : Fragment() {
 
         val viewModelFactory = NoteListViewModelFactory(dataSource, application)
 
-        noteListViewModel = ViewModelProvider(this, viewModelFactory).get(NoteListViewModel::class.java)
-
+        noteListViewModel =
+            ViewModelProvider(this, viewModelFactory).get(NoteListViewModel::class.java)
 
 
         val adapter = NotesAdapter(NoteListener {
@@ -69,7 +69,7 @@ class NoteListFragment : Fragment() {
                 }
             })
 
-            navigateToNoteDetail.observe(viewLifecycleOwner, {note ->
+            navigateToNoteDetail.observe(viewLifecycleOwner, { note ->
                 note?.let {
                     val bundle = Bundle()
                     bundle.putParcelable("note", note)
@@ -78,7 +78,7 @@ class NoteListFragment : Fragment() {
                     )
                     noteListViewModel.onNoteDetailNavigated()
                 }
-            } )
+            })
         }
 
         binding.apply {
@@ -99,7 +99,8 @@ class NoteListFragment : Fragment() {
 
         noteList = noteListViewModel.notes
         coordinator = activity?.findViewById(R.id.list_coordinator)!!
-        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT){
+        ItemTouchHelper(object :
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,

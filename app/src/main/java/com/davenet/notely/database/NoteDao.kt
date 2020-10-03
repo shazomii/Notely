@@ -16,7 +16,7 @@ interface NoteDao {
     @Query("select * from database_note order by id desc")
     fun getAllNotes(): LiveData<List<DatabaseNote>>
 
-    @Query("select * from database_note ORDER BY id DESC LIMIT 1" )
+    @Query("select * from database_note ORDER BY id DESC LIMIT 1")
     fun getNote(): DatabaseNote
 
     @Query("delete from database_note where id = :key")
