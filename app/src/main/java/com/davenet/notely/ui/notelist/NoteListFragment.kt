@@ -12,14 +12,13 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.davenet.notely.R
-import com.davenet.notely.database.DatabaseNote
 import com.davenet.notely.database.getDatabase
 import com.davenet.notely.databinding.FragmentNoteListBinding
+import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.ui.NoteListener
 import com.davenet.notely.ui.NotesAdapter
 import com.davenet.notely.viewmodels.NoteListViewModel
 import com.davenet.notely.viewmodels.NoteListViewModelFactory
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_note_list.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +32,7 @@ class NoteListFragment : Fragment() {
     private lateinit var uiScope: CoroutineScope
     private lateinit var binding: FragmentNoteListBinding
     private lateinit var coordinator: CoordinatorLayout
-    private lateinit var noteList: LiveData<List<DatabaseNote>>
+    private lateinit var noteList: LiveData<List<NoteEntry>>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,9 +44,7 @@ class NoteListFragment : Fragment() {
 
         val application = requireNotNull(this.activity).application
 
-        val dataSource = getDatabase(application).noteDao
-
-        val viewModelFactory = NoteListViewModelFactory(dataSource, application)
+        val viewModelFactory = NoteListViewModelFactory(application)
 
         noteListViewModel =
             ViewModelProvider(this, viewModelFactory).get(NoteListViewModel::class.java)
@@ -137,13 +134,13 @@ class NoteListFragment : Fragment() {
 
     }
 
-    private fun undoDeleteNotes(noteList: List<DatabaseNote>) {
+    private fun undoDeleteNotes(noteList: List<NoteEntry>) {
         coordinator.longSnackbar("Notes deleted", "Undo") {
             insertAllNotes(noteList)
         }
     }
 
-    private fun insertAllNotes(noteList: List<DatabaseNote>) {
+    private fun insertAllNotes(noteList: List<NoteEntry>) {
         uiScope.launch {
             withContext(Dispatchers.Main) {
                 noteListViewModel.insertAllNotes(noteList)
@@ -159,7 +156,7 @@ class NoteListFragment : Fragment() {
         }
     }
 
-    private fun deleteNote(note: DatabaseNote) {
+    private fun deleteNote(note: NoteEntry) {
         uiScope.launch {
             withContext(Dispatchers.Main) {
                 noteListViewModel.deleteNote(note)
@@ -167,7 +164,7 @@ class NoteListFragment : Fragment() {
         }
     }
 
-    private fun insertNote(note: DatabaseNote) {
+    private fun insertNote(note: NoteEntry) {
         uiScope.launch {
             withContext(Dispatchers.Main) {
                 noteListViewModel.insertNote(note)

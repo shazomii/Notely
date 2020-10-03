@@ -7,7 +7,7 @@
 
         <variable
             name="note"
-            type="com.davenet.notely.database.DatabaseNote" />
+            type="com.davenet.notely.domain.NoteEntry" />
 
         <variable
             name="clickListener"

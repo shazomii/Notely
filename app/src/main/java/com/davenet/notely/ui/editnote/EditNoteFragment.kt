@@ -12,6 +12,7 @@ import com.davenet.notely.R
 import com.davenet.notely.database.DatabaseNote
 import com.davenet.notely.database.getDatabase
 import com.davenet.notely.databinding.FragmentEditNoteBinding
+import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.viewmodels.EditNoteViewModel
 import com.davenet.notely.viewmodels.EditNoteViewModelFactory
 import com.google.android.material.snackbar.Snackbar
@@ -41,10 +42,8 @@ class EditNoteFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val application = requireNotNull(this.activity).application
-
-        val dataSource = getDatabase(application).noteDao
-        val selectedNote: DatabaseNote? = arguments?.getParcelable("note")
-        val viewModelFactory = EditNoteViewModelFactory(dataSource, selectedNote)
+        val selectedNote: NoteEntry? = arguments?.getParcelable("note")
+        val viewModelFactory = EditNoteViewModelFactory(application, selectedNote)
         viewModel = ViewModelProvider(this, viewModelFactory).get(EditNoteViewModel::class.java)
         binding.editviewmodel = viewModel
     }

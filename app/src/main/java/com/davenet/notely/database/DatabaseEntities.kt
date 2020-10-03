@@ -1,9 +1,8 @@
 package com.davenet.notely.database
 
-import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.android.parcel.Parcelize
+import com.davenet.notely.domain.NoteEntry
 
 /**
  * Database entities go in this file. These are responsible for reading and writing from the
@@ -13,15 +12,23 @@ import kotlinx.android.parcel.Parcelize
 /**
  * DatabaseNote represents a note entity in the database.
  */
-@Parcelize
 @Entity(tableName = "database_note")
 data class DatabaseNote(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-    var title: String,
-    var text: String
-) : Parcelable {
-    fun copy(): DatabaseNote {
-        return DatabaseNote(id, title, text)
+    val id: Int? = 0,
+    val title: String,
+    val text: String
+)
+
+/**
+ * Map DatabaseNotes to domain entities
+ */
+fun List<DatabaseNote>.asDomainModel(): List<NoteEntry> {
+    return map {
+        NoteEntry(
+            id = it.id,
+            title = it.title,
+            text = it.text
+        )
     }
 }
