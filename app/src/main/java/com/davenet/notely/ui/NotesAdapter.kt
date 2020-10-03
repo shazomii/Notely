@@ -41,7 +41,7 @@ class NotesAdapter(val clickListener: NoteListener) :
     }
 
     class ViewHolder private constructor(val binding: NoteItemBinding) :
-            RecyclerView.ViewHolder(binding.root) {
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(
             item: DatabaseNote,
             clickListener: NoteListener

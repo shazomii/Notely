@@ -10,7 +10,6 @@ import kotlinx.android.parcel.Parcelize
  * database.
  */
 
-
 /**
  * DatabaseNote represents a note entity in the database.
  */
@@ -20,8 +19,9 @@ data class DatabaseNote(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     var title: String,
-    var text: String) : Parcelable {
-    fun copy() : DatabaseNote {
+    var text: String
+) : Parcelable {
+    fun copy(): DatabaseNote {
         return DatabaseNote(id, title, text)
     }
 }

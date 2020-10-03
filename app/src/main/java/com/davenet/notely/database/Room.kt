@@ -7,7 +7,7 @@ import androidx.room.*
  * Database for the offline cache
  */
 @Database(entities = [DatabaseNote::class], version = 1)
-abstract class NotesDatabase: RoomDatabase() {
+abstract class NotesDatabase : RoomDatabase() {
     abstract val noteDao: NoteDao
 }
 
@@ -24,9 +24,11 @@ private lateinit var INSTANCE: NotesDatabase
 fun getDatabase(context: Context): NotesDatabase {
     synchronized(NotesDatabase::class.java) {
         if (!::INSTANCE.isInitialized) {
-            INSTANCE = Room.databaseBuilder(context.applicationContext,
+            INSTANCE = Room.databaseBuilder(
+                context.applicationContext,
                 NotesDatabase::class.java,
-                "notes").build()
+                "notes"
+            ).build()
         }
     }
     return INSTANCE

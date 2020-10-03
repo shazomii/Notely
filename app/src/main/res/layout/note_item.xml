@@ -4,25 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="note"
             type="com.davenet.notely.database.DatabaseNote" />
+
         <variable
             name="clickListener"
             type="com.davenet.notely.ui.NoteListener" />
 
         <import type="com.davenet.notely.util.UtilKt" />
     </data>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="@{() -> clickListener.onClick(note)}">
+
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="4dp"
             app:cardElevation="4dp"
             app:cardUseCompatPadding="true">
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -38,10 +43,10 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="?android:attr/colorFocusedHighlight"
                     android:textStyle="bold"
-                    tools:text="Title"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Title" />
 
                 <TextView
                     android:id="@+id/textSummary"
@@ -53,11 +58,11 @@
                     android:layout_marginBottom="16dp"
                     android:text="@{UtilKt.smartTruncate(note.text, 50)}"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    tools:text="Summary"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/textTitle" />
+                    app:layout_constraintTop_toBottomOf="@id/textTitle"
+                    tools:text="Summary" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>

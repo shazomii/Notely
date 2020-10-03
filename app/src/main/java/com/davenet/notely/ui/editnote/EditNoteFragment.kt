@@ -56,7 +56,7 @@ class EditNoteFragment : Fragment() {
 
     private fun saveNote() {
         uiScope = CoroutineScope(Dispatchers.Default)
-        if (viewModel.noteBeingModified.title.isNullOrBlank()) {
+        if (viewModel.noteBeingModified.title.isBlank()) {
             return
         }
         uiScope.launch {

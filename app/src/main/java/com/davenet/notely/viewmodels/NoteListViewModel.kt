@@ -42,7 +42,6 @@ class NoteListViewModel(
                 database.deleteNote(note.id)
             }
         }
-
         Log.d("notelist", "note removed from db")
     }
 
@@ -75,5 +74,4 @@ class NoteListViewModelFactory(
         }
         throw IllegalArgumentException("Unknown ViewModel Class")
     }
-
 }
