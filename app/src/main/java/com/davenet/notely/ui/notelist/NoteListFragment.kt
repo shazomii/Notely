@@ -53,8 +53,8 @@ class NoteListFragment : Fragment() {
 
 
 
-        val adapter = NotesAdapter(NoteListener { noteId ->
-            noteListViewModel.onNoteClicked(noteId)
+        val adapter = NotesAdapter(NoteListener {
+            noteListViewModel.onNoteClicked(it)
         })
 
         noteListViewModel.apply {
