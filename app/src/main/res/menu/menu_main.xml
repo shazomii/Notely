@@ -4,7 +4,8 @@
     tools:context="com.davenet.notely.MainActivity">
     <item
         android:id="@+id/action_clear"
+        android:icon="@drawable/ic_baseline_delete_24"
         android:orderInCategory="100"
         android:title="Clear"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 </menu>
