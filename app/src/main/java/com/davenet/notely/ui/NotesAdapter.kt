@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.davenet.notely.database.DatabaseNote
 import com.davenet.notely.databinding.NoteItemBinding
+import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.ui.NotesAdapter.ViewHolder.Companion.from
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +23,7 @@ class NotesAdapter(val clickListener: NoteListener) :
         return from(parent)
     }
 
-    fun submitToList(list: List<DatabaseNote>?) {
+    fun submitToList(list: List<NoteEntry>?) {
         adapterScope.launch {
             val items = list?.map { DataItem.NoteItem(it) }
             withContext(Dispatchers.Main) {
@@ -43,7 +44,7 @@ class NotesAdapter(val clickListener: NoteListener) :
     class ViewHolder private constructor(val binding: NoteItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(
-            item: DatabaseNote,
+            item: NoteEntry,
             clickListener: NoteListener
         ) {
             binding.apply {
@@ -74,15 +75,15 @@ class NoteDiffCallback : DiffUtil.ItemCallback<DataItem>() {
 }
 
 sealed class DataItem {
-    abstract val id: Int
+    abstract val id: Int?
 
-    data class NoteItem(val note: DatabaseNote) : DataItem() {
-        override val id: Int = note.id
+    data class NoteItem(val note: NoteEntry) : DataItem() {
+        override val id: Int? = note.id
     }
 }
 
-class NoteListener(val clickListener: (note: DatabaseNote) -> Unit) {
-    fun onClick(note: DatabaseNote) {
+class NoteListener(val clickListener: (note: NoteEntry) -> Unit) {
+    fun onClick(note: NoteEntry) {
         clickListener(note)
         Log.d("notelist", "selected note\'s id is " + note.title)
     }

@@ -20,13 +20,13 @@ interface NoteDao {
     fun getNote(): DatabaseNote
 
     @Query("delete from database_note where id = :key")
-    fun deleteNote(key: Int)
+    fun deleteNote(key: Int?)
 
     @Query("delete from database_note")
     fun deleteAllNotes()
 
     @Insert
-    fun insert(note: DatabaseNote)
+    fun insert(note: DatabaseNote?)
 
     @Insert
     fun insertNotesList(notes: List<DatabaseNote>)

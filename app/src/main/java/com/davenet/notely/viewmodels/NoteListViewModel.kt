@@ -5,72 +5,63 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.davenet.notely.database.DatabaseNote
 import com.davenet.notely.database.NoteDao
+import com.davenet.notely.database.getDatabase
+import com.davenet.notely.domain.NoteEntry
+import com.davenet.notely.domain.asDataBaseModel
+import com.davenet.notely.repository.NotesRepository
 import kotlinx.coroutines.*
 
-class NoteListViewModel(
-    val database: NoteDao,
-    application: Application
-) : AndroidViewModel(application) {
+class NoteListViewModel(application: Application) : AndroidViewModel(application) {
+    private val notesRepository = NotesRepository(getDatabase(application))
 
     private var viewModelJob = Job()
-    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+    private val viewModelScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    private val _navigateToNoteDetail = MutableLiveData<DatabaseNote?>()
-    val navigateToNoteDetail: LiveData<DatabaseNote?> get() = _navigateToNoteDetail
+    private val _navigateToNoteDetail = MutableLiveData<NoteEntry?>()
+    val navigateToNoteDetail: LiveData<NoteEntry?> get() = _navigateToNoteDetail
 
-    var notes = database.getAllNotes()
+    var notes = notesRepository.notes
 
     fun onNoteDetailNavigated() {
         _navigateToNoteDetail.value = null
     }
 
-    fun onNoteClicked(note: DatabaseNote) {
+    fun onNoteClicked(note: NoteEntry) {
         _navigateToNoteDetail.value = note
     }
 
-    suspend fun deleteAllNotes() {
-        uiScope.launch {
-            withContext(Dispatchers.IO) {
-                database.deleteAllNotes()
-            }
+    fun deleteAllNotes() {
+        viewModelScope.launch {
+            notesRepository.deleteAllNotes()
         }
     }
 
-    suspend fun deleteNote(note: DatabaseNote) {
-        uiScope.launch {
-            withContext(Dispatchers.IO) {
-                database.deleteNote(note.id)
-            }
+    fun deleteNote(note: NoteEntry) {
+        viewModelScope.launch {
+            notesRepository.deleteNote(note)
         }
         Log.d("notelist", "note removed from db")
     }
 
-    suspend fun insertNote(note: DatabaseNote) {
-        uiScope.launch {
-            withContext(Dispatchers.IO) {
-                database.insert(note)
-            }
+    fun insertNote(note: NoteEntry) {
+        viewModelScope.launch {
+            notesRepository.insertNote(note)
         }
         Log.d("notelist", "note replaced into db")
     }
 
-    suspend fun insertAllNotes(noteList: List<DatabaseNote>) {
-        uiScope.launch {
-            withContext(Dispatchers.IO) {
-                database.insertNotesList(noteList)
-            }
+    fun insertAllNotes(noteList: List<NoteEntry>) {
+        viewModelScope.launch {
+            notesRepository.insertAllNotes(noteList)
         }
     }
 }
 
-class NoteListViewModelFactory(
-    private val dataSource: NoteDao,
-    private val application: Application
-) : ViewModelProvider.Factory {
+class NoteListViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
     @Suppress("unchecked_cast")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(NoteListViewModel::class.java)) {
-            return NoteListViewModel(dataSource, application) as T
+            return NoteListViewModel(application) as T
         }
         throw IllegalArgumentException("Unknown ViewModel Class")
     }
