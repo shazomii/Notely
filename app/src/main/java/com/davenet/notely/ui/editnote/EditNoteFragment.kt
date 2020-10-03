@@ -14,6 +14,8 @@ import com.davenet.notely.database.getDatabase
 import com.davenet.notely.databinding.FragmentEditNoteBinding
 import com.davenet.notely.viewmodels.EditNoteViewModel
 import com.davenet.notely.viewmodels.EditNoteViewModelFactory
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_edit_note.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,11 +34,7 @@ class EditNoteFragment : Fragment() {
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_edit_note, container, false
         )
-
-
-
         return binding.root
-
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -45,15 +43,15 @@ class EditNoteFragment : Fragment() {
         val application = requireNotNull(this.activity).application
 
         val dataSource = getDatabase(application).noteDao
-        val selectedNote : DatabaseNote? = arguments?.getParcelable("note")
+        val selectedNote: DatabaseNote? = arguments?.getParcelable("note")
         val viewModelFactory = EditNoteViewModelFactory(dataSource, selectedNote)
         viewModel = ViewModelProvider(this, viewModelFactory).get(EditNoteViewModel::class.java)
-        binding.apply {
-            editviewmodel = viewModel
-            fab.setOnClickListener {
-                saveNote()
-            }
-        }
+        binding.editviewmodel = viewModel
+    }
+
+    override fun onPause() {
+        super.onPause()
+        saveNote()
     }
 
     private fun saveNote() {
@@ -67,5 +65,4 @@ class EditNoteFragment : Fragment() {
             }
         }
     }
-
 }
