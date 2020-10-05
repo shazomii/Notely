@@ -2,6 +2,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.davenet.notely.MainActivity">
+
+    <item
+        android:id="@+id/night_mode"
+        android:icon="@drawable/ic_baseline_day"
+        android:orderInCategory="100"
+        android:title="Day Mode"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_clear"
         android:icon="@drawable/ic_baseline_delete_24"

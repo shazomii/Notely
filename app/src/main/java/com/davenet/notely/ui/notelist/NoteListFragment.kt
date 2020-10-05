@@ -1,7 +1,13 @@
 package com.davenet.notely.ui.notelist
 
+import android.graphics.Canvas
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Layout
 import android.view.*
+import android.widget.FrameLayout
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.cardview.widget.CardView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -12,19 +18,21 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.davenet.notely.R
-import com.davenet.notely.database.getDatabase
 import com.davenet.notely.databinding.FragmentNoteListBinding
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.ui.NoteListener
 import com.davenet.notely.ui.NotesAdapter
 import com.davenet.notely.viewmodels.NoteListViewModel
 import com.davenet.notely.viewmodels.NoteListViewModelFactory
+import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 import kotlinx.android.synthetic.main.fragment_note_list.*
+import kotlinx.android.synthetic.main.note_item.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.design.longSnackbar
+
 
 class NoteListFragment : Fragment() {
 
@@ -33,6 +41,7 @@ class NoteListFragment : Fragment() {
     private lateinit var binding: FragmentNoteListBinding
     private lateinit var coordinator: CoordinatorLayout
     private lateinit var noteList: LiveData<List<NoteEntry>>
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -106,6 +115,7 @@ class NoteListFragment : Fragment() {
                 return false
             }
 
+
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val noteToErase = noteList.value?.get(position)
@@ -114,12 +124,57 @@ class NoteListFragment : Fragment() {
                     insertNote(noteToErase)
                 }
             }
+
+            override fun onChildDraw(
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+
+                RecyclerViewSwipeDecorator.Builder(
+                    c,
+                    recyclerView,
+                    viewHolder,
+                    dX,
+                    dY,
+                    actionState,
+                    isCurrentlyActive
+                )
+                    .addActionIcon(R.drawable.ic_baseline_delete_24)
+                    .setActionIconTint(Color.WHITE)
+                    .addBackgroundColor(Color.RED)
+                    .create()
+                    .decorate()
+
+                super.onChildDraw(
+                    c,
+                    recyclerView,
+                    viewHolder,
+                    dX,
+                    dY,
+                    actionState,
+                    isCurrentlyActive
+                )
+            }
         }).attachToRecyclerView(binding.noteList)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_main, menu)
+        when (AppCompatDelegate.getDefaultNightMode()) {
+            AppCompatDelegate.MODE_NIGHT_YES -> {
+                menu.findItem(R.id.night_mode).setIcon(R.drawable.ic_baseline_night).title = "Night"
+            }
+            else -> {
+                menu.findItem(R.id.night_mode).setIcon(R.drawable.ic_baseline_day).title = "Day"
+            }
+        }
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -129,8 +184,19 @@ class NoteListFragment : Fragment() {
                 undoDeleteNotes(noteList.value!!)
                 true
             }
-            else -> super.onOptionsItemSelected(item)
-        }
+            R.id.night_mode -> {
+                when (AppCompatDelegate.getDefaultNightMode()) {
+                    AppCompatDelegate.MODE_NIGHT_YES -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    }
+                    else -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    }
+                }
+                activity?.recreate()
+                true
+            }
+            else -> true        }
 
     }
 
