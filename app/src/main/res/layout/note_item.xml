@@ -17,16 +17,18 @@
     </data>
 
     <FrameLayout
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="@{() -> clickListener.onClick(note)}">
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/card_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             app:cardCornerRadius="4dp"
-            app:cardElevation="4dp"
-            app:cardUseCompatPadding="true">
+            app:cardElevation="2dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
