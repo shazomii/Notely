@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.Layout
 import android.view.*
 import android.widget.FrameLayout
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.DataBindingUtil
@@ -165,6 +166,15 @@ class NoteListFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_main, menu)
+        when (AppCompatDelegate.getDefaultNightMode()) {
+            AppCompatDelegate.MODE_NIGHT_YES -> {
+                menu.findItem(R.id.night_mode).setIcon(R.drawable.ic_baseline_night).title = "Night"
+            }
+            else -> {
+                menu.findItem(R.id.night_mode).setIcon(R.drawable.ic_baseline_day).title = "Day"
+            }
+        }
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -174,8 +184,19 @@ class NoteListFragment : Fragment() {
                 undoDeleteNotes(noteList.value!!)
                 true
             }
-            else -> super.onOptionsItemSelected(item)
-        }
+            R.id.night_mode -> {
+                when (AppCompatDelegate.getDefaultNightMode()) {
+                    AppCompatDelegate.MODE_NIGHT_YES -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    }
+                    else -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    }
+                }
+                activity?.recreate()
+                true
+            }
+            else -> true        }
 
     }
 
