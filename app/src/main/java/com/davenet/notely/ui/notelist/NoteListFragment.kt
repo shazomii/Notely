@@ -20,6 +20,7 @@ import com.davenet.notely.databinding.FragmentNoteListBinding
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.ui.NoteListener
 import com.davenet.notely.ui.NotesAdapter
+import com.davenet.notely.util.UIState
 import com.davenet.notely.viewmodels.NoteListViewModel
 import com.davenet.notely.viewmodels.NoteListViewModelFactory
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
@@ -65,8 +66,10 @@ class NoteListFragment : Fragment() {
                 it?.let {
                     if (it.isNotEmpty()) {
                         setHasOptionsMenu(true)
+                        noteListViewModel.uiState.set(UIState.HAS_DATA)
                     } else {
                         setHasOptionsMenu(false)
+                        noteListViewModel.uiState.set(UIState.EMPTY)
                     }
                     adapter.submitToList(it)
                 }
@@ -86,6 +89,7 @@ class NoteListFragment : Fragment() {
 
         binding.apply {
             lifecycleOwner = this@NoteListFragment
+            uiState = noteListViewModel.uiState
             noteList.adapter = adapter
             noteList.layoutManager = LinearLayoutManager(context)
         }

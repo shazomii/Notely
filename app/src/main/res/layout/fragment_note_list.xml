@@ -4,11 +4,44 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".NoteListFragment">
 
-    <data></data>
+    <data>
+        <import type="androidx.databinding.ObservableField" />
+        <import type="com.davenet.notely.util.UIState" />
+        <variable
+            name="uiState"
+            type="ObservableField&lt;UIState>" />
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/progress_circular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:visible="@{uiState == UIState.LOADING}" />
+
+        <TextView
+            android:id="@+id/empty_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="cursive"
+            android:text="@string/empty_quote"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            android:textStyle="italic"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:visible="@{uiState == UIState.EMPTY}" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
@@ -26,6 +59,7 @@
             android:id="@+id/note_list"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            app:visible="@{uiState == UIState.HAS_DATA}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
