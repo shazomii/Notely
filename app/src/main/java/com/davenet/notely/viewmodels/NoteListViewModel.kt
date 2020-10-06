@@ -2,17 +2,21 @@ package com.davenet.notely.viewmodels
 
 import android.app.Application
 import android.util.Log
+import androidx.databinding.ObservableField
 import androidx.lifecycle.*
-import com.davenet.notely.database.DatabaseNote
-import com.davenet.notely.database.NoteDao
 import com.davenet.notely.database.getDatabase
 import com.davenet.notely.domain.NoteEntry
-import com.davenet.notely.domain.asDataBaseModel
 import com.davenet.notely.repository.NotesRepository
-import kotlinx.coroutines.*
+import com.davenet.notely.util.UIState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class NoteListViewModel(application: Application) : AndroidViewModel(application) {
     private val notesRepository = NotesRepository(getDatabase(application))
+
+    val uiState = ObservableField(UIState.LOADING)
 
     private var viewModelJob = Job()
     private val viewModelScope = CoroutineScope(Dispatchers.Main + viewModelJob)
