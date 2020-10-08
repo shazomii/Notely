@@ -1,22 +1,16 @@
 package com.davenet.notely.ui.editnote
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.davenet.notely.R
-import com.davenet.notely.database.DatabaseNote
-import com.davenet.notely.database.getDatabase
 import com.davenet.notely.databinding.FragmentEditNoteBinding
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.viewmodels.EditNoteViewModel
 import com.davenet.notely.viewmodels.EditNoteViewModelFactory
-import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_edit_note.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,6 +26,7 @@ class EditNoteFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        setHasOptionsMenu(true)
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_edit_note, container, false
         )
@@ -48,9 +43,19 @@ class EditNoteFragment : Fragment() {
         binding.editviewmodel = viewModel
     }
 
-    override fun onPause() {
-        super.onPause()
-        saveNote()
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_edit, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_save -> {
+                saveNote()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun saveNote() {
