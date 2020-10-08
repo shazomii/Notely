@@ -1,11 +1,10 @@
 package com.davenet.notely.ui.notelist
 
-import android.content.res.Configuration
 import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.*
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -39,7 +38,6 @@ class NoteListFragment : Fragment() {
     private lateinit var binding: FragmentNoteListBinding
     private lateinit var coordinator: CoordinatorLayout
     private lateinit var noteList: LiveData<List<NoteEntry>>
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -166,37 +164,23 @@ class NoteListFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.menu_main, menu)
-        when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_YES -> {
-                menu.findItem(R.id.night_mode).setIcon(R.drawable.ic_baseline_day).title = "Day"
-            }
-            Configuration.UI_MODE_NIGHT_NO -> {
-                menu.findItem(R.id.night_mode).setIcon(R.drawable.ic_baseline_night).title = "Night"
-            }
-        }
+        inflater.inflate(R.menu.menu_list, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_clear -> {
+                Log.d("delete", "Delete selected")
                 deleteAllNotes()
                 undoDeleteNotes(noteList.value!!)
                 true
             }
-            R.id.night_mode -> {
-                when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-                    Configuration.UI_MODE_NIGHT_YES -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                    }
-                    Configuration.UI_MODE_NIGHT_NO -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                    }
-                }
+            R.id.action_settings -> {
+                findNavController().navigate(R.id.action_noteListFragment_to_settingsActivity2)
                 true
             }
-            else -> true        }
-
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun undoDeleteNotes(noteList: List<NoteEntry>) {
