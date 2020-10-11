@@ -11,11 +11,22 @@
         tools:layout="@layout/fragment_note_list">
         <action
             android:id="@+id/action_noteListFragment_to_editNoteFragment"
-            app:destination="@id/editNoteFragment" />
+            app:destination="@id/editNoteFragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+        <action
+            android:id="@+id/action_noteListFragment_to_settingsActivity2"
+            app:destination="@id/settingsActivity2" />
     </fragment>
     <fragment
         android:id="@+id/editNoteFragment"
         android:name="com.davenet.notely.ui.editnote.EditNoteFragment"
         android:label="Add Note"
         tools:layout="@layout/fragment_edit_note" />
+    <activity
+        android:id="@+id/settingsActivity2"
+        android:name="com.davenet.notely.SettingsActivity"
+        android:label="SettingsActivity" />
 </navigation>

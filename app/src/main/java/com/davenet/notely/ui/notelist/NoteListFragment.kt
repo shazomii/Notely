@@ -3,11 +3,8 @@ package com.davenet.notely.ui.notelist
 import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Bundle
-import android.text.Layout
+import android.util.Log
 import android.view.*
-import android.widget.FrameLayout
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.cardview.widget.CardView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -22,11 +19,11 @@ import com.davenet.notely.databinding.FragmentNoteListBinding
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.ui.NoteListener
 import com.davenet.notely.ui.NotesAdapter
+import com.davenet.notely.util.UIState
 import com.davenet.notely.viewmodels.NoteListViewModel
 import com.davenet.notely.viewmodels.NoteListViewModelFactory
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 import kotlinx.android.synthetic.main.fragment_note_list.*
-import kotlinx.android.synthetic.main.note_item.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -41,7 +38,6 @@ class NoteListFragment : Fragment() {
     private lateinit var binding: FragmentNoteListBinding
     private lateinit var coordinator: CoordinatorLayout
     private lateinit var noteList: LiveData<List<NoteEntry>>
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -68,8 +64,10 @@ class NoteListFragment : Fragment() {
                 it?.let {
                     if (it.isNotEmpty()) {
                         setHasOptionsMenu(true)
+                        noteListViewModel.uiState.set(UIState.HAS_DATA)
                     } else {
                         setHasOptionsMenu(false)
+                        noteListViewModel.uiState.set(UIState.EMPTY)
                     }
                     adapter.submitToList(it)
                 }
@@ -89,6 +87,7 @@ class NoteListFragment : Fragment() {
 
         binding.apply {
             lifecycleOwner = this@NoteListFragment
+            uiState = noteListViewModel.uiState
             noteList.adapter = adapter
             noteList.layoutManager = LinearLayoutManager(context)
         }
@@ -165,39 +164,23 @@ class NoteListFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.menu_main, menu)
-        when (AppCompatDelegate.getDefaultNightMode()) {
-            AppCompatDelegate.MODE_NIGHT_YES -> {
-                menu.findItem(R.id.night_mode).setIcon(R.drawable.ic_baseline_night).title = "Night"
-            }
-            else -> {
-                menu.findItem(R.id.night_mode).setIcon(R.drawable.ic_baseline_day).title = "Day"
-            }
-        }
-
+        inflater.inflate(R.menu.menu_list, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_clear -> {
+                Log.d("delete", "Delete selected")
                 deleteAllNotes()
                 undoDeleteNotes(noteList.value!!)
                 true
             }
-            R.id.night_mode -> {
-                when (AppCompatDelegate.getDefaultNightMode()) {
-                    AppCompatDelegate.MODE_NIGHT_YES -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                    }
-                    else -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                    }
-                }
-                activity?.recreate()
+            R.id.action_settings -> {
+                findNavController().navigate(R.id.action_noteListFragment_to_settingsActivity2)
                 true
             }
-            else -> true        }
-
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun undoDeleteNotes(noteList: List<NoteEntry>) {
