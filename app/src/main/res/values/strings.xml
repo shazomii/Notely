@@ -19,4 +19,13 @@
     <string name="choose_theme">Choose theme</string>
     <string name="default_theme">default</string>
     <string name="save">Save</string>
+
+    <string name="username">Name</string>
+    <string name="userEmail">Email</string>
+    <string name="userPassword">Password</string>
+    <string name="userRegister">Register</string>
+    <string name="userLogin">Login</string>
+    <string name="alreadyRegistered">Already have an account?</string>
+    <string name="newUser">Don\'t have an account?</string>
+    <string name="signIn">Sign In</string>
 </resources>

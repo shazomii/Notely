@@ -1,5 +1,6 @@
 package com.davenet.notely.ui.notelist
 
+import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Bundle
@@ -14,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.davenet.notely.LoginActivity
 import com.davenet.notely.R
 import com.davenet.notely.databinding.FragmentNoteListBinding
 import com.davenet.notely.domain.NoteEntry
@@ -22,6 +24,7 @@ import com.davenet.notely.ui.NotesAdapter
 import com.davenet.notely.util.UIState
 import com.davenet.notely.viewmodels.NoteListViewModel
 import com.davenet.notely.viewmodels.NoteListViewModelFactory
+import com.google.firebase.auth.FirebaseAuth
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 import kotlinx.android.synthetic.main.fragment_note_list.*
 import kotlinx.coroutines.CoroutineScope
@@ -38,6 +41,7 @@ class NoteListFragment : Fragment() {
     private lateinit var binding: FragmentNoteListBinding
     private lateinit var coordinator: CoordinatorLayout
     private lateinit var noteList: LiveData<List<NoteEntry>>
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,6 +50,8 @@ class NoteListFragment : Fragment() {
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_note_list, container, false
         )
+
+        auth = FirebaseAuth.getInstance()
 
         val application = requireNotNull(this.activity).application
 
@@ -162,6 +168,13 @@ class NoteListFragment : Fragment() {
         }).attachToRecyclerView(binding.noteList)
     }
 
+    override fun onStart() {
+        super.onStart()
+        if (auth.currentUser == null){
+            findNavController().navigate(R.id.action_noteListFragment_to_loginActivity)
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_list, menu)
@@ -177,6 +190,11 @@ class NoteListFragment : Fragment() {
             }
             R.id.action_settings -> {
                 findNavController().navigate(R.id.action_noteListFragment_to_settingsActivity2)
+                true
+            }
+            R.id.action_logout -> {
+                FirebaseAuth.getInstance().signOut()
+                findNavController().navigate(R.id.action_noteListFragment_to_loginActivity)
                 true
             }
             else -> super.onOptionsItemSelected(item)
