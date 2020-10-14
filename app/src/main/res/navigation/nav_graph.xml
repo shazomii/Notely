@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_noteListFragment_to_settingsActivity2"
             app:destination="@id/settingsActivity2" />
+        <action
+            android:id="@+id/action_noteListFragment_to_loginActivity"
+            app:destination="@id/loginActivity" />
     </fragment>
     <fragment
         android:id="@+id/editNoteFragment"
@@ -29,4 +32,9 @@
         android:id="@+id/settingsActivity2"
         android:name="com.davenet.notely.SettingsActivity"
         android:label="SettingsActivity" />
+    <activity
+        android:id="@+id/loginActivity"
+        android:name="com.davenet.notely.LoginActivity"
+        android:label="activity_login"
+        tools:layout="@layout/activity_login" />
 </navigation>

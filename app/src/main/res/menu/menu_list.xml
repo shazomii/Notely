@@ -12,4 +12,8 @@
         android:id="@+id/action_settings"
         android:orderInCategory="300"
         android:title="Settings" />
+    <item
+        android:id="@+id/action_logout"
+        android:orderInCategory="400"
+        android:title="Logout" />
 </menu>
