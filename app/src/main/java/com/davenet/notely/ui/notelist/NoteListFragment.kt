@@ -1,6 +1,5 @@
 package com.davenet.notely.ui.notelist
 
-import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Bundle
@@ -15,7 +14,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.davenet.notely.LoginActivity
 import com.davenet.notely.R
 import com.davenet.notely.databinding.FragmentNoteListBinding
 import com.davenet.notely.domain.NoteEntry
@@ -47,6 +45,7 @@ class NoteListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        setHasOptionsMenu(true)
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_note_list, container, false
         )
@@ -69,10 +68,8 @@ class NoteListFragment : Fragment() {
             notes.observe(viewLifecycleOwner, {
                 it?.let {
                     if (it.isNotEmpty()) {
-                        setHasOptionsMenu(true)
                         noteListViewModel.uiState.set(UIState.HAS_DATA)
                     } else {
-                        setHasOptionsMenu(false)
                         noteListViewModel.uiState.set(UIState.EMPTY)
                     }
                     adapter.submitToList(it)
@@ -186,6 +183,7 @@ class NoteListFragment : Fragment() {
                 Log.d("delete", "Delete selected")
                 deleteAllNotes()
                 undoDeleteNotes(noteList.value!!)
+                activity?.invalidateOptionsMenu()
                 true
             }
             R.id.action_settings -> {
@@ -199,6 +197,16 @@ class NoteListFragment : Fragment() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+
+        noteListViewModel.notes.observe(viewLifecycleOwner, {
+             it?.let {
+                 menu.findItem(R.id.action_clear).isVisible = it.isNotEmpty()
+             }
+         })
+        return super.onPrepareOptionsMenu(menu)
     }
 
     private fun undoDeleteNotes(noteList: List<NoteEntry>) {
