@@ -17,7 +17,7 @@
     <string name="key_theme">theme</string>
     <string name="category_display">Display</string>
     <string name="choose_theme">Choose theme</string>
-    <string name="default_theme">default</string>
+    <string name="default_theme">MODE_NIGHT_FOLLOW_SYSTEM</string>
     <string name="save">Save</string>
 
     <string name="username">Name</string>
