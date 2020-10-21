@@ -1,7 +1,10 @@
 package com.davenet.notely.ui.editnote
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
+import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -51,6 +54,7 @@ class EditNoteFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_save -> {
+                hideKeyboard()
                 saveNote()
                 true
             }
@@ -58,14 +62,27 @@ class EditNoteFragment : Fragment() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        hideKeyboard()
+    }
+
+    private fun hideKeyboard() {
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
+    }
+
     private fun saveNote() {
         uiScope = CoroutineScope(Dispatchers.Default)
         if (viewModel.noteBeingModified.title.isBlank()) {
+            Toast.makeText(context, "Note title cannot be blank", Toast.LENGTH_LONG).show()
             return
         }
         uiScope.launch {
             withContext(Dispatchers.Main) {
                 viewModel.saveNote()
+                Toast.makeText(context, "Changes saved", Toast.LENGTH_LONG).show()
             }
         }
     }

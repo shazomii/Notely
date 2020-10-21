@@ -8,7 +8,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.davenet.notely.database.getDatabase
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.repository.NotesRepository
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class EditNoteViewModel(selectedNote: NoteEntry?, application: Application) :
     AndroidViewModel(application) {

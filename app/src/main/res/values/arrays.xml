@@ -1,5 +1,5 @@
 <resources>
-    <!-- Reply Preference -->
+    <!-- Theme Preference -->
     <string-array name="pref_theme">
         <item>System default</item>
         <item>Light</item>
@@ -7,8 +7,8 @@
     </string-array>
 
     <string-array name="pref_theme_values">
-        <item>default</item>
-        <item>light</item>
-        <item>dark</item>
+        <item>MODE_NIGHT_FOLLOW_SYSTEM</item>
+        <item>MODE_NIGHT_NO</item>
+        <item>MODE_NIGHT_YES</item>
     </string-array>
 </resources>
