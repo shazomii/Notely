@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.davenet.notely.R
 import com.davenet.notely.databinding.FragmentEditNoteBinding
 import com.davenet.notely.domain.NoteEntry
@@ -82,6 +83,7 @@ class EditNoteFragment : Fragment() {
         uiScope.launch {
             withContext(Dispatchers.Main) {
                 viewModel.saveNote()
+                findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
                 Toast.makeText(context, "Changes saved", Toast.LENGTH_LONG).show()
             }
         }
