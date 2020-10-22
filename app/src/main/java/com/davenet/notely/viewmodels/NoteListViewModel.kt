@@ -1,7 +1,6 @@
 package com.davenet.notely.viewmodels
 
 import android.app.Application
-import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.davenet.notely.database.getDatabase
@@ -44,14 +43,12 @@ class NoteListViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             notesRepository.deleteNote(note)
         }
-        Log.d("notelist", "note removed from db")
     }
 
     fun insertNote(note: NoteEntry) {
         viewModelScope.launch {
             notesRepository.insertNote(note)
         }
-        Log.d("notelist", "note replaced into db")
     }
 
     fun insertAllNotes(noteList: List<NoteEntry>) {
