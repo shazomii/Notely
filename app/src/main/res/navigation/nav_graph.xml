@@ -30,7 +30,9 @@
         tools:layout="@layout/fragment_edit_note" >
         <action
             android:id="@+id/action_editNoteFragment_to_noteListFragment"
-            app:destination="@id/noteListFragment" />
+            app:destination="@id/noteListFragment"
+            app:popUpTo="@id/noteListFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <activity
         android:id="@+id/settingsActivity2"
