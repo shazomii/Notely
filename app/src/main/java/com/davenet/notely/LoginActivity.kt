@@ -1,18 +1,14 @@
 package com.davenet.notely
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Patterns
 import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.activity_signup.*
-import kotlinx.android.synthetic.main.activity_signup.userEmail
 import kotlinx.android.synthetic.main.activity_signup.userPassword
 
 class LoginActivity : AppCompatActivity() {
@@ -27,15 +23,13 @@ class LoginActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         //Register new user
-        val registerNewUser: TextView = findViewById(R.id.textView3)
-        registerNewUser.setOnClickListener {
+        buttonRegister.setOnClickListener {
             startActivity(Intent(this, SignUpActivity::class.java))
             finish()
         }
 
         //login user if credentials matches
-        userLogin = findViewById(R.id.buttonLogin)
-        userLogin.setOnClickListener {
+        buttonLogin.setOnClickListener {
             loginUser()
         }
     }
