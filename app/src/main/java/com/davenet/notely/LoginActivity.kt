@@ -3,18 +3,22 @@ package com.davenet.notely
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
-import android.widget.Button
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_signup.userPassword
+import kotlinx.android.synthetic.main.error_dialog.view.*
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
-    private lateinit var userLogin: Button
+    private lateinit var loadingDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +36,14 @@ class LoginActivity : AppCompatActivity() {
         buttonLogin.setOnClickListener {
             loginUser()
         }
+
+        //set up loading dialog
+        val builder = AlertDialog.Builder(this)
+        val viewGroup: ViewGroup = findViewById(android.R.id.content)
+        val dialogView: View =
+            LayoutInflater.from(this).inflate(R.layout.loading_dialog, viewGroup, false)
+        builder.setView(dialogView)
+        loadingDialog = builder.create()
     }
 
     private fun loginUser() {
@@ -54,17 +66,44 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
+        loadingDialog.show()
+
         auth.signInWithEmailAndPassword(userEmailLogin.text.toString(), userPassword.text.toString())
             .addOnCompleteListener(this) { task ->
+                loadingDialog.dismiss()
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     updateUI(user)
                 } else {
-
-                    updateUI(null)
+                    showErrorDIalog(task.exception?.message)
                 }
             }
     }
+
+    private fun showErrorDIalog(message: String?) {
+        if (message != null) {
+            val builder = AlertDialog.Builder(this)
+            val viewGroup: ViewGroup = findViewById(android.R.id.content)
+            val dialogView: View = LayoutInflater.from(this).inflate(R.layout.error_dialog, viewGroup, false)
+            builder.setView(dialogView)
+            val dialog: AlertDialog = builder.create()
+            dialogView.apply {
+                dialogMessage.text = message
+                dismissDialogButton.setOnClickListener {
+                    dialog.dismiss()
+                }
+            }
+            dialog.show()
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val currentUser = auth.currentUser
+        updateUI(currentUser)
+    }
+
     public override fun onStart() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
@@ -83,9 +122,5 @@ class LoginActivity : AppCompatActivity() {
                 ).show()
             }
         }
-//        } else{
-//            Toast.makeText(baseContext, "Login failed.",
-//                Toast.LENGTH_SHORT).show()
-//        }
     }
 }

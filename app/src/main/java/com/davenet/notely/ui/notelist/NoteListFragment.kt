@@ -3,7 +3,6 @@ package com.davenet.notely.ui.notelist
 import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.DataBindingUtil
@@ -58,7 +57,6 @@ class NoteListFragment : Fragment() {
 
         noteListViewModel =
             ViewModelProvider(this, viewModelFactory).get(NoteListViewModel::class.java)
-
 
         val adapter = NotesAdapter(NoteListener {
             noteListViewModel.onNoteClicked(it)
@@ -180,7 +178,6 @@ class NoteListFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_clear -> {
-                Log.d("delete", "Delete selected")
                 deleteAllNotes()
                 undoDeleteNotes(noteList.value!!)
                 activity?.invalidateOptionsMenu()

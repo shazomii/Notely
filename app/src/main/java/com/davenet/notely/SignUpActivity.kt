@@ -3,16 +3,19 @@ package com.davenet.notely
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
-import android.widget.Button
-import android.widget.Toast
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_signup.*
+import kotlinx.android.synthetic.main.error_dialog.view.*
 
 class SignUpActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
-    private lateinit var userRegister: Button
+    private lateinit var loadingDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +33,14 @@ class SignUpActivity : AppCompatActivity() {
         buttonSignUp.setOnClickListener {
             registerUser()
         }
+
+        //set up loading dialog
+        val builder = AlertDialog.Builder(this)
+        val viewGroup: ViewGroup = findViewById(android.R.id.content)
+        val dialogView: View =
+            LayoutInflater.from(this).inflate(R.layout.loading_dialog, viewGroup, false)
+        builder.setView(dialogView)
+        loadingDialog = builder.create()
     }
 
     private fun registerUser() {
@@ -51,8 +62,11 @@ class SignUpActivity : AppCompatActivity() {
             return
         }
 
+        loadingDialog.show()
+
         auth.createUserWithEmailAndPassword(userEmail.text.toString(), userPassword.text.toString())
             .addOnCompleteListener(this) { task ->
+                loadingDialog.dismiss()
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     user!!.sendEmailVerification()
@@ -63,10 +77,25 @@ class SignUpActivity : AppCompatActivity() {
                             }
                         }
                 } else {
-                    Toast.makeText(baseContext, "Sign Up failed. Try again later.",
-                        Toast.LENGTH_SHORT).show()
+                    showErrorDialog(task.exception?.message)
                 }
 
             }
+    }
+
+    private fun showErrorDialog(message: String?) {
+        if (message != null) {
+            val builder = AlertDialog.Builder(this)
+            val viewGroup: ViewGroup = findViewById(android.R.id.content)
+            val dialogView: View =
+                LayoutInflater.from(this).inflate(R.layout.error_dialog, viewGroup, false)
+            builder.setView(dialogView)
+            val dialog: AlertDialog = builder.create()
+            dialogView.dialogMessage.text = message
+            dialogView.dismissDialogButton.setOnClickListener {
+                dialog.dismiss()
+            }
+            dialog.show()
+        }
     }
 }

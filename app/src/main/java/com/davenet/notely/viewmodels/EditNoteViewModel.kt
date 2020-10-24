@@ -1,7 +1,6 @@
 package com.davenet.notely.viewmodels
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -13,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class EditNoteViewModel(selectedNote: NoteEntry?, application: Application) :
+class EditNoteViewModel(private val selectedNote: NoteEntry?, application: Application) :
     AndroidViewModel(application) {
     private val noteRepository = NotesRepository(getDatabase(application))
     private var viewModelJob = Job()
@@ -27,11 +26,9 @@ class EditNoteViewModel(selectedNote: NoteEntry?, application: Application) :
         if (selectedNote != null) {
             noteBeingModified = selectedNote
             mIsEdit = true
-            Log.d("editNote", "editnote")
         } else {
             noteBeingModified = noteRepository.emptyNote
             mIsEdit = false
-            Log.d("editNote", "newnote")
         }
     }
 
@@ -39,16 +36,12 @@ class EditNoteViewModel(selectedNote: NoteEntry?, application: Application) :
         viewModelScope.launch {
             noteRepository.insertNote(note)
         }
-
-        Log.d("editnote", "new note created in db")
     }
 
     private fun updateNote(note: NoteEntry) {
         viewModelScope.launch {
             noteRepository.updateNote(note)
         }
-
-        Log.d("editnote", "note updated in db")
     }
 
     fun saveNote() {

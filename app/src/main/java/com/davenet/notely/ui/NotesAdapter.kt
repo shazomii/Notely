@@ -1,12 +1,10 @@
 package com.davenet.notely.ui
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.davenet.notely.database.DatabaseNote
 import com.davenet.notely.databinding.NoteItemBinding
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.ui.NotesAdapter.ViewHolder.Companion.from
@@ -15,7 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class NotesAdapter(val clickListener: NoteListener) :
+class NotesAdapter(private val clickListener: NoteListener) :
     ListAdapter<DataItem, RecyclerView.ViewHolder>(NoteDiffCallback()) {
     private val adapterScope = CoroutineScope(Dispatchers.Default)
 
@@ -41,7 +39,7 @@ class NotesAdapter(val clickListener: NoteListener) :
         }
     }
 
-    class ViewHolder private constructor(val binding: NoteItemBinding) :
+    class ViewHolder private constructor(private val binding: NoteItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(
             item: NoteEntry,
@@ -85,6 +83,5 @@ sealed class DataItem {
 class NoteListener(val clickListener: (note: NoteEntry) -> Unit) {
     fun onClick(note: NoteEntry) {
         clickListener(note)
-        Log.d("notelist", "selected note\'s id is " + note.title)
     }
 }
