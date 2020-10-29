@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.DataBindingUtil
+import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
@@ -23,6 +24,7 @@ import com.davenet.notely.viewmodels.NoteListViewModel
 import com.davenet.notely.viewmodels.NoteListViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_note_list.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,6 +47,7 @@ class NoteListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         setHasOptionsMenu(true)
+        requireActivity().drawer_layout.setDrawerLockMode(LOCK_MODE_UNLOCKED)
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_note_list, container, false
         )
@@ -183,10 +186,6 @@ class NoteListFragment : Fragment() {
                 activity?.invalidateOptionsMenu()
                 true
             }
-            R.id.action_settings -> {
-                findNavController().navigate(R.id.action_noteListFragment_to_settingsActivity2)
-                true
-            }
             R.id.action_logout -> {
                 FirebaseAuth.getInstance().signOut()
                 findNavController().navigate(R.id.action_noteListFragment_to_loginActivity)
@@ -197,7 +196,6 @@ class NoteListFragment : Fragment() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
-
         noteListViewModel.notes.observe(viewLifecycleOwner, {
              it?.let {
                  menu.findItem(R.id.action_clear).isVisible = it.isNotEmpty()

@@ -18,10 +18,18 @@
             app:popExitAnim="@anim/fragment_close_exit" />
         <action
             android:id="@+id/action_noteListFragment_to_settingsActivity2"
-            app:destination="@id/settingsActivity2" />
+            app:destination="@id/settingsActivity2"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit"/>
         <action
             android:id="@+id/action_noteListFragment_to_loginActivity"
-            app:destination="@id/loginActivity" />
+            app:destination="@id/loginActivity"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit"/>
     </fragment>
     <fragment
         android:id="@+id/editNoteFragment"
@@ -32,15 +40,23 @@
             android:id="@+id/action_editNoteFragment_to_noteListFragment"
             app:destination="@id/noteListFragment"
             app:popUpTo="@id/noteListFragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit"/>
     </fragment>
     <activity
         android:id="@+id/settingsActivity2"
         android:name="com.davenet.notely.SettingsActivity"
-        android:label="SettingsActivity" />
+        android:label="Settings" />
     <activity
         android:id="@+id/loginActivity"
         android:name="com.davenet.notely.LoginActivity"
         android:label="activity_login"
         tools:layout="@layout/activity_login" />
+    <fragment
+        android:id="@+id/settingsFragment2"
+        android:name="com.davenet.notely.SettingsFragment"
+        android:label="@string/title_activity_settings" />
 </navigation>
