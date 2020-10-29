@@ -118,7 +118,6 @@ class NoteListFragment : Fragment() {
                 return false
             }
 
-
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val noteToErase = noteList.value?.get(position)
@@ -168,7 +167,7 @@ class NoteListFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        if (auth.currentUser == null){
+        if (auth.currentUser == null) {
             findNavController().navigate(R.id.action_noteListFragment_to_loginActivity)
         }
     }
@@ -197,10 +196,10 @@ class NoteListFragment : Fragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         noteListViewModel.notes.observe(viewLifecycleOwner, {
-             it?.let {
-                 menu.findItem(R.id.action_clear).isVisible = it.isNotEmpty()
-             }
-         })
+            it?.let {
+                menu.findItem(R.id.action_clear).isVisible = it.isNotEmpty()
+            }
+        })
         return super.onPrepareOptionsMenu(menu)
     }
 

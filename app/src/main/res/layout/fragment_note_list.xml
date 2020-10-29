@@ -5,8 +5,11 @@
     tools:context=".NoteListFragment">
 
     <data>
+
         <import type="androidx.databinding.ObservableField" />
+
         <import type="com.davenet.notely.util.UIState" />
+
         <variable
             name="uiState"
             type="ObservableField&lt;UIState>" />
@@ -22,8 +25,8 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:visible="@{uiState == UIState.LOADING}" />
 
         <TextView
@@ -59,11 +62,11 @@
             android:id="@+id/note_list"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:visible="@{uiState == UIState.HAS_DATA}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:visible="@{uiState == UIState.HAS_DATA}"
             tools:listitem="@layout/note_item" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

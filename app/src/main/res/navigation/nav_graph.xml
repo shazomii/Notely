@@ -52,11 +52,11 @@
         android:label="Settings" />
     <activity
         android:id="@+id/loginActivity"
-        android:name="com.davenet.notely.LoginActivity"
+        android:name="com.davenet.notely.ui.LoginActivity"
         android:label="activity_login"
         tools:layout="@layout/activity_login" />
     <fragment
         android:id="@+id/settingsFragment2"
-        android:name="com.davenet.notely.SettingsFragment"
+        android:name="com.davenet.notely.ui.SettingsFragment"
         android:label="@string/title_activity_settings" />
 </navigation>

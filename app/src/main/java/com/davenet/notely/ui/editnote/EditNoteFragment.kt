@@ -22,7 +22,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-
 class EditNoteFragment : Fragment() {
     private lateinit var binding: FragmentEditNoteBinding
     private lateinit var viewModel: EditNoteViewModel

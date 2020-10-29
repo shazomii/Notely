@@ -1,4 +1,4 @@
-package com.davenet.notely
+package com.davenet.notely.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.davenet.notely.R
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_signup.*
 import kotlinx.android.synthetic.main.error_dialog.view.*

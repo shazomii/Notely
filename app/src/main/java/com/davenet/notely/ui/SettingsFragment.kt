@@ -1,4 +1,4 @@
-package com.davenet.notely
+package com.davenet.notely.ui
 
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -9,25 +9,11 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import com.davenet.notely.R
 import kotlinx.android.synthetic.main.activity_main.*
 
-//class SettingsActivity : AppCompatActivity() {
-//
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.settings_activity)
-//        supportFragmentManager
-//            .beginTransaction()
-//            .add(R.id.settings_fragment, SettingsFragment())
-////            .replace(R.id.settings, SettingsFragment())
-//            .commit()
-//        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-//    }
-//
-//
-//}
-
-class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
+class SettingsFragment : PreferenceFragmentCompat(),
+    SharedPreferences.OnSharedPreferenceChangeListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
