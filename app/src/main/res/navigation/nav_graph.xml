@@ -17,13 +17,6 @@
             app:popEnterAnim="@anim/fragment_close_enter"
             app:popExitAnim="@anim/fragment_close_exit" />
         <action
-            android:id="@+id/action_noteListFragment_to_settingsActivity2"
-            app:destination="@id/settingsActivity2"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit"/>
-        <action
             android:id="@+id/action_noteListFragment_to_loginActivity"
             app:destination="@id/loginActivity"
             app:enterAnim="@anim/fragment_fade_enter"
@@ -47,10 +40,6 @@
             app:popExitAnim="@anim/fragment_close_exit"/>
     </fragment>
     <activity
-        android:id="@+id/settingsActivity2"
-        android:name="com.davenet.notely.SettingsActivity"
-        android:label="Settings" />
-    <activity
         android:id="@+id/loginActivity"
         android:name="com.davenet.notely.ui.LoginActivity"
         android:label="activity_login"
@@ -58,5 +47,6 @@
     <fragment
         android:id="@+id/settingsFragment2"
         android:name="com.davenet.notely.ui.SettingsFragment"
-        android:label="@string/title_activity_settings" />
+        android:label="@string/title_activity_settings"
+        tools:layout="@layout/fragment_settings"/>
 </navigation>
