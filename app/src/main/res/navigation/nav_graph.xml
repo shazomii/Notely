@@ -18,11 +18,7 @@
             app:popExitAnim="@anim/fragment_close_exit" />
         <action
             android:id="@+id/action_noteListFragment_to_loginActivity"
-            app:destination="@id/loginActivity"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit"/>
+            app:destination="@id/loginActivity" />
     </fragment>
     <fragment
         android:id="@+id/editNoteFragment"

@@ -2,6 +2,7 @@ package com.davenet.notely.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
@@ -101,16 +102,11 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        Log.d("login", "onResume called")
         val currentUser = auth.currentUser
         updateUI(currentUser)
     }
 
-    public override fun onStart() {
-        super.onStart()
-        // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = auth.currentUser
-        updateUI(currentUser)
-    }
     private fun updateUI(currentUser: FirebaseUser?){
         if(currentUser != null) {
             if (currentUser.isEmailVerified) {
