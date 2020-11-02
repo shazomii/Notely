@@ -14,6 +14,7 @@ import com.davenet.notely.R
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.nav_header_main.view.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -52,7 +53,13 @@ class MainActivity : AppCompatActivity() {
                     else -> true
                 }
             }
+        val user = auth.currentUser
+        if (user != null) {
+            val navHeader = nav_view.getHeaderView(0)
+            navHeader.currentUserEmail.text = user.email
+        }
     }
+
 
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {

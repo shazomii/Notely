@@ -3,14 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group>
         <item
             android:id="@+id/settingsFragment2"
             android:icon="@drawable/ic_baseline_settings_24"
             android:title="@string/action_settings" />
+        <item
+            android:id="@+id/action_logout"
+            android:icon="@drawable/ic_logout"
+            android:title="Logout" />
     </group>
-    <item
-        android:id="@+id/action_logout"
-        android:icon="@drawable/ic_logout"
-        android:title="Logout" />
 </menu>
