@@ -9,5 +9,8 @@
             android:icon="@drawable/ic_baseline_settings_24"
             android:title="@string/action_settings" />
     </group>
-
+    <item
+        android:id="@+id/action_logout"
+        android:icon="@drawable/ic_logout"
+        android:title="Logout" />
 </menu>

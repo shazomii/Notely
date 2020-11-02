@@ -11,15 +11,18 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.davenet.notely.R
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth = FirebaseAuth.getInstance()
 
         val darkModeValues = resources.getStringArray(R.array.pref_theme_values)
         when (PreferenceManager.getDefaultSharedPreferences(this)
@@ -34,6 +37,21 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(setOf(R.id.noteListFragment), drawer_layout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         nav_view.setupWithNavController(navController)
+        nav_view.setNavigationItemSelectedListener {
+                when (it.itemId) {
+                    R.id.action_logout -> {
+                        auth.signOut()
+                        navController.navigate(R.id.action_noteListFragment_to_loginActivity)
+//                        drawer_layout.closeDrawer(GravityCompat.START)
+                        true
+                    }
+                    R.id.settingsFragment2 -> {
+                        navController.navigate(R.id.action_noteListFragment_to_settingsFragment2)
+                        true
+                    }
+                    else -> true
+                }
+            }
     }
 
     override fun onBackPressed() {

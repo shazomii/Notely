@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_noteListFragment_to_loginActivity"
             app:destination="@id/loginActivity" />
+        <action
+            android:id="@+id/action_noteListFragment_to_settingsFragment2"
+            app:destination="@id/settingsFragment2" />
     </fragment>
     <fragment
         android:id="@+id/editNoteFragment"

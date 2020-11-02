@@ -7,9 +7,4 @@
         android:orderInCategory="200"
         android:title="Clear"
         app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/action_logout"
-        android:orderInCategory="400"
-        android:title="Logout" />
 </menu>

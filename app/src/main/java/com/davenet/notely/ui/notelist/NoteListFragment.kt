@@ -185,11 +185,6 @@ class NoteListFragment : Fragment() {
                 activity?.invalidateOptionsMenu()
                 true
             }
-            R.id.action_logout -> {
-                FirebaseAuth.getInstance().signOut()
-                findNavController().navigate(R.id.action_noteListFragment_to_loginActivity)
-                true
-            }
             else -> super.onOptionsItemSelected(item)
         }
     }
