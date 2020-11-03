@@ -1,9 +1,7 @@
 package com.davenet.notely.viewmodels
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import com.davenet.notely.database.getDatabase
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.repository.NotesRepository
@@ -12,22 +10,23 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class EditNoteViewModel(private val selectedNote: NoteEntry?, application: Application) :
+class EditNoteViewModel(selectedNote: NoteEntry?, application: Application) :
     AndroidViewModel(application) {
     private val noteRepository = NotesRepository(getDatabase(application))
     private var viewModelJob = Job()
     private val viewModelScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    val noteBeingModified: NoteEntry
+    private val _noteBeingModified = MutableLiveData<NoteEntry?>()
+    val noteBeingModified: LiveData<NoteEntry?> get() = _noteBeingModified
 
     private var mIsEdit: Boolean = false
 
     init {
         if (selectedNote != null) {
-            noteBeingModified = selectedNote
+            _noteBeingModified.value = selectedNote
             mIsEdit = true
         } else {
-            noteBeingModified = noteRepository.emptyNote
+            _noteBeingModified.value = noteRepository.emptyNote
             mIsEdit = false
         }
     }
@@ -46,9 +45,9 @@ class EditNoteViewModel(private val selectedNote: NoteEntry?, application: Appli
 
     fun saveNote() {
         if (!mIsEdit) {
-            insertNote(noteBeingModified)
+            insertNote(_noteBeingModified.value!!)
         } else {
-            updateNote(noteBeingModified)
+            updateNote(_noteBeingModified.value!!)
         }
     }
 }

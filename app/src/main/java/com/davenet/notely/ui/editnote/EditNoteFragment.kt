@@ -52,6 +52,7 @@ class EditNoteFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_edit, menu)
+        activity?.invalidateOptionsMenu()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -65,6 +66,16 @@ class EditNoteFragment : Fragment() {
         }
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        viewModel.noteBeingModified.observe(viewLifecycleOwner, {
+            it?.let {
+                menu.findItem(R.id.action_save).isEnabled = it.title.isNotBlank() && it.text.isNotBlank()
+            }
+        })
+        return super.onPrepareOptionsMenu(menu)
+    }
+
+
     override fun onPause() {
         super.onPause()
         hideKeyboard()
@@ -77,12 +88,7 @@ class EditNoteFragment : Fragment() {
     }
 
     private fun saveNote() {
-        uiScope = CoroutineScope(Dispatchers.Default)
-        if (viewModel.noteBeingModified.title.isBlank()) {
-            Toast.makeText(context, "Note title cannot be blank", Toast.LENGTH_LONG).show()
-            return
-        }
-        uiScope.launch {
+        CoroutineScope(Dispatchers.Default).launch {
             withContext(Dispatchers.Main) {
                 viewModel.saveNote()
                 findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
