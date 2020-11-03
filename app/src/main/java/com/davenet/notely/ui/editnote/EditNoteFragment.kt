@@ -25,7 +25,6 @@ import kotlinx.coroutines.withContext
 class EditNoteFragment : Fragment() {
     private lateinit var binding: FragmentEditNoteBinding
     private lateinit var viewModel: EditNoteViewModel
-    private lateinit var uiScope: CoroutineScope
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

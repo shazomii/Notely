@@ -107,6 +107,13 @@ class LoginActivity : AppCompatActivity() {
         updateUI(currentUser)
     }
 
+    override fun onStart() {
+        super.onStart()
+        Log.d("login", "onStart called")
+        val currentUser = auth.currentUser
+        updateUI(currentUser)
+    }
+
     private fun updateUI(currentUser: FirebaseUser?){
         if(currentUser != null) {
             if (currentUser.isEmailVerified) {
