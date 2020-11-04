@@ -12,8 +12,6 @@
         <variable
             name="clickListener"
             type="com.davenet.notely.ui.NoteListener" />
-
-        <import type="com.davenet.notely.util.UtilKt" />
     </data>
 
     <FrameLayout
