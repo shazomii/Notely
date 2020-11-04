@@ -65,6 +65,18 @@ class NoteListFragment : Fragment() {
             noteListViewModel.onNoteClicked(it)
         })
 
+        observeViewModel(adapter)
+
+        binding.apply {
+            lifecycleOwner = this@NoteListFragment
+            uiState = noteListViewModel.uiState
+            noteList.adapter = adapter
+            noteList.layoutManager = LinearLayoutManager(context)
+        }
+        return binding.root
+    }
+
+    private fun observeViewModel(adapter: NotesAdapter) {
         noteListViewModel.apply {
             notes.observe(viewLifecycleOwner, {
                 it?.let {
@@ -88,14 +100,6 @@ class NoteListFragment : Fragment() {
                 }
             })
         }
-
-        binding.apply {
-            lifecycleOwner = this@NoteListFragment
-            uiState = noteListViewModel.uiState
-            noteList.adapter = adapter
-            noteList.layoutManager = LinearLayoutManager(context)
-        }
-        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

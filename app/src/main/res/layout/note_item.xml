@@ -25,14 +25,14 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/card_item"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="4dp"
             app:cardCornerRadius="4dp"
             app:cardElevation="2dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
                 <TextView
                     android:id="@+id/textTitle"
@@ -41,6 +41,8 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:text="@{note.title}"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="?android:attr/colorFocusedHighlight"
@@ -58,7 +60,10 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="30dp"
                     android:layout_marginBottom="16dp"
-                    android:text="@{UtilKt.smartTruncate(note.text, 50)}"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:minLines="2"
+                    android:text="@{note.text}"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
