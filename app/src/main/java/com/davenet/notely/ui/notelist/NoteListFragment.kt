@@ -11,8 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.davenet.notely.R
 import com.davenet.notely.databinding.FragmentNoteListBinding
@@ -20,6 +20,7 @@ import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.ui.NoteListener
 import com.davenet.notely.ui.NotesAdapter
 import com.davenet.notely.util.UIState
+import com.davenet.notely.util.calculateNoOfColumns
 import com.davenet.notely.viewmodels.NoteListViewModel
 import com.davenet.notely.viewmodels.NoteListViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
@@ -71,7 +72,7 @@ class NoteListFragment : Fragment() {
             lifecycleOwner = this@NoteListFragment
             uiState = noteListViewModel.uiState
             noteList.adapter = adapter
-            noteList.layoutManager = LinearLayoutManager(context)
+            noteList.layoutManager = GridLayoutManager(context, calculateNoOfColumns(requireContext(), 180))
         }
         return binding.root
     }
