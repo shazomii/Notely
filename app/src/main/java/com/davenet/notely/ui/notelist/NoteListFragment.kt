@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED
 import androidx.fragment.app.Fragment
@@ -26,6 +27,7 @@ import com.davenet.notely.viewmodels.NoteListViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_note_list.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +50,10 @@ class NoteListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         setHasOptionsMenu(true)
-        requireActivity().drawer_layout.setDrawerLockMode(LOCK_MODE_UNLOCKED)
+        requireActivity().apply {
+            drawer_layout.setDrawerLockMode(LOCK_MODE_UNLOCKED)
+            toolbar.isVisible = true
+        }
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_note_list, container, false
         )
@@ -72,7 +77,8 @@ class NoteListFragment : Fragment() {
             lifecycleOwner = this@NoteListFragment
             uiState = noteListViewModel.uiState
             noteList.adapter = adapter
-            noteList.layoutManager = GridLayoutManager(context, calculateNoOfColumns(requireContext(), 180))
+            noteList.layoutManager =
+                GridLayoutManager(context, calculateNoOfColumns(requireContext(), 180))
         }
         return binding.root
     }
@@ -173,7 +179,7 @@ class NoteListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         if (auth.currentUser == null) {
-            findNavController().navigate(R.id.action_noteListFragment_to_loginActivity)
+            findNavController().navigate(R.id.action_noteListFragment_to_loginFragment)
         }
     }
 

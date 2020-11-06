@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
                 when (it.itemId) {
                     R.id.action_logout -> {
                         auth.signOut()
-                        navController.navigate(R.id.action_noteListFragment_to_loginActivity)
+                        navController.navigate(R.id.action_noteListFragment_to_loginFragment)
 //                        drawer_layout.closeDrawer(GravityCompat.START)
                         true
                     }

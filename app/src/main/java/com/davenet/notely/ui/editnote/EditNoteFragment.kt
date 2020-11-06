@@ -1,9 +1,7 @@
 package com.davenet.notely.ui.editnote
 
-import android.content.Context
 import android.os.Bundle
 import android.view.*
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -14,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.davenet.notely.R
 import com.davenet.notely.databinding.FragmentEditNoteBinding
 import com.davenet.notely.domain.NoteEntry
+import com.davenet.notely.util.hideKeyboard
 import com.davenet.notely.viewmodels.EditNoteViewModel
 import com.davenet.notely.viewmodels.EditNoteViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
@@ -57,7 +56,7 @@ class EditNoteFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_save -> {
-                hideKeyboard()
+                hideKeyboard(view, requireContext())
                 saveNote()
                 true
             }
@@ -68,22 +67,16 @@ class EditNoteFragment : Fragment() {
     override fun onPrepareOptionsMenu(menu: Menu) {
         viewModel.noteBeingModified.observe(viewLifecycleOwner, {
             it?.let {
-                menu.findItem(R.id.action_save).isEnabled = it.title.isNotBlank() && it.text.isNotBlank()
+                menu.findItem(R.id.action_save).isEnabled =
+                    it.title.isNotBlank() && it.text.isNotBlank()
             }
         })
         return super.onPrepareOptionsMenu(menu)
     }
 
-
     override fun onPause() {
         super.onPause()
-        hideKeyboard()
-    }
-
-    private fun hideKeyboard() {
-        val imm =
-            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view?.windowToken, 0)
+        hideKeyboard(view, requireContext())
     }
 
     private fun saveNote() {
