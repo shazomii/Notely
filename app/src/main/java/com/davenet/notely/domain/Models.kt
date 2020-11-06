@@ -12,10 +12,11 @@ data class NoteEntry(
     @PrimaryKey
     var id: Int?,
     var title: String,
-    var text: String
+    var text: String,
+    var date: Long?
 ) : Parcelable {
     fun copy(): DatabaseNote {
-        return DatabaseNote(id, title, text)
+        return DatabaseNote(id, title, text, date)
     }
 }
 
@@ -24,7 +25,8 @@ fun List<NoteEntry>.asDataBaseModel(): List<DatabaseNote> {
         DatabaseNote(
             id = it.id,
             title = it.title,
-            text = it.text
+            text = it.text,
+            date = it.date
         )
     }
 }

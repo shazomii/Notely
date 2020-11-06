@@ -242,7 +242,7 @@ class NoteListFragment : Fragment() {
     private fun insertNote(note: NoteEntry) {
         uiScope.launch {
             withContext(Dispatchers.Main) {
-                noteListViewModel.insertNote(note)
+                noteListViewModel.restoreNote(note)
             }
         }
     }

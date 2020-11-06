@@ -45,9 +45,9 @@ class NoteListViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun insertNote(note: NoteEntry) {
+    fun restoreNote(note: NoteEntry) {
         viewModelScope.launch {
-            notesRepository.insertNote(note)
+            notesRepository.restoreNote(note)
         }
     }
 

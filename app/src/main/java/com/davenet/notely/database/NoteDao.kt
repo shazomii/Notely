@@ -13,7 +13,7 @@ import androidx.room.Update
  */
 @Dao
 interface NoteDao {
-    @Query("select * from database_note order by id desc")
+    @Query("select * from database_note order by date desc")
     fun getAllNotes(): LiveData<List<DatabaseNote>>
 
     @Query("select * from database_note ORDER BY id DESC LIMIT 1")

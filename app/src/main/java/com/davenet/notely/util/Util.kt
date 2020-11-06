@@ -1,6 +1,7 @@
 package com.davenet.notely.util
 
 import android.content.Context
+import android.text.format.DateUtils
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,8 @@ import androidx.fragment.app.FragmentActivity
 import com.davenet.notely.R
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.android.synthetic.main.error_dialog.view.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 fun calculateNoOfColumns(context: Context, columnWidthDp: Int): Int {
     val displayMetrics = context.resources.displayMetrics
@@ -52,22 +55,43 @@ fun setupLoadingDialog(context: Context, activity: FragmentActivity): AlertDialo
 }
 
 fun inputValidation(email: TextInputEditText, password: TextInputEditText): Boolean {
-    when {
+    return when {
         email.text.toString().isEmpty() -> {
             email.error = "Please enter email"
             email.requestFocus()
-            return true
+            true
         }
         !Patterns.EMAIL_ADDRESS.matcher(email.text.toString()).matches() -> {
             email.error = "Please enter valid email"
             email.requestFocus()
-            return true
+            true
         }
         password.text.toString().isEmpty() -> {
             password.error = "Please enter password"
             password.requestFocus()
-            return true
+            true
         }
-        else -> return false
+        else -> false
+    }
+}
+
+fun currentDate(): Long {
+    return Calendar.getInstance().timeInMillis
+}
+
+fun formatDate(date: Long): String {
+    val dateString = DateUtils.getRelativeTimeSpanString(
+        date,
+        currentDate(),
+        DateUtils.SECOND_IN_MILLIS
+    ).toString()
+    return when {
+        "minute" in dateString -> {
+            SimpleDateFormat("h:mm a", Locale.getDefault()).format(date)
+        }
+        " seconds" in dateString -> {
+            "now"
+        }
+        else -> dateString
     }
 }

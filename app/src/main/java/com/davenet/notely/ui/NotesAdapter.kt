@@ -76,6 +76,7 @@ sealed class DataItem {
     abstract val id: Int?
 
     data class NoteItem(val note: NoteEntry) : DataItem() {
+        //        val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss", Locale.CANADA)
         override val id: Int? = note.id
     }
 }

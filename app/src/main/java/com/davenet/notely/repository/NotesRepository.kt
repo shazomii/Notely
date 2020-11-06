@@ -6,6 +6,7 @@ import com.davenet.notely.database.NotesDatabase
 import com.davenet.notely.database.asDomainModel
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.domain.asDataBaseModel
+import com.davenet.notely.util.currentDate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -16,7 +17,7 @@ class NotesRepository(private val database: NotesDatabase) {
 
     val emptyNote: NoteEntry
         get() {
-            return NoteEntry(id = null, "", text = "")
+            return NoteEntry(id = null, "", text = "", date = null)
         }
 
     suspend fun deleteAllNotes() {
@@ -33,6 +34,12 @@ class NotesRepository(private val database: NotesDatabase) {
 
     suspend fun insertNote(note: NoteEntry) {
         withContext(Dispatchers.IO) {
+            database.noteDao.insert(note.copy(date = currentDate()).copy())
+        }
+    }
+
+    suspend fun restoreNote(note: NoteEntry) {
+        withContext(Dispatchers.IO) {
             database.noteDao.insert(note.copy())
         }
     }
@@ -45,7 +52,7 @@ class NotesRepository(private val database: NotesDatabase) {
 
     suspend fun updateNote(note: NoteEntry) {
         withContext(Dispatchers.IO) {
-            database.noteDao.update(note.copy())
+            database.noteDao.update(note.copy(date = currentDate()).copy())
         }
     }
 }

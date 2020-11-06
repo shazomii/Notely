@@ -17,7 +17,8 @@ data class DatabaseNote(
     @PrimaryKey(autoGenerate = true)
     val id: Int? = 0,
     val title: String,
-    val text: String
+    val text: String,
+    val date: Long?
 )
 
 /**
@@ -28,7 +29,8 @@ fun List<DatabaseNote>.asDomainModel(): List<NoteEntry> {
         NoteEntry(
             id = it.id,
             title = it.title,
-            text = it.text
+            text = it.text,
+            date = it.date
         )
     }
 }

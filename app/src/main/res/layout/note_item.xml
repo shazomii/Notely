@@ -12,6 +12,8 @@
         <variable
             name="clickListener"
             type="com.davenet.notely.ui.NoteListener" />
+
+        <import type="com.davenet.notely.util.UtilKt" />
     </data>
 
     <FrameLayout
@@ -74,12 +76,12 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="30dp"
                     android:layout_marginBottom="16dp"
-                    android:text="2d ago"
+                    android:text="@{UtilKt.formatDate(note.date)}"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/textSummary"/>
+                    app:layout_constraintTop_toBottomOf="@id/textSummary" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
