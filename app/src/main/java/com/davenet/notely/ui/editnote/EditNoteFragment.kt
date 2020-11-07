@@ -1,5 +1,6 @@
 package com.davenet.notely.ui.editnote
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -60,17 +61,38 @@ class EditNoteFragment : Fragment() {
                 saveNote()
                 true
             }
+            R.id.action_share -> {
+                shareNote()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
+    private fun shareNote() {
+        val sendIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, viewModel.noteBeingModified.value?.text)
+            type = "text/plain"
+        }
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        startActivity(shareIntent)
+    }
+
     override fun onPrepareOptionsMenu(menu: Menu) {
-        viewModel.noteBeingModified.observe(viewLifecycleOwner, {
-            it?.let {
-                menu.findItem(R.id.action_save).isEnabled =
-                    it.title.isNotBlank() && it.text.isNotBlank()
-            }
-        })
+        viewModel.apply {
+            noteBeingModified.observe(viewLifecycleOwner, {
+                it?.let {
+                    menu.findItem(R.id.action_save).isEnabled =
+                        it.title.isNotBlank() && it.text.isNotBlank()
+                }
+            })
+            mIsEdit.observe(viewLifecycleOwner, {
+                it?.let {
+                    menu.findItem(R.id.action_share).isVisible = it
+                }
+            })
+        }
         return super.onPrepareOptionsMenu(menu)
     }
 
