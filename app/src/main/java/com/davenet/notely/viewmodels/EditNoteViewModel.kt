@@ -19,15 +19,16 @@ class EditNoteViewModel(selectedNote: NoteEntry?, application: Application) :
     private val _noteBeingModified = MutableLiveData<NoteEntry?>()
     val noteBeingModified: LiveData<NoteEntry?> get() = _noteBeingModified
 
-    private var mIsEdit: Boolean = false
+    private var _mIsEdit = MutableLiveData<Boolean>()
+    val mIsEdit: LiveData<Boolean> get() = _mIsEdit
 
     init {
         if (selectedNote != null) {
             _noteBeingModified.value = selectedNote
-            mIsEdit = true
+           _mIsEdit.value = true
         } else {
             _noteBeingModified.value = noteRepository.emptyNote
-            mIsEdit = false
+            _mIsEdit.value = false
         }
     }
 
@@ -44,7 +45,7 @@ class EditNoteViewModel(selectedNote: NoteEntry?, application: Application) :
     }
 
     fun saveNote() {
-        if (!mIsEdit) {
+        if (!_mIsEdit.value!!) {
             insertNote(_noteBeingModified.value!!)
         } else {
             updateNote(_noteBeingModified.value!!)
