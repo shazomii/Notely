@@ -5,3 +5,8 @@ enum class UIState {
     HAS_DATA,
     EMPTY
 }
+
+enum class ReminderState {
+    HAS_REMINDER,
+    NO_REMINDER
+}

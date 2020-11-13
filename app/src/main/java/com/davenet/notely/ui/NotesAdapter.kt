@@ -80,8 +80,8 @@ sealed class DataItem {
     }
 }
 
-class NoteListener(val clickListener: (note: NoteEntry) -> Unit) {
-    fun onClick(note: NoteEntry) {
-        clickListener(note)
+class NoteListener(val clickListener: (noteId: Int) -> Unit) {
+    fun onClick(noteId: Int) {
+        clickListener(noteId)
     }
 }

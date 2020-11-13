@@ -75,14 +75,14 @@ fun inputValidation(email: TextInputEditText, password: TextInputEditText): Bool
     }
 }
 
-fun currentDate(): Long {
-    return Calendar.getInstance().timeInMillis
+fun currentDate(): Calendar {
+    return Calendar.getInstance()
 }
 
 fun formatDate(date: Long): String {
     val dateString = DateUtils.getRelativeTimeSpanString(
         date,
-        currentDate(),
+        currentDate().timeInMillis,
         DateUtils.SECOND_IN_MILLIS
     ).toString()
     return when {
@@ -94,4 +94,8 @@ fun formatDate(date: Long): String {
         }
         else -> dateString
     }
+}
+
+fun formatReminderDate(date: Long): String {
+    return SimpleDateFormat("dd MMM, yyyy h:mm a", Locale.getDefault()).format(date)
 }

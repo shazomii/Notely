@@ -96,10 +96,10 @@ class NoteListFragment : Fragment() {
                 }
             })
 
-            navigateToNoteDetail.observe(viewLifecycleOwner, { note ->
-                note?.let {
+            navigateToNoteDetail.observe(viewLifecycleOwner, { noteId ->
+                noteId?.let {
                     val bundle = Bundle()
-                    bundle.putParcelable("note", note)
+                    bundle.putInt("noteId", noteId)
                     findNavController().navigate(
                         R.id.action_noteListFragment_to_editNoteFragment, bundle
                     )
@@ -134,7 +134,7 @@ class NoteListFragment : Fragment() {
                 val noteToErase = noteList.value?.get(position)
                 deleteNote(noteToErase!!)
                 coordinator.longSnackbar("Note deleted", "Undo") {
-                    insertNote(noteToErase)
+                    restoreNote(noteToErase)
                 }
             }
 
@@ -239,7 +239,7 @@ class NoteListFragment : Fragment() {
         }
     }
 
-    private fun insertNote(note: NoteEntry) {
+    private fun restoreNote(note: NoteEntry) {
         uiScope.launch {
             withContext(Dispatchers.Main) {
                 noteListViewModel.restoreNote(note)

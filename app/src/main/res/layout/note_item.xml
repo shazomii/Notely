@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:onClick="@{() -> clickListener.onClick(note)}">
+        android:onClick="@{() -> clickListener.onClick(note.id)}">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/card_item"
