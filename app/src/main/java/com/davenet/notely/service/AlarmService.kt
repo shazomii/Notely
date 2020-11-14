@@ -23,12 +23,12 @@ class AlarmService : Service() {
         val shareIntent: PendingIntent = PendingIntent.getActivity(
             baseContext, 0, Intent.createChooser(Intent(Intent.ACTION_SEND)
                 .setType("text/plain")
-                .putExtra(Constants.NOTE_TEXT, intent.getStringExtra(Constants.NOTE_TEXT)), null),
+                .putExtra(Intent.EXTRA_TEXT, intent.getStringExtra(Constants.NOTE_TEXT)), null),
             PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         val builder = NotificationCompat.Builder(baseContext, Constants.CHANNEL_ID)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.mipmap.ic_launcher_foreground)
             .setContentIntent(deepLink)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

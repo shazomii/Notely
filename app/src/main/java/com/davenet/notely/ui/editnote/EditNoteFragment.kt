@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.davenet.notely.R
 import com.davenet.notely.databinding.FragmentEditNoteBinding
+import com.davenet.notely.util.Constants
 import com.davenet.notely.util.ReminderState
 import com.davenet.notely.util.hideKeyboard
 import com.davenet.notely.viewmodels.EditNoteViewModel
@@ -45,7 +46,7 @@ class EditNoteFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val application = requireNotNull(this.activity).application
-        val selectedNoteId: Int? = arguments?.getInt("noteId")
+        val selectedNoteId: Int? = arguments?.getInt(Constants.NOTE_ID)
         val viewModelFactory = EditNoteViewModelFactory(application, selectedNoteId)
         viewModel = ViewModelProvider(this, viewModelFactory).get(EditNoteViewModel::class.java)
         binding.apply {

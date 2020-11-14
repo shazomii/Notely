@@ -57,7 +57,7 @@ class NoteRepository(private val database: NotesDatabase) {
         val intent = Intent(context, AlarmBroadcastReceiver::class.java).also {
             it.flags = Intent.FLAG_INCLUDE_STOPPED_PACKAGES
             it.type = "${note.reminder}-${note.title}-${note.id}"
-            it.putExtra("noteId", note.id)
+            it.putExtra(Constants.NOTE_ID, note.id)
             it.putExtra(Constants.NOTE_TITLE, note.title)
             it.putExtra(Constants.NOTE_TEXT, note.text)
         }

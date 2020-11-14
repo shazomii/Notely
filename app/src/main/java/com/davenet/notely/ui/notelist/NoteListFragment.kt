@@ -20,6 +20,7 @@ import com.davenet.notely.databinding.FragmentNoteListBinding
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.ui.NoteListener
 import com.davenet.notely.ui.NotesAdapter
+import com.davenet.notely.util.Constants
 import com.davenet.notely.util.UIState
 import com.davenet.notely.util.calculateNoOfColumns
 import com.davenet.notely.viewmodels.NoteListViewModel
@@ -99,7 +100,7 @@ class NoteListFragment : Fragment() {
             navigateToNoteDetail.observe(viewLifecycleOwner, { noteId ->
                 noteId?.let {
                     val bundle = Bundle()
-                    bundle.putInt("noteId", noteId)
+                    bundle.putInt(Constants.NOTE_ID, noteId)
                     findNavController().navigate(
                         R.id.action_noteListFragment_to_editNoteFragment, bundle
                     )

@@ -20,9 +20,6 @@ class NoteListRepository(private val database: NotesDatabase) {
         it.asDomainModel()
     }
 
-
-
-
     suspend fun deleteAllNotes() {
         withContext(Dispatchers.IO) {
             database.noteDao.deleteAllNotes()
@@ -51,7 +48,7 @@ class NoteListRepository(private val database: NotesDatabase) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(context, AlarmBroadcastReceiver::class.java).also {
-            it.putExtra("noteId", note.id)
+            it.putExtra(Constants.NOTE_ID, note.id)
             it.putExtra(Constants.NOTE_TITLE, note.title)
             it.putExtra(Constants.NOTE_TEXT, note.text)
         }
