@@ -26,7 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class EditNoteFragment : Fragment() {
+class EditNoteFragment : Fragment(), BottomSheetClickListener {
     private lateinit var binding: FragmentEditNoteBinding
     private lateinit var viewModel: EditNoteViewModel
 
@@ -62,6 +62,18 @@ class EditNoteFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        reminderCard?.setOnClickListener {
+            childFragmentManager.let {
+                OptionsListDialogFragment.newInstance(Bundle()).apply {
+                    show(it, tag)
+                }
+            }
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_edit, menu)
@@ -91,8 +103,57 @@ class EditNoteFragment : Fragment() {
         }
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        viewModel.apply {
+            mIsEdit.observe(viewLifecycleOwner, {
+                it?.let { isEdit ->
+                    menu.findItem(R.id.action_share).isVisible = isEdit
+                }
+            })
+
+            noteBeingModified.observe(viewLifecycleOwner, {
+                it?.let {
+                    val isNotBlank = it.title.isNotBlank() && it.text.isNotBlank()
+                    menu.findItem(R.id.action_save).isEnabled = isNotBlank
+                    menu.findItem(R.id.action_remind).isVisible =
+                        isNotBlank && it.reminder == null && viewModel.mIsEdit.value!!
+
+                    if (it.reminder != null) {
+                        viewModel.reminderState.set(ReminderState.HAS_REMINDER)
+                    } else {
+                        viewModel.reminderState.set(ReminderState.NO_REMINDER)
+                    }
+                }
+            })
+        }
+        return super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        hideKeyboard(view, requireContext())
+    }
+
+    override fun onAttachFragment(childFragment: Fragment) {
+        super.onAttachFragment(childFragment)
+        when (childFragment) {
+            is OptionsListDialogFragment -> childFragment.mListener = this
+        }
+    }
+
+    override fun onItemClick(item: String) {
+        when (item) {
+            "Modify" -> {
+                pickDate()
+            }
+            "Delete" -> {
+                cancelReminder()
+            }
+        }
+    }
+
     private fun onBackClicked() {
-            openAlertDialog()
+        openAlertDialog()
     }
 
     private fun openAlertDialog() {
@@ -116,39 +177,14 @@ class EditNoteFragment : Fragment() {
         startActivity(shareIntent)
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        viewModel.apply {
-            noteBeingModified.observe(viewLifecycleOwner, {
-                it?.let {
-                    val isNotBlank = it.title.isNotBlank() && it.text.isNotBlank()
-                    menu.findItem(R.id.action_save).isEnabled = isNotBlank
-                    menu.findItem(R.id.action_remind).isVisible = isNotBlank
-                    if (it.reminder != null) {
-                        viewModel.reminderState.set(ReminderState.HAS_REMINDER)
-                    } else {
-                        viewModel.reminderState.set(ReminderState.NO_REMINDER)
-                    }
-                }
-            })
-            mIsEdit.observe(viewLifecycleOwner, {
-                it?.let { isEdit ->
-                    menu.findItem(R.id.action_share).isVisible = isEdit
-                    menu.findItem(R.id.action_remind).isVisible = isEdit
-                }
-            })
-        }
-        return super.onPrepareOptionsMenu(menu)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        hideKeyboard(view, requireContext())
-    }
-
     private fun pickDate() {
         CoroutineScope(Dispatchers.Default).launch {
             withContext(Dispatchers.Main) {
-                viewModel.pickDate(requireContext(), viewModel.noteBeingModified.value!!, textNoteReminder)
+                viewModel.pickDate(
+                    requireContext(),
+                    viewModel.noteBeingModified.value!!,
+                    textNoteReminder
+                )
             }
         }
     }
@@ -164,6 +200,10 @@ class EditNoteFragment : Fragment() {
                 Toast.makeText(context, "Changes saved", Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    private fun cancelReminder() {
+        viewModel.cancelReminder(requireContext(), viewModel.noteBeingModified.value!!)
     }
 
     private fun scheduleReminder() {

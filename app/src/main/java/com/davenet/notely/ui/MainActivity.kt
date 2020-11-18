@@ -39,20 +39,19 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         nav_view.setupWithNavController(navController)
         nav_view.setNavigationItemSelectedListener {
-                when (it.itemId) {
-                    R.id.action_logout -> {
-                        auth.signOut()
-                        navController.navigate(R.id.action_noteListFragment_to_loginFragment)
-//                        drawer_layout.closeDrawer(GravityCompat.START)
-                        true
-                    }
-                    R.id.settingsFragment2 -> {
-                        navController.navigate(R.id.action_noteListFragment_to_settingsFragment2)
-                        true
-                    }
-                    else -> true
+            when (it.itemId) {
+                R.id.action_logout -> {
+                    auth.signOut()
+                    navController.navigate(R.id.action_noteListFragment_to_loginFragment)
+                    true
                 }
+                R.id.settingsFragment2 -> {
+                    navController.navigate(R.id.action_noteListFragment_to_settingsFragment2)
+                    true
+                }
+                else -> true
             }
+        }
         val user = auth.currentUser
         if (user != null) {
             val navHeader = nav_view.getHeaderView(0)

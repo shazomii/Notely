@@ -12,10 +12,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.davenet.notely.R
-import com.davenet.notely.util.hideKeyboard
-import com.davenet.notely.util.inputValidation
-import com.davenet.notely.util.setupLoadingDialog
-import com.davenet.notely.util.showErrorDialog
+import com.davenet.notely.util.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_main.*
@@ -97,7 +94,14 @@ class LoginFragment : Fragment() {
     private fun updateUI(currentUser: FirebaseUser?) {
         if (currentUser != null) {
             if (currentUser.isEmailVerified) {
-                findNavController().navigate(R.id.action_loginFragment_to_noteListFragment)
+                if (arguments?.getInt(Constants.NOTE_ID) != null) {
+                    val bundle = Bundle()
+                    bundle.putInt(Constants.NOTE_ID, arguments?.getInt(Constants.NOTE_ID, 0)!!)
+                    findNavController().navigate(R.id.action_loginFragment_to_noteListFragment, bundle)
+                }
+                else {
+                    findNavController().navigate(R.id.action_loginFragment_to_noteListFragment)
+                }
             } else {
                 Toast.makeText(
                     requireContext(), "Please verify your  email.",

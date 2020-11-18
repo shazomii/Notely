@@ -23,14 +23,21 @@ import java.util.*
 class NoteRepository(private val database: NotesDatabase) {
 
     fun getSelectedNote(noteId: Int): MutableLiveData<NoteEntry?> {
-       return Transformations.map(database.noteDao.get(noteId)) {
-           it.asDomainModelEntry()
-       } as MutableLiveData<NoteEntry?>
+        return Transformations.map(database.noteDao.get(noteId)) {
+            it.asDomainModelEntry()
+        } as MutableLiveData<NoteEntry?>
     }
 
     val emptyNote: NoteEntry
         get() {
-            return NoteEntry(id = null, "", text = "", date = null, reminder = null, started = false)
+            return NoteEntry(
+                id = null,
+                "",
+                text = "",
+                date = null,
+                reminder = null,
+                started = false
+            )
         }
 
     fun pickDateTime(context: Context, note: NoteEntry, reminder: TextView) {
@@ -55,16 +62,14 @@ class NoteRepository(private val database: NotesDatabase) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(context, AlarmBroadcastReceiver::class.java).also {
-            it.flags = Intent.FLAG_INCLUDE_STOPPED_PACKAGES
-            it.type = "${note.reminder}-${note.title}-${note.id}"
             it.putExtra(Constants.NOTE_ID, note.id)
             it.putExtra(Constants.NOTE_TITLE, note.title)
-            it.putExtra(Constants.NOTE_TEXT, note.text)
         }
 
-        val reminderPendingIntent: PendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
+        val reminderPendingIntent: PendingIntent =
+            PendingIntent.getBroadcast(context, note.id!!, intent, 0)
 
-        alarmManager.setExact(
+        alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             note.reminder!!,
             reminderPendingIntent
@@ -75,6 +80,20 @@ class NoteRepository(private val database: NotesDatabase) {
 
     fun cancelAlarm(context: Context, note: NoteEntry) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val intent = Intent(context, AlarmBroadcastReceiver::class.java)
+
+        val reminderPendingIntent = PendingIntent.getBroadcast(
+            context,
+            note.id!!,
+            intent,
+            0
+        )
+
+        alarmManager.cancel(reminderPendingIntent)
+
+        note.reminder = null
+        note.started = false
     }
 
     suspend fun insertNote(note: NoteEntry) {

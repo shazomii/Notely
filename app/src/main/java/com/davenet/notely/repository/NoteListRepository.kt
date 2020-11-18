@@ -48,12 +48,13 @@ class NoteListRepository(private val database: NotesDatabase) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(context, AlarmBroadcastReceiver::class.java).also {
+            it.flags = Intent.FLAG_FROM_BACKGROUND
+            it.flags =Intent.FLAG_INCLUDE_STOPPED_PACKAGES
             it.putExtra(Constants.NOTE_ID, note.id)
             it.putExtra(Constants.NOTE_TITLE, note.title)
-            it.putExtra(Constants.NOTE_TEXT, note.text)
         }
 
-        val reminderPendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
+        val reminderPendingIntent = PendingIntent.getBroadcast(context, note.id!!, intent, 0)
 
         alarmManager.setExact(
             AlarmManager.RTC_WAKEUP,

@@ -70,6 +70,7 @@
                     tools:text="Summary" />
 
                 <TextView
+                    android:id="@+id/dateModified"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -79,9 +80,20 @@
                     android:text="@{UtilKt.formatDate(note.date)}"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/reminderIconNote"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/textSummary" />
+
+                <ImageView
+                    android:id="@+id/reminderIconNote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_baseline_alarm_16"
+                    app:layout_constraintBottom_toBottomOf="@id/dateModified"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/dateModified"
+                    app:visible="@{note.reminder != null}" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>

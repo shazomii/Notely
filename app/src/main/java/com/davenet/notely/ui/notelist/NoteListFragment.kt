@@ -72,6 +72,10 @@ class NoteListFragment : Fragment() {
             noteListViewModel.onNoteClicked(it)
         })
 
+        if (arguments?.getInt(Constants.NOTE_ID) != null) {
+            noteListViewModel.onNoteClicked(arguments?.getInt(Constants.NOTE_ID))
+        }
+
         observeViewModel(adapter)
 
         binding.apply {

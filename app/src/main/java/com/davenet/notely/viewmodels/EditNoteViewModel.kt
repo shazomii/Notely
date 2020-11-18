@@ -34,7 +34,7 @@ class EditNoteViewModel(selectedNoteId: Int?, application: Application) :
         if (selectedNoteId != null) {
             _noteBeingModified =
                 noteRepository.getSelectedNote(selectedNoteId)
-           onNoteInserted()
+            onNoteInserted()
         } else {
             _noteBeingModified.value = noteRepository.emptyNote
             onNewNote()
@@ -68,6 +68,10 @@ class EditNoteViewModel(selectedNoteId: Int?, application: Application) :
             noteRepository.schedule(context, note)
             noteRepository.updateNote(note)
         }
+    }
+
+    fun cancelReminder(context: Context, note: NoteEntry) {
+        noteRepository.cancelAlarm(context, note)
     }
 
     private fun updateNote(note: NoteEntry) {
