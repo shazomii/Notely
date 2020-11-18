@@ -13,10 +13,12 @@ data class NoteEntry(
     var id: Int?,
     var title: String,
     var text: String,
-    var date: Long?
+    var date: Long?,
+    var reminder: Long?,
+    var started: Boolean
 ) : Parcelable {
     fun copy(): DatabaseNote {
-        return DatabaseNote(id, title, text, date)
+        return DatabaseNote(id, title, text, date, reminder, started)
     }
 }
 
@@ -26,7 +28,9 @@ fun List<NoteEntry>.asDataBaseModel(): List<DatabaseNote> {
             id = it.id,
             title = it.title,
             text = it.text,
-            date = it.date
+            date = it.date,
+            reminder = it.reminder,
+            started = it.started
         )
     }
 }

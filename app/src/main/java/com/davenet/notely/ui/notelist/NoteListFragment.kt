@@ -20,6 +20,7 @@ import com.davenet.notely.databinding.FragmentNoteListBinding
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.ui.NoteListener
 import com.davenet.notely.ui.NotesAdapter
+import com.davenet.notely.util.Constants
 import com.davenet.notely.util.UIState
 import com.davenet.notely.util.calculateNoOfColumns
 import com.davenet.notely.viewmodels.NoteListViewModel
@@ -71,6 +72,10 @@ class NoteListFragment : Fragment() {
             noteListViewModel.onNoteClicked(it)
         })
 
+        if (arguments?.getInt(Constants.NOTE_ID) != null) {
+            noteListViewModel.onNoteClicked(arguments?.getInt(Constants.NOTE_ID))
+        }
+
         observeViewModel(adapter)
 
         binding.apply {
@@ -96,10 +101,10 @@ class NoteListFragment : Fragment() {
                 }
             })
 
-            navigateToNoteDetail.observe(viewLifecycleOwner, { note ->
-                note?.let {
+            navigateToNoteDetail.observe(viewLifecycleOwner, { noteId ->
+                noteId?.let {
                     val bundle = Bundle()
-                    bundle.putParcelable("note", note)
+                    bundle.putInt(Constants.NOTE_ID, noteId)
                     findNavController().navigate(
                         R.id.action_noteListFragment_to_editNoteFragment, bundle
                     )
@@ -134,7 +139,7 @@ class NoteListFragment : Fragment() {
                 val noteToErase = noteList.value?.get(position)
                 deleteNote(noteToErase!!)
                 coordinator.longSnackbar("Note deleted", "Undo") {
-                    insertNote(noteToErase)
+                    restoreNote(noteToErase)
                 }
             }
 
@@ -239,7 +244,7 @@ class NoteListFragment : Fragment() {
         }
     }
 
-    private fun insertNote(note: NoteEntry) {
+    private fun restoreNote(note: NoteEntry) {
         uiScope.launch {
             withContext(Dispatchers.Main) {
                 noteListViewModel.restoreNote(note)

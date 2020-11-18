@@ -34,6 +34,6 @@ interface NoteDao {
     @Update
     fun update(note: DatabaseNote)
 
-//    @Query("select * from database_note where id = :key")
-//    fun get(key: Int): DatabaseNote
+    @Query("select * from database_note where id = :key")
+    fun get(key: Int): LiveData<DatabaseNote>
 }

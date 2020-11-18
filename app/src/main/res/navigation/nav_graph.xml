@@ -35,10 +35,6 @@
         <action
             android:id="@+id/action_editNoteFragment_to_noteListFragment"
             app:destination="@id/noteListFragment"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit"
             app:popUpTo="@id/noteListFragment"
             app:popUpToInclusive="true" />
     </fragment>

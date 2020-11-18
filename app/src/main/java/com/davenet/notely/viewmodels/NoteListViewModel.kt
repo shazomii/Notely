@@ -5,7 +5,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.davenet.notely.database.getDatabase
 import com.davenet.notely.domain.NoteEntry
-import com.davenet.notely.repository.NotesRepository
+import com.davenet.notely.repository.NoteListRepository
 import com.davenet.notely.util.UIState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,47 +13,47 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class NoteListViewModel(application: Application) : AndroidViewModel(application) {
-    private val notesRepository = NotesRepository(getDatabase(application))
+    private val noteListRepository = NoteListRepository(getDatabase(application))
 
     val uiState = ObservableField(UIState.LOADING)
 
     private var viewModelJob = Job()
     private val viewModelScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    private val _navigateToNoteDetail = MutableLiveData<NoteEntry?>()
-    val navigateToNoteDetail: LiveData<NoteEntry?> get() = _navigateToNoteDetail
+    private val _navigateToNoteDetail = MutableLiveData<Int?>()
+    val navigateToNoteDetail: LiveData<Int?> get() = _navigateToNoteDetail
 
-    var notes = notesRepository.notes
+    var notes = noteListRepository.notes
 
     fun onNoteDetailNavigated() {
         _navigateToNoteDetail.value = null
     }
 
-    fun onNoteClicked(note: NoteEntry) {
-        _navigateToNoteDetail.value = note
+    fun onNoteClicked(noteId: Int?) {
+        _navigateToNoteDetail.value = noteId
     }
 
     fun deleteAllNotes() {
         viewModelScope.launch {
-            notesRepository.deleteAllNotes()
+            noteListRepository.deleteAllNotes()
         }
     }
 
     fun deleteNote(note: NoteEntry) {
         viewModelScope.launch {
-            notesRepository.deleteNote(note)
+            noteListRepository.deleteNote(note)
         }
     }
 
     fun restoreNote(note: NoteEntry) {
         viewModelScope.launch {
-            notesRepository.restoreNote(note)
+            noteListRepository.restoreNote(note)
         }
     }
 
     fun insertAllNotes(noteList: List<NoteEntry>) {
         viewModelScope.launch {
-            notesRepository.insertAllNotes(noteList)
+            noteListRepository.insertAllNotes(noteList)
         }
     }
 }

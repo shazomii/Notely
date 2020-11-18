@@ -7,6 +7,13 @@
         <variable
             name="editviewmodel"
             type="com.davenet.notely.viewmodels.EditNoteViewModel" />
+        <import type="com.davenet.notely.util.UtilKt" />
+        <import type="androidx.databinding.ObservableField" />
+
+        <import type="com.davenet.notely.util.ReminderState" />
+        <variable
+            name="reminderState"
+            type="ObservableField&lt;ReminderState>" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -26,8 +33,7 @@
             android:hint="Note title"
             android:inputType="textMultiLine"
             android:text="@={editviewmodel.noteBeingModified.title}"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            style="@style/TextAppearance.MaterialComponents.Headline6"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -44,11 +50,50 @@
             android:hint="Note text"
             android:inputType="textMultiLine"
             android:text="@={editviewmodel.noteBeingModified.text}"
-            app:layout_constraintBottom_toBottomOf="parent"
+            style="@style/TextAppearance.MaterialComponents.Body1"
+            app:layout_constraintBottom_toTopOf="@id/reminderCard"
             app:layout_constraintEnd_toEndOf="@+id/textNoteTitle"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@+id/textNoteTitle"
             app:layout_constraintTop_toBottomOf="@+id/textNoteTitle" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/reminderCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardElevation="@dimen/cardview_default_elevation"
+            app:visible="@{reminderState == reminderState.HAS_REMINDER}"
+            app:layout_constraintTop_toBottomOf="@id/textNoteText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp">
+                <ImageView
+                    android:id="@+id/reminderIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_alarm_24"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+                <TextView
+                    android:id="@+id/textNoteReminder"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@{UtilKt.formatReminderDate(editviewmodel.noteBeingModified.reminder)}"
+                    style="@style/TextAppearance.MaterialComponents.Body2"
+                    app:layout_constraintStart_toEndOf="@id/reminderIcon"
+                    app:layout_constraintTop_toTopOf="@id/reminderIcon"
+                    app:layout_constraintBottom_toBottomOf="@id/reminderIcon"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

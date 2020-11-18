@@ -32,4 +32,5 @@
     <string name="please_wait">Please wait</string>
     <string name="app_logo">App Logo</string>
     <string name="share">Share</string>
+    <string name="set_reminder">Set reminder</string>
 </resources>
