@@ -1,6 +1,7 @@
 package com.davenet.notely.viewmodels
 
 import android.app.Application
+import android.content.Context
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.davenet.notely.database.getDatabase
@@ -35,10 +36,21 @@ class NoteListViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun deleteNote(note: NoteEntry) {
+    fun deleteNote(context: Context, note: NoteEntry) {
+        if (note.started) {
+            cancelAlarm(context, note)
+        }
         viewModelScope.launch {
             noteListRepository.deleteNote(note)
         }
+    }
+
+    private fun cancelAlarm(context: Context, note: NoteEntry) {
+        noteListRepository.cancelAlarm(context, note)
+    }
+
+    private fun scheduleAlarm(context: Context, note: NoteEntry) {
+        noteListRepository.schedule(context, note)
     }
 
     fun restoreNote(note: NoteEntry) {

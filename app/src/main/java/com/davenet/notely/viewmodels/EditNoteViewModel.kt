@@ -44,21 +44,13 @@ class EditNoteViewModel(selectedNoteId: Int?, application: Application) :
         }
     }
 
-    private fun onNoteInserted() {
-        _mIsEdit.value = true
-    }
-
-    private fun onNewNote() {
-        _mIsEdit.value = false
-    }
-
-    private fun insertNote(note: NoteEntry) {
-        viewModelScope.launch {
-            val newNote = note.copy(date = currentDate().timeInMillis)
-            noteRepository.insertNote(newNote)
-            onNoteInserted()
+    var isChanged: Boolean = false
+        get() = if (_mIsEdit.value!!) {
+            _noteBeingModified.value != selectedNote
+        } else {
+            _noteBeingModified.value != noteRepository.emptyNote
         }
-    }
+        private set
 
     fun pickDate(context: Context, note: NoteEntry, reminder: TextView) {
         viewModelScope.launch {
@@ -69,20 +61,12 @@ class EditNoteViewModel(selectedNoteId: Int?, application: Application) :
     fun scheduleReminder(context: Context, note: NoteEntry) {
         viewModelScope.launch {
             noteRepository.schedule(context, note)
-            val updatedNote = note.copy(date = currentDate().timeInMillis)
-            noteRepository.updateNote(updatedNote)
+            updateNote(note)
         }
     }
 
     fun cancelReminder(context: Context, note: NoteEntry) {
         noteRepository.cancelAlarm(context, note)
-    }
-
-    private fun updateNote(note: NoteEntry) {
-        viewModelScope.launch {
-            val updatedNote = note.copy(date = currentDate().timeInMillis)
-            noteRepository.updateNote(updatedNote)
-        }
     }
 
     fun saveNote() {
@@ -93,13 +77,27 @@ class EditNoteViewModel(selectedNoteId: Int?, application: Application) :
         }
     }
 
-    var isChanged: Boolean = false
-        get() = if (_mIsEdit.value!!) {
-            _noteBeingModified.value != selectedNote
-        } else {
-            _noteBeingModified.value != noteRepository.emptyNote
+    private fun insertNote(note: NoteEntry) {
+        viewModelScope.launch {
+            val newNote = note.copy(date = currentDate().timeInMillis)
+            noteRepository.insertNote(newNote)
         }
-        private set
+    }
+
+    private fun updateNote(note: NoteEntry) {
+        viewModelScope.launch {
+            val updatedNote = note.copy(date = currentDate().timeInMillis)
+            noteRepository.updateNote(updatedNote)
+        }
+    }
+
+    private fun onNoteInserted() {
+        _mIsEdit.value = true
+    }
+
+    private fun onNewNote() {
+        _mIsEdit.value = false
+    }
 }
 
 class EditNoteViewModelFactory(

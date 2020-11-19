@@ -1,5 +1,6 @@
 package com.davenet.notely.ui.notelist
 
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Bundle
@@ -136,7 +137,7 @@ class NoteListFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val noteToErase = noteList.value?.get(position)
-                deleteNote(noteToErase!!)
+                deleteNote(requireContext(), noteToErase!!)
                 coordinator.longSnackbar("Note deleted", "Undo") {
                     restoreNote(noteToErase)
                 }
@@ -235,10 +236,10 @@ class NoteListFragment : Fragment() {
         }
     }
 
-    private fun deleteNote(note: NoteEntry) {
+    private fun deleteNote(context: Context, note: NoteEntry) {
         uiScope.launch {
             withContext(Dispatchers.Main) {
-                noteListViewModel.deleteNote(note)
+                noteListViewModel.deleteNote(context, note)
             }
         }
     }

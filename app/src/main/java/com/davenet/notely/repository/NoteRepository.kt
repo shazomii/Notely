@@ -23,8 +23,8 @@ import java.util.*
 class NoteRepository(private val database: NotesDatabase) {
 
     fun getSelectedNote(noteId: Int): MutableLiveData<NoteEntry?> {
-        return Transformations.map(database.noteDao.get(noteId)) {
-            it.asDomainModelEntry()
+        return Transformations.map(database.noteDao.get(noteId)) {databaseNote ->
+            databaseNote.asDomainModelEntry()
         } as MutableLiveData<NoteEntry?>
     }
 
