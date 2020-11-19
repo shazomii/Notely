@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 
 class EditNoteViewModel(selectedNoteId: Int?, application: Application) :
     AndroidViewModel(application) {
+    private var selectedNote: NoteEntry?
     private var viewModelJob = Job()
     private val viewModelScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
@@ -30,14 +31,16 @@ class EditNoteViewModel(selectedNoteId: Int?, application: Application) :
 
     private val noteRepository = NoteRepository(getDatabase(application))
 
+
     init {
         if (selectedNoteId != null) {
-            _noteBeingModified =
-                noteRepository.getSelectedNote(selectedNoteId)
             onNoteInserted()
+            _noteBeingModified = noteRepository.getSelectedNote(selectedNoteId)
+            selectedNote = _noteBeingModified.value
         } else {
-            _noteBeingModified.value = noteRepository.emptyNote
             onNewNote()
+            selectedNote = noteRepository.emptyNote
+            _noteBeingModified.value = selectedNote
         }
     }
 
@@ -66,7 +69,8 @@ class EditNoteViewModel(selectedNoteId: Int?, application: Application) :
     fun scheduleReminder(context: Context, note: NoteEntry) {
         viewModelScope.launch {
             noteRepository.schedule(context, note)
-            noteRepository.updateNote(note)
+            val updatedNote = note.copy(date = currentDate().timeInMillis)
+            noteRepository.updateNote(updatedNote)
         }
     }
 
@@ -88,6 +92,14 @@ class EditNoteViewModel(selectedNoteId: Int?, application: Application) :
             updateNote(_noteBeingModified.value!!)
         }
     }
+
+    var isChanged: Boolean = false
+        get() = if (_mIsEdit.value!!) {
+            _noteBeingModified.value != selectedNote
+        } else {
+            _noteBeingModified.value != noteRepository.emptyNote
+        }
+        private set
 }
 
 class EditNoteViewModelFactory(

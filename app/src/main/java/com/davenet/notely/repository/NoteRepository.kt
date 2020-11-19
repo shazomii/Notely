@@ -30,14 +30,7 @@ class NoteRepository(private val database: NotesDatabase) {
 
     val emptyNote: NoteEntry
         get() {
-            return NoteEntry(
-                id = null,
-                "",
-                text = "",
-                date = null,
-                reminder = null,
-                started = false
-            )
+            return NoteEntry(id = null, title = "", text = "", date = null, reminder = null, started = false)
         }
 
     fun pickDateTime(context: Context, note: NoteEntry, reminder: TextView) {
@@ -98,13 +91,13 @@ class NoteRepository(private val database: NotesDatabase) {
 
     suspend fun insertNote(note: NoteEntry) {
         withContext(Dispatchers.IO) {
-            database.noteDao.insert(note.copy(date = currentDate().timeInMillis).copy())
+            database.noteDao.insert(note.copy())
         }
     }
 
     suspend fun updateNote(note: NoteEntry) {
         withContext(Dispatchers.IO) {
-            database.noteDao.update(note.copy(date = currentDate().timeInMillis).copy())
+            database.noteDao.update(note.copy())
         }
     }
 }

@@ -49,7 +49,7 @@ class AlarmService : Service() {
                     .setBigContentTitle(intent.getStringExtra(Constants.NOTE_TITLE))
                     .setSummaryText("Reminder")
             )
-            .setContentTitle("Reminder:")
+            .setContentTitle("Reminder")
             .setContentText(intent.getStringExtra(Constants.NOTE_TITLE))
             .build()
 

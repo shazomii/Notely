@@ -108,7 +108,6 @@ class NoteListFragment : Fragment() {
                     findNavController().navigate(
                         R.id.action_noteListFragment_to_editNoteFragment, bundle
                     )
-                    noteListViewModel.onNoteDetailNavigated()
                 }
             })
         }

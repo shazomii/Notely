@@ -25,10 +25,6 @@ class NoteListViewModel(application: Application) : AndroidViewModel(application
 
     var notes = noteListRepository.notes
 
-    fun onNoteDetailNavigated() {
-        _navigateToNoteDetail.value = null
-    }
-
     fun onNoteClicked(noteId: Int?) {
         _navigateToNoteDetail.value = noteId
     }

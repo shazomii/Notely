@@ -153,7 +153,11 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
     }
 
     private fun onBackClicked() {
-        openAlertDialog()
+        if (viewModel.isChanged) {
+            openAlertDialog()
+        } else {
+            findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
+        }
     }
 
     private fun openAlertDialog() {
