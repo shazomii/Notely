@@ -68,8 +68,8 @@ class SignUpFragment : Fragment() {
                     if (task.isSuccessful) {
                         val user = auth.currentUser
                         user!!.sendEmailVerification()
-                            .addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
+                            .addOnCompleteListener { verifyTask ->
+                                if (verifyTask.isSuccessful) {
                                     findNavController().navigate(R.id.action_signUpFragment_to_loginFragment)
                                 }
                             }

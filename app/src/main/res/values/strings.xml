@@ -4,14 +4,6 @@
     <string name="empty_quote">The way to get started is to quit talking and begin doing. -Walt Disney</string>
     <string name="title_activity_settings">Settings</string>
 
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
     <!-- Sync Preferences -->
     <string name="theme">Theme</string>
     <string name="key_theme">theme</string>
@@ -33,4 +25,15 @@
     <string name="app_logo">App Logo</string>
     <string name="share">Share</string>
     <string name="set_reminder">Set reminder</string>
+    <string name="discard">Discard changes?</string>
+    <string name="discard_changes">Any changes you have made will be discarded. Continue anyway?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="changes_saved">Changes saved</string>
+    <string name="modify">Modify</string>
+    <string name="delete">Delete</string>
+    <string name="verify">Please verify your  email.</string>
+    <string name="notes_deleted">Notes deleted</string>
+    <string name="undo">Undo</string>
+    <string name="note_deleted">Note deleted</string>
 </resources>

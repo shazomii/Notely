@@ -138,7 +138,7 @@ class NoteListFragment : Fragment() {
                 val position = viewHolder.adapterPosition
                 val noteToErase = noteList.value?.get(position)
                 deleteNote(requireContext(), noteToErase!!)
-                coordinator.longSnackbar("Note deleted", "Undo") {
+                coordinator.longSnackbar(getString(R.string.note_deleted), getString(R.string.undo)) {
                     restoreNote(requireContext(), noteToErase)
                 }
             }
@@ -215,7 +215,7 @@ class NoteListFragment : Fragment() {
     }
 
     private fun undoDeleteNotes(noteList: List<NoteEntry>) {
-        coordinator.longSnackbar("Notes deleted", "Undo") {
+        coordinator.longSnackbar(getString(R.string.notes_deleted), getString(R.string.undo)) {
             insertAllNotes(noteList)
         }
     }

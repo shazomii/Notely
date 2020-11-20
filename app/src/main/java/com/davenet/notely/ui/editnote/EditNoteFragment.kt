@@ -162,12 +162,12 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
 
     private fun openAlertDialog() {
         AlertDialog.Builder(requireContext())
-            .setTitle("Discard changes?")
-            .setMessage("Any changes you have made will be discarded. Continue anyway?")
-            .setPositiveButton("Yes") { _, _ ->
+            .setTitle(getString(R.string.discard))
+            .setMessage(getString(R.string.discard_changes))
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
                 findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
             }
-            .setNegativeButton("No", null)
+            .setNegativeButton(getString(R.string.no), null)
             .show()
     }
 
@@ -201,7 +201,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
                     scheduleReminder()
                 }
                 findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
-                Toast.makeText(context, "Changes saved", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, getString(R.string.changes_saved), Toast.LENGTH_LONG).show()
             }
         }
     }

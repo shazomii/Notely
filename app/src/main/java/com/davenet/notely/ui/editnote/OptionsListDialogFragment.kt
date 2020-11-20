@@ -29,11 +29,11 @@ class OptionsListDialogFragment : BottomSheetDialogFragment() {
     private fun setupViews() {
         modifyReminder.setOnClickListener {
             dismissAllowingStateLoss()
-            mListener?.onItemClick("Modify")
+            mListener?.onItemClick(getString(R.string.modify))
         }
         deleteReminder.setOnClickListener {
             dismissAllowingStateLoss()
-            mListener?.onItemClick("Delete")
+            mListener?.onItemClick(getString(R.string.delete))
         }
     }
 

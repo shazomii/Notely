@@ -1,7 +1,6 @@
 package com.davenet.notely.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,14 +44,12 @@ class LoginFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        Log.d("login", "onResume called")
         val currentUser = auth.currentUser
         updateUI(currentUser)
     }
 
     override fun onStart() {
         super.onStart()
-        Log.d("login", "onStart called")
         val currentUser = auth.currentUser
         updateUI(currentUser)
     }
@@ -104,7 +101,7 @@ class LoginFragment : Fragment() {
                 }
             } else {
                 Toast.makeText(
-                    requireContext(), "Please verify your  email.",
+                    requireContext(), getString(R.string.verify),
                     Toast.LENGTH_SHORT
                 ).show()
             }
