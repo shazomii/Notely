@@ -139,7 +139,7 @@ class NoteListFragment : Fragment() {
                 val noteToErase = noteList.value?.get(position)
                 deleteNote(requireContext(), noteToErase!!)
                 coordinator.longSnackbar("Note deleted", "Undo") {
-                    restoreNote(noteToErase)
+                    restoreNote(requireContext(), noteToErase)
                 }
             }
 
@@ -244,10 +244,10 @@ class NoteListFragment : Fragment() {
         }
     }
 
-    private fun restoreNote(note: NoteEntry) {
+    private fun restoreNote(context: Context, note: NoteEntry) {
         uiScope.launch {
             withContext(Dispatchers.Main) {
-                noteListViewModel.restoreNote(note)
+                noteListViewModel.restoreNote(context, note)
             }
         }
     }

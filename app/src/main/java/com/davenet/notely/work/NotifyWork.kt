@@ -1,26 +1,33 @@
-package com.davenet.notely.service
+package com.davenet.notely.work
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.Service
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.navigation.NavDeepLinkBuilder
+import androidx.work.Worker
+import androidx.work.WorkerParameters
 import com.davenet.notely.R
 import com.davenet.notely.util.Constants
 
-class AlarmService : Service() {
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val noteId = intent?.getIntExtra(Constants.NOTE_ID, 0)
-        val bundle = Bundle()
-        bundle.putInt(Constants.NOTE_ID, noteId!!)
+class NotifyWork(context: Context, params: WorkerParameters): Worker(context, params) {
+    override fun doWork(): Result {
+        val id = inputData.getInt(Constants.NOTE_ID, 0)
+        val title = inputData.getString(Constants.NOTE_TITLE)
 
-        val deepLink = NavDeepLinkBuilder(baseContext)
+        sendNotification(id, title)
+
+        return Result.success()
+    }
+
+    private fun sendNotification(id: Int, title: String?) {
+        val bundle = Bundle()
+        bundle.putInt(Constants.NOTE_ID, id)
+
+        val deepLink = NavDeepLinkBuilder(applicationContext)
             .setGraph(R.navigation.nav_graph)
             .setDestination(R.id.loginFragment)
             .setArguments(bundle)
@@ -35,10 +42,10 @@ class AlarmService : Service() {
                 )
             )
         }
-        val drawable = applicationInfo.loadIcon(packageManager)
+        val drawable = applicationContext.applicationInfo.loadIcon(applicationContext.packageManager)
         val bitmap = drawable.toBitmap()
 
-        val builder = NotificationCompat.Builder(baseContext, Constants.CHANNEL_ID)
+        val builder = NotificationCompat.Builder(applicationContext, Constants.CHANNEL_ID)
             .setSmallIcon(R.mipmap.ic_launcher_foreground)
             .setContentIntent(deepLink)
             .setAutoCancel(true)
@@ -46,18 +53,14 @@ class AlarmService : Service() {
             .setLargeIcon(bitmap)
             .setStyle(
                 NotificationCompat.InboxStyle()
-                    .setBigContentTitle(intent.getStringExtra(Constants.NOTE_TITLE))
+                    .setBigContentTitle(title)
                     .setSummaryText("Reminder")
             )
             .setContentTitle("Reminder")
-            .setContentText(intent.getStringExtra(Constants.NOTE_TITLE))
+            .setContentText(title)
             .build()
 
-        notificationManager.notify(noteId, builder)
-        return START_NOT_STICKY
+        notificationManager.notify(id, builder)
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
-    }
 }

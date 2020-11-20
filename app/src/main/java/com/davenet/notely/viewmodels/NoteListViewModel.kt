@@ -7,6 +7,7 @@ import androidx.lifecycle.*
 import com.davenet.notely.database.getDatabase
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.repository.NoteListRepository
+import com.davenet.notely.repository.NoteRepository
 import com.davenet.notely.util.UIState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 
 class NoteListViewModel(application: Application) : AndroidViewModel(application) {
     private val noteListRepository = NoteListRepository(getDatabase(application))
+    private val noteRepository = NoteRepository(getDatabase(application))
 
     val uiState = ObservableField(UIState.LOADING)
 
@@ -50,10 +52,13 @@ class NoteListViewModel(application: Application) : AndroidViewModel(application
     }
 
     private fun scheduleAlarm(context: Context, note: NoteEntry) {
-        noteListRepository.schedule(context, note)
+        noteRepository.createSchedule(context, note)
     }
 
-    fun restoreNote(note: NoteEntry) {
+    fun restoreNote(context: Context, note: NoteEntry) {
+        if (note.started) {
+            scheduleAlarm(context, note)
+        }
         viewModelScope.launch {
             noteListRepository.restoreNote(note)
         }

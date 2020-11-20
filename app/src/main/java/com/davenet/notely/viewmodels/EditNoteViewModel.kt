@@ -60,7 +60,7 @@ class EditNoteViewModel(selectedNoteId: Int?, application: Application) :
 
     fun scheduleReminder(context: Context, note: NoteEntry) {
         viewModelScope.launch {
-            noteRepository.schedule(context, note)
+            noteRepository.createSchedule(context, note)
             updateNote(note)
         }
     }
