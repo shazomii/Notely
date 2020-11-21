@@ -7,21 +7,29 @@
         <variable
             name="editviewmodel"
             type="com.davenet.notely.viewmodels.EditNoteViewModel" />
+
         <import type="com.davenet.notely.util.UtilKt" />
+
         <import type="androidx.databinding.ObservableField" />
 
         <import type="com.davenet.notely.util.ReminderState" />
+
         <variable
             name="reminderState"
             type="ObservableField&lt;ReminderState>" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/editNoteLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@{editviewmodel.noteBeingModified.color}"
+        android:backgroundTint="#4AFFFFFF"
+        android:backgroundTintMode="screen">
 
         <EditText
             android:id="@+id/textNoteTitle"
+            style="@style/TextAppearance.MaterialComponents.Headline6"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -30,16 +38,16 @@
             android:background="@null"
             android:ems="10"
             android:gravity="start|top"
-            android:hint="Note title"
+            android:hint="@string/note_title"
             android:inputType="textMultiLine"
             android:text="@={editviewmodel.noteBeingModified.title}"
-            style="@style/TextAppearance.MaterialComponents.Headline6"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/textNoteText"
+            style="@style/TextAppearance.MaterialComponents.Body1"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="24dp"
@@ -47,10 +55,9 @@
             android:background="@null"
             android:ems="10"
             android:gravity="start|top"
-            android:hint="Note text"
+            android:hint="@string/note_text"
             android:inputType="textMultiLine"
             android:text="@={editviewmodel.noteBeingModified.text}"
-            style="@style/TextAppearance.MaterialComponents.Body1"
             app:layout_constraintBottom_toTopOf="@id/reminderCard"
             app:layout_constraintEnd_toEndOf="@+id/textNoteTitle"
             app:layout_constraintHorizontal_bias="1.0"
@@ -62,35 +69,39 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardElevation="@dimen/cardview_default_elevation"
-            app:visible="@{reminderState == reminderState.HAS_REMINDER}"
-            app:layout_constraintTop_toBottomOf="@id/textNoteText"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textNoteText"
+            app:visible="@{reminderState == reminderState.HAS_REMINDER}">
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp">
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp">
+
                 <ImageView
                     android:id="@+id/reminderIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_baseline_alarm_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    android:contentDescription="@string/reminder_icon" />
+
                 <TextView
                     android:id="@+id/textNoteReminder"
+                    style="@style/TextAppearance.MaterialComponents.Body2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="@{UtilKt.formatReminderDate(editviewmodel.noteBeingModified.reminder)}"
-                    style="@style/TextAppearance.MaterialComponents.Body2"
+                    app:layout_constraintBottom_toBottomOf="@id/reminderIcon"
                     app:layout_constraintStart_toEndOf="@id/reminderIcon"
-                    app:layout_constraintTop_toTopOf="@id/reminderIcon"
-                    app:layout_constraintBottom_toBottomOf="@id/reminderIcon"/>
+                    app:layout_constraintTop_toTopOf="@id/reminderIcon" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 

@@ -1,5 +1,6 @@
 package com.davenet.notely.repository
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
@@ -10,6 +11,7 @@ import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
+import com.davenet.notely.R
 import com.davenet.notely.database.NotesDatabase
 import com.davenet.notely.database.asDomainModelEntry
 import com.davenet.notely.domain.NoteEntry
@@ -17,8 +19,11 @@ import com.davenet.notely.util.Constants
 import com.davenet.notely.util.currentDate
 import com.davenet.notely.util.formatReminderDate
 import com.davenet.notely.work.NotifyWork
+import kotlinx.android.synthetic.main.fragment_edit_note.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import petrov.kristiyan.colorpicker.ColorPicker
+import petrov.kristiyan.colorpicker.ColorPicker.OnChooseColorListener
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -38,7 +43,8 @@ class NoteRepository(private val database: NotesDatabase) {
                 text = "",
                 date = null,
                 reminder = null,
-                started = false
+                started = false,
+                color = -10965321
             )
         }
 
@@ -65,6 +71,28 @@ class NoteRepository(private val database: NotesDatabase) {
                 reminder.text = formatReminderDate(pickedDateTime.timeInMillis)
             }, hour, minute, false).show()
         }, startYear, startMonth, startDay).show()
+    }
+
+    fun pickColor(activity: Activity, note: NoteEntry) {
+        val colorPicker = ColorPicker(activity)
+        colorPicker.run {
+            setRoundColorButton(true)
+                .setTitle(activity.getString(R.string.note_color))
+                .show()
+            setOnChooseColorListener(object : OnChooseColorListener {
+                override fun onChooseColor(position: Int, color: Int) {
+                    note.color = color
+                    activity.editNoteLayout.setBackgroundColor(color)
+                }
+
+                override fun onCancel() {
+                    return
+                }
+
+
+            })
+        }
+
     }
 
     fun createSchedule(context: Context, note: NoteEntry) {

@@ -36,4 +36,9 @@
     <string name="notes_deleted">Notes deleted</string>
     <string name="undo">Undo</string>
     <string name="note_deleted">Note deleted</string>
+    <string name="color">Color</string>
+    <string name="note_color">Note color</string>
+    <string name="note_title">Note title</string>
+    <string name="note_text">Note text</string>
+    <string name="reminder_icon">Reminder icon</string>
 </resources>

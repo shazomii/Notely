@@ -20,7 +20,8 @@ data class DatabaseNote(
     val text: String,
     val date: Long?,
     val reminder: Long?,
-    val started: Boolean = false
+    val started: Boolean = false,
+    val color: Int = -1
 )
 
 /**
@@ -34,11 +35,12 @@ fun List<DatabaseNote>.asDomainModel(): List<NoteEntry> {
             text = it.text,
             date = it.date,
             reminder = it.reminder,
-            started = it.started
+            started = it.started,
+            color = it.color
         )
     }
 }
 
 fun DatabaseNote.asDomainModelEntry(): NoteEntry {
-    return NoteEntry(id, title, text, date, reminder, started)
+    return NoteEntry(id, title, text, date, reminder, started, color)
 }

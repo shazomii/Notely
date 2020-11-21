@@ -17,21 +17,22 @@
     </data>
 
     <FrameLayout
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:background="@drawable/item_border"
+        android:backgroundTint="@{note.color}"
         android:onClick="@{() -> clickListener.onClick(note.id)}">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_item"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/item_overlay">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/item_border">
+                android:foreground="@drawable/item_border">
 
                 <TextView
                     android:id="@+id/textTitle"
@@ -43,9 +44,7 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:text="@{note.title}"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="?android:attr/colorFocusedHighlight"
-                    android:textStyle="bold"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -63,7 +62,7 @@
                     android:maxLines="3"
                     android:minLines="3"
                     android:text="@{note.text}"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/textTitle"
@@ -78,7 +77,7 @@
                     android:layout_marginEnd="30dp"
                     android:layout_marginBottom="16dp"
                     android:text="@{UtilKt.formatDate(note.date)}"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/reminderIconNote"
                     app:layout_constraintStart_toStartOf="parent"
@@ -93,9 +92,10 @@
                     app:layout_constraintBottom_toBottomOf="@id/dateModified"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/dateModified"
-                    app:visible="@{note.reminder != null}" />
+                    app:visible="@{note.reminder != null}"
+                    android:contentDescription="@string/reminder_icon" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
+        </FrameLayout>
     </FrameLayout>
 </layout>

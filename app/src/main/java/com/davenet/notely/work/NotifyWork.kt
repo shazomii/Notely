@@ -13,7 +13,7 @@ import androidx.work.WorkerParameters
 import com.davenet.notely.R
 import com.davenet.notely.util.Constants
 
-class NotifyWork(context: Context, params: WorkerParameters): Worker(context, params) {
+class NotifyWork(context: Context, params: WorkerParameters) : Worker(context, params) {
     override fun doWork(): Result {
         val id = inputData.getInt(Constants.NOTE_ID, 0)
         val title = inputData.getString(Constants.NOTE_TITLE)
@@ -42,7 +42,8 @@ class NotifyWork(context: Context, params: WorkerParameters): Worker(context, pa
                 )
             )
         }
-        val drawable = applicationContext.applicationInfo.loadIcon(applicationContext.packageManager)
+        val drawable =
+            applicationContext.applicationInfo.loadIcon(applicationContext.packageManager)
         val bitmap = drawable.toBitmap()
 
         val builder = NotificationCompat.Builder(applicationContext, Constants.CHANNEL_ID)
@@ -53,8 +54,8 @@ class NotifyWork(context: Context, params: WorkerParameters): Worker(context, pa
             .setLargeIcon(bitmap)
             .setStyle(
                 NotificationCompat.InboxStyle()
-                    .setBigContentTitle(title)
-                    .setSummaryText("Reminder")
+                    .setBigContentTitle("Reminder")
+                    .addLine(title)
             )
             .setContentTitle("Reminder")
             .setContentText(title)

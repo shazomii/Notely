@@ -1,5 +1,6 @@
 package com.davenet.notely.ui.editnote
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -14,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.davenet.notely.R
 import com.davenet.notely.databinding.FragmentEditNoteBinding
+import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.util.Constants
 import com.davenet.notely.util.ReminderState
 import com.davenet.notely.util.hideKeyboard
@@ -93,6 +95,10 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
             }
             R.id.action_remind -> {
                 pickDate()
+                true
+            }
+            R.id.action_color -> {
+                pickColor(requireActivity(), viewModel.noteBeingModified.value!!)
                 true
             }
             android.R.id.home -> {
@@ -182,15 +188,15 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
     }
 
     private fun pickDate() {
-        CoroutineScope(Dispatchers.Default).launch {
-            withContext(Dispatchers.Main) {
-                viewModel.pickDate(
-                    requireContext(),
-                    viewModel.noteBeingModified.value!!,
-                    textNoteReminder
-                )
-            }
-        }
+        viewModel.pickDate(
+            requireContext(),
+            viewModel.noteBeingModified.value!!,
+            textNoteReminder
+        )
+    }
+
+    private fun pickColor(activity: Activity, note: NoteEntry) {
+        viewModel.pickColor(activity, note)
     }
 
     private fun saveNote() {

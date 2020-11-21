@@ -1,5 +1,6 @@
 package com.davenet.notely.viewmodels
 
+import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.widget.TextView
@@ -53,9 +54,11 @@ class EditNoteViewModel(selectedNoteId: Int?, application: Application) :
         private set
 
     fun pickDate(context: Context, note: NoteEntry, reminder: TextView) {
-        viewModelScope.launch {
-            noteRepository.pickDateTime(context, note, reminder)
-        }
+        noteRepository.pickDateTime(context, note, reminder)
+    }
+
+    fun pickColor(activity: Activity, note: NoteEntry) {
+        noteRepository.pickColor(activity, note)
     }
 
     fun scheduleReminder(context: Context, note: NoteEntry) {

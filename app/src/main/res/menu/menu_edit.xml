@@ -3,21 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_save"
-        android:title="@string/save"
         android:icon="@drawable/ic_baseline_check"
         android:orderInCategory="100"
-        app:showAsAction="ifRoom"/>
+        android:title="@string/save"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_remind"
-        android:title="@string/set_reminder"
         android:orderInCategory="200"
-        app:showAsAction="never"/>
+        android:title="@string/set_reminder"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_share"
-        android:title="@string/share"
         android:icon="@drawable/ic_baseline_share_24"
         android:orderInCategory="300"
+        android:title="@string/share"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_color"
+        android:orderInCategory="400"
+        android:title="@string/color"
         app:showAsAction="never" />
 </menu>
