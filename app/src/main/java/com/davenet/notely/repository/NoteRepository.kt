@@ -44,7 +44,7 @@ class NoteRepository(private val database: NotesDatabase) {
                 date = null,
                 reminder = null,
                 started = false,
-                color = -10965321
+                color = -4224594
             )
         }
 

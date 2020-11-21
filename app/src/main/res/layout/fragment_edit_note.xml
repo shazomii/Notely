@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@{editviewmodel.noteBeingModified.color}"
-        android:backgroundTint="#4AFFFFFF"
+        android:backgroundTint="#27FFFFFF"
         android:backgroundTintMode="screen">
 
         <EditText
