@@ -9,6 +9,7 @@ import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.repository.NoteListRepository
 import com.davenet.notely.repository.NoteRepository
 import com.davenet.notely.util.UIState
+import com.davenet.notely.util.currentDate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -56,7 +57,7 @@ class NoteListViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun restoreNote(context: Context, note: NoteEntry) {
-        if (note.started) {
+        if (note.started && note.reminder!! > currentDate().timeInMillis) {
             scheduleAlarm(context, note)
         }
         viewModelScope.launch {
@@ -64,7 +65,12 @@ class NoteListViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun insertAllNotes(noteList: List<NoteEntry>) {
+    fun insertAllNotes(context: Context, noteList: List<NoteEntry>) {
+        for (note in noteList) {
+            if (note.started && note.reminder!! > currentDate().timeInMillis) {
+                scheduleAlarm(context, note)
+            }
+        }
         viewModelScope.launch {
             noteListRepository.insertAllNotes(noteList)
         }

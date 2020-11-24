@@ -56,8 +56,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
-                    android:layout_marginEnd="30dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="8dp"
                     android:ellipsize="end"
                     android:maxLines="3"
                     android:minLines="3"
@@ -74,26 +73,27 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
-                    android:layout_marginEnd="30dp"
+                    android:layout_marginEnd="8dp"
                     android:layout_marginBottom="16dp"
                     android:text="@{UtilKt.formatDate(note.date)}"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/reminderIconNote"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/textSummary" />
+                    app:layout_constraintTop_toBottomOf="@id/textSummary"
+                    tools:text="23 hours ago" />
 
                 <ImageView
                     android:id="@+id/reminderIconNote"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
+                    android:contentDescription="@string/reminder_icon"
                     android:src="@drawable/ic_baseline_alarm_16"
                     app:layout_constraintBottom_toBottomOf="@id/dateModified"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/dateModified"
-                    app:visible="@{note.reminder != null}"
-                    android:contentDescription="@string/reminder_icon" />
+                    app:visible="@{note.reminder > UtilKt.currentDate().timeInMillis}" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </FrameLayout>

@@ -223,22 +223,22 @@ class NoteListFragment : Fragment() {
             .setMessage(getString(R.string.confirm_delete_message))
             .setPositiveButton(getString(R.string.delete)) { _, _ ->
                 deleteAllNotes()
-                undoDeleteNotes(noteList.value!!)
+                undoDeleteNotes(requireContext(), noteList.value!!)
             }
             .setNegativeButton(getString(R.string.cancel), null)
             .show()
     }
 
-    private fun undoDeleteNotes(noteList: List<NoteEntry>) {
+    private fun undoDeleteNotes(context: Context, noteList: List<NoteEntry>) {
         coordinator.longSnackbar(getString(R.string.notes_deleted), getString(R.string.undo)) {
-            insertAllNotes(noteList)
+            insertAllNotes(context, noteList)
         }
     }
 
-    private fun insertAllNotes(noteList: List<NoteEntry>) {
+    private fun insertAllNotes(context: Context, noteList: List<NoteEntry>) {
         uiScope.launch {
             withContext(Dispatchers.Main) {
-                noteListViewModel.insertAllNotes(noteList)
+                noteListViewModel.insertAllNotes(context, noteList)
             }
         }
     }
