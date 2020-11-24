@@ -9,7 +9,7 @@
         android:id="@+id/modifyReminder"
         style="@style/BottomSheetDialogItems"
         android:drawableStart="@drawable/ic_baseline_alarm_24"
-        android:text="Modify"
+        android:text="@string/modify"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -18,7 +18,7 @@
         android:id="@+id/deleteReminder"
         style="@style/BottomSheetDialogItems"
         android:drawableStart="@drawable/ic_baseline_delete_24"
-        android:text="Delete reminder"
+        android:text="@string/delete_reminder"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/modifyReminder" />

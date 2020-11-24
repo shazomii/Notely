@@ -9,6 +9,7 @@ import androidx.lifecycle.*
 import com.davenet.notely.database.getDatabase
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.repository.NoteRepository
+import com.davenet.notely.util.ReminderCompletion
 import com.davenet.notely.util.ReminderState
 import com.davenet.notely.util.currentDate
 import kotlinx.coroutines.CoroutineScope
@@ -23,6 +24,7 @@ class EditNoteViewModel(selectedNoteId: Int?, application: Application) :
     private val viewModelScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     val reminderState = ObservableField(ReminderState.NO_REMINDER)
+    val reminderCompletion = ObservableField(ReminderCompletion.ONGOING)
 
     private var _noteBeingModified = MutableLiveData<NoteEntry?>()
     val noteBeingModified: LiveData<NoteEntry?> get() = _noteBeingModified
@@ -62,9 +64,10 @@ class EditNoteViewModel(selectedNoteId: Int?, application: Application) :
     }
 
     fun scheduleReminder(context: Context, note: NoteEntry) {
-        viewModelScope.launch {
+        if (_noteBeingModified.value!!.reminder != null && _noteBeingModified.value!!.reminder!! > currentDate().timeInMillis) {
             noteRepository.createSchedule(context, note)
             updateNote(note)
+            reminderCompletion.set(ReminderCompletion.ONGOING)
         }
     }
 
@@ -81,15 +84,15 @@ class EditNoteViewModel(selectedNoteId: Int?, application: Application) :
     }
 
     private fun insertNote(note: NoteEntry) {
+        val newNote = note.copy(date = currentDate().timeInMillis)
         viewModelScope.launch {
-            val newNote = note.copy(date = currentDate().timeInMillis)
             noteRepository.insertNote(newNote)
         }
     }
 
     private fun updateNote(note: NoteEntry) {
+        val updatedNote = note.copy(date = currentDate().timeInMillis)
         viewModelScope.launch {
-            val updatedNote = note.copy(date = currentDate().timeInMillis)
             noteRepository.updateNote(updatedNote)
         }
     }

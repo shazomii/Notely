@@ -16,9 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.davenet.notely.R
 import com.davenet.notely.databinding.FragmentEditNoteBinding
 import com.davenet.notely.domain.NoteEntry
-import com.davenet.notely.util.Constants
-import com.davenet.notely.util.ReminderState
-import com.davenet.notely.util.hideKeyboard
+import com.davenet.notely.util.*
 import com.davenet.notely.viewmodels.EditNoteViewModel
 import com.davenet.notely.viewmodels.EditNoteViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
@@ -55,6 +53,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
             lifecycleOwner = this@EditNoteFragment
             editviewmodel = viewModel
             reminderState = viewModel.reminderState
+            reminderCompletion = viewModel.reminderCompletion
         }
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -124,10 +123,23 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
                     menu.findItem(R.id.action_remind).isVisible =
                         isNotBlank && it.reminder == null && viewModel.mIsEdit.value!!
 
-                    if (it.reminder != null) {
-                        viewModel.reminderState.set(ReminderState.HAS_REMINDER)
-                    } else {
-                        viewModel.reminderState.set(ReminderState.NO_REMINDER)
+                    when {
+                        it.reminder != null -> {
+                            viewModel.reminderState.set(ReminderState.HAS_REMINDER)
+                        }
+                        else -> {
+                            viewModel.reminderState.set(ReminderState.NO_REMINDER)
+                        }
+                    }
+                    it.reminder?.let { reminder ->
+                        when {
+                            currentDate().timeInMillis > reminder -> {
+                                viewModel.reminderCompletion.set(ReminderCompletion.COMPLETED)
+                            }
+                            else -> {
+                                viewModel.reminderCompletion.set(ReminderCompletion.ONGOING)
+                            }
+                        }
                     }
                 }
             })
@@ -149,20 +161,23 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
 
     override fun onItemClick(item: String) {
         when (item) {
-            "Modify" -> {
+            getString(R.string.modify) -> {
                 pickDate()
             }
-            "Delete" -> {
+            getString(R.string.delete) -> {
                 cancelReminder()
             }
         }
     }
 
     private fun onBackClicked() {
-        if (viewModel.isChanged) {
-            openAlertDialog()
-        } else {
-            findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
+        when {
+            viewModel.isChanged -> {
+                openAlertDialog()
+            }
+            else -> {
+                findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
+            }
         }
     }
 
@@ -203,13 +218,11 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
         CoroutineScope(Dispatchers.Default).launch {
             withContext(Dispatchers.Main) {
                 viewModel.saveNote()
-                if (viewModel.noteBeingModified.value!!.reminder != null) {
-                    scheduleReminder()
-                }
-                findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
-                Toast.makeText(context, getString(R.string.changes_saved), Toast.LENGTH_LONG).show()
             }
         }
+        scheduleReminder()
+        findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
+        Toast.makeText(context, getString(R.string.changes_saved), Toast.LENGTH_LONG).show()
     }
 
     private fun cancelReminder() {
@@ -217,10 +230,6 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
     }
 
     private fun scheduleReminder() {
-        CoroutineScope(Dispatchers.Default).launch {
-            withContext(Dispatchers.IO) {
-                viewModel.scheduleReminder(requireContext(), viewModel.noteBeingModified.value!!)
-            }
-        }
+        viewModel.scheduleReminder(requireContext(), viewModel.noteBeingModified.value!!)
     }
 }

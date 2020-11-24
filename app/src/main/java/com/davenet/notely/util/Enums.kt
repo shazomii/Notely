@@ -10,3 +10,8 @@ enum class ReminderState {
     HAS_REMINDER,
     NO_REMINDER
 }
+
+enum class ReminderCompletion {
+    COMPLETED,
+    ONGOING
+}

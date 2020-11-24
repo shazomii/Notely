@@ -88,11 +88,8 @@ class NoteRepository(private val database: NotesDatabase) {
                 override fun onCancel() {
                     return
                 }
-
-
             })
         }
-
     }
 
     fun createSchedule(context: Context, note: NoteEntry) {

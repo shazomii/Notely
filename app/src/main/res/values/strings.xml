@@ -41,4 +41,5 @@
     <string name="note_title">Note title</string>
     <string name="note_text">Note text</string>
     <string name="reminder_icon">Reminder icon</string>
+    <string name="delete_reminder">Delete reminder</string>
 </resources>
