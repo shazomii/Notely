@@ -42,4 +42,7 @@
     <string name="note_text">Note text</string>
     <string name="reminder_icon">Reminder icon</string>
     <string name="delete_reminder">Delete reminder</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_all">Delete all notes?</string>
+    <string name="confirm_delete_message">You are about to delete all notes. Continue?</string>
 </resources>

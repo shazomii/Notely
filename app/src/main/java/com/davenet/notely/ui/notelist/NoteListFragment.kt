@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
@@ -138,7 +139,10 @@ class NoteListFragment : Fragment() {
                 val position = viewHolder.adapterPosition
                 val noteToErase = noteList.value?.get(position)
                 deleteNote(requireContext(), noteToErase!!)
-                coordinator.longSnackbar(getString(R.string.note_deleted), getString(R.string.undo)) {
+                coordinator.longSnackbar(
+                    getString(R.string.note_deleted),
+                    getString(R.string.undo)
+                ) {
                     restoreNote(requireContext(), noteToErase)
                 }
             }
@@ -196,8 +200,7 @@ class NoteListFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_clear -> {
-                deleteAllNotes()
-                undoDeleteNotes(noteList.value!!)
+                openAlertDialog()
                 activity?.invalidateOptionsMenu()
                 true
             }
@@ -212,6 +215,18 @@ class NoteListFragment : Fragment() {
             }
         })
         return super.onPrepareOptionsMenu(menu)
+    }
+
+    private fun openAlertDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.delete_all))
+            .setMessage(getString(R.string.confirm_delete_message))
+            .setPositiveButton(getString(R.string.delete)) { _, _ ->
+                deleteAllNotes()
+                undoDeleteNotes(noteList.value!!)
+            }
+            .setNegativeButton(getString(R.string.cancel), null)
+            .show()
     }
 
     private fun undoDeleteNotes(noteList: List<NoteEntry>) {
