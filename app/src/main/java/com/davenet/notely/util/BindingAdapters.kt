@@ -10,7 +10,7 @@ fun View.setVisible(visible: Boolean) {
     visibility = if (visible) View.VISIBLE else View.GONE
 }
 
-@BindingAdapter("textView:strikeThrough")
+@BindingAdapter("strikeThrough")
 fun strikeThrough(textView: TextView, strikeThrough: Boolean) {
     if (strikeThrough) {
         textView.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
