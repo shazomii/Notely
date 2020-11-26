@@ -21,11 +21,9 @@ import com.davenet.notely.viewmodels.EditNoteViewModel
 import com.davenet.notely.viewmodels.EditNoteViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_edit_note.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
+@InternalCoroutinesApi
 class EditNoteFragment : Fragment(), BottomSheetClickListener {
     private lateinit var binding: FragmentEditNoteBinding
     private lateinit var viewModel: EditNoteViewModel

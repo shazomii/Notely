@@ -6,20 +6,20 @@ import android.content.Context
 import android.widget.TextView
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
+import com.davenet.notely.database.asDomainModelEntry
 import com.davenet.notely.database.getDatabase
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.repository.NoteRepository
 import com.davenet.notely.util.ReminderCompletion
 import com.davenet.notely.util.ReminderState
 import com.davenet.notely.util.currentDate
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 
-class EditNoteViewModel(selectedNoteId: Int?, application: Application) :
+@InternalCoroutinesApi
+class EditNoteViewModel(private val selectedNoteId: Int?, application: Application) :
     AndroidViewModel(application) {
-    private var selectedNote: NoteEntry?
+    private lateinit var selectedNote: NoteEntry
     private var viewModelJob = Job()
     private val viewModelScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
@@ -38,12 +38,20 @@ class EditNoteViewModel(selectedNoteId: Int?, application: Application) :
     init {
         if (selectedNoteId != null) {
             onNoteInserted()
-            _noteBeingModified = noteRepository.getSelectedNote(selectedNoteId)
-            selectedNote = _noteBeingModified.value
+            getSelectedNote()
         } else {
             onNewNote()
             selectedNote = noteRepository.emptyNote
             _noteBeingModified.value = selectedNote
+        }
+    }
+
+    private fun getSelectedNote() {
+        viewModelScope.launch {
+            noteRepository.getNote(selectedNoteId!!).collect {
+                _noteBeingModified.postValue(it)
+                selectedNote = it!!.copy().asDomainModelEntry()
+            }
         }
     }
 
@@ -110,6 +118,7 @@ class EditNoteViewModelFactory(
     private val application: Application,
     private val selectedNoteId: Int?
 ) : ViewModelProvider.NewInstanceFactory() {
+    @InternalCoroutinesApi
     @Suppress("unchecked_cast")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(EditNoteViewModel::class.java)) {

@@ -5,8 +5,6 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.widget.TextView
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
@@ -21,6 +19,9 @@ import com.davenet.notely.util.formatReminderDate
 import com.davenet.notely.work.NotifyWork
 import kotlinx.android.synthetic.main.fragment_edit_note.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import petrov.kristiyan.colorpicker.ColorPicker
 import petrov.kristiyan.colorpicker.ColorPicker.OnChooseColorListener
@@ -29,10 +30,10 @@ import java.util.concurrent.TimeUnit
 
 class NoteRepository(private val database: NotesDatabase) {
 
-    fun getSelectedNote(noteId: Int): MutableLiveData<NoteEntry?> {
-        return Transformations.map(database.noteDao.get(noteId)) { databaseNote ->
-            databaseNote.asDomainModelEntry()
-        } as MutableLiveData<NoteEntry?>
+    suspend fun getNote(noteId: Int): Flow<NoteEntry?> {
+        return flow {
+            emit(database.noteDao.get(noteId).asDomainModelEntry())
+        }.flowOn(Dispatchers.IO)
     }
 
     val emptyNote: NoteEntry
