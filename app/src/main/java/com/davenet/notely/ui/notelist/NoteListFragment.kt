@@ -225,7 +225,6 @@ class NoteListFragment : Fragment() {
                 deleteAllNotes()
                 undoDeleteNotes(requireContext(), noteList.value!!)
             }
-            .setNegativeButton(getString(R.string.cancel), null)
             .show()
     }
 

@@ -183,10 +183,12 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
         AlertDialog.Builder(requireContext())
             .setTitle(getString(R.string.discard))
             .setMessage(getString(R.string.discard_changes))
-            .setPositiveButton(getString(R.string.yes)) { _, _ ->
+            .setPositiveButton(getString(R.string.save)) { _, _ ->
+                saveNote()
+            }
+            .setNegativeButton(getString(R.string.discard_note)) { _, _ ->
                 findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
             }
-            .setNegativeButton(getString(R.string.no), null)
             .show()
     }
 

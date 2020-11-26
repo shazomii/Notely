@@ -10,7 +10,6 @@
     <string name="category_display">Display</string>
     <string name="choose_theme">Choose theme</string>
     <string name="default_theme">MODE_NIGHT_FOLLOW_SYSTEM</string>
-    <string name="save">Save</string>
 
     <string name="username">Name</string>
     <string name="userEmail">Email</string>
@@ -27,8 +26,6 @@
     <string name="set_reminder">Set reminder</string>
     <string name="discard">Discard changes?</string>
     <string name="discard_changes">Any changes you have made will be discarded. Continue anyway?</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
     <string name="changes_saved">Changes saved</string>
     <string name="modify">Modify</string>
     <string name="delete">Delete</string>
@@ -42,7 +39,8 @@
     <string name="note_text">Note text</string>
     <string name="reminder_icon">Reminder icon</string>
     <string name="delete_reminder">Delete reminder</string>
-    <string name="cancel">Cancel</string>
     <string name="delete_all">Delete all notes?</string>
     <string name="confirm_delete_message">You are about to delete all notes. Continue?</string>
+    <string name="save">Save</string>
+    <string name="discard_note">Discard</string>
 </resources>
