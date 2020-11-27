@@ -219,7 +219,6 @@ class NoteListFragment : Fragment() {
 
     private fun openAlertDialog() {
         AlertDialog.Builder(requireContext())
-            .setTitle(getString(R.string.delete_all))
             .setMessage(getString(R.string.confirm_delete_message))
             .setPositiveButton(getString(R.string.delete)) { _, _ ->
                 deleteAllNotes()
