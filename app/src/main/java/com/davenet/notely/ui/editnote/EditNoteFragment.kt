@@ -181,10 +181,14 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
 
     private fun openAlertDialog() {
         AlertDialog.Builder(requireContext())
-            .setTitle(getString(R.string.discard))
             .setMessage(getString(R.string.discard_changes))
             .setPositiveButton(getString(R.string.save)) { _, _ ->
-                saveNote()
+                val note = viewModel.noteBeingModified.value!!
+                if (note.title.isNotEmpty() and note.text.isNotEmpty()) {
+                    saveNote()
+                } else {
+                    Toast.makeText(requireContext(), getString(R.string.not_be_blank), Toast.LENGTH_LONG).show()
+                }
             }
             .setNegativeButton(getString(R.string.discard_note)) { _, _ ->
                 findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
