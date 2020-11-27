@@ -45,7 +45,7 @@
             android:ems="10"
             android:gravity="start|top"
             android:hint="@string/note_title"
-            android:inputType="textMultiLine"
+            android:inputType="textShortMessage"
             android:text="@={editviewmodel.noteBeingModified.title}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

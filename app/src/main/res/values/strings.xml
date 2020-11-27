@@ -24,7 +24,6 @@
     <string name="app_logo">App Logo</string>
     <string name="share">Share</string>
     <string name="set_reminder">Set reminder</string>
-    <string name="discard">Discard changes?</string>
     <string name="discard_changes">Any changes you have made will be discarded. Continue anyway?</string>
     <string name="changes_saved">Changes saved</string>
     <string name="modify">Modify</string>
@@ -35,12 +34,12 @@
     <string name="note_deleted">Note deleted</string>
     <string name="color">Color</string>
     <string name="note_color">Note color</string>
-    <string name="note_title">Note title</string>
-    <string name="note_text">Note text</string>
+    <string name="note_title">Note title (required)</string>
+    <string name="note_text">Note text (required)</string>
     <string name="reminder_icon">Reminder icon</string>
     <string name="delete_reminder">Delete reminder</string>
-    <string name="delete_all">Delete all notes?</string>
     <string name="confirm_delete_message">You are about to delete all notes. Continue?</string>
     <string name="save">Save</string>
     <string name="discard_note">Discard</string>
+    <string name="not_be_blank">Title and content cannot be blank</string>
 </resources>
