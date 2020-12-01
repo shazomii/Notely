@@ -87,10 +87,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="32dp"
             android:text="@string/alreadyRegistered"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/buttonSignIn"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/registerText"
             app:layout_constraintTop_toBottomOf="@+id/buttonSignUp" />
 
         <Button
@@ -100,7 +101,7 @@
             android:layout_height="wrap_content"
             android:text="@string/signIn"
             app:layout_constraintBaseline_toBaselineOf="@id/textView2"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/registerText"
             app:layout_constraintStart_toEndOf="@+id/textView2"
             app:layout_constraintTop_toBottomOf="@+id/buttonSignUp" />
 

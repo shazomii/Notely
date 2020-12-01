@@ -42,4 +42,10 @@
     <string name="save">Save</string>
     <string name="discard_note">Discard</string>
     <string name="not_be_blank">Title and content cannot be blank</string>
+    <string name="logout">Logout</string>
+    <string name="login_register">Login/Register</string>
+    <string name="skip_login">Skip login</string>
+    <string name="add_new_note">Add new note</string>
+    <string name="clear">Clear</string>
+    <string name="ok">OK</string>
 </resources>

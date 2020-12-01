@@ -4,7 +4,7 @@
     <item
         android:id="@+id/action_clear"
         android:icon="@drawable/ic_baseline_delete_24"
-        android:orderInCategory="200"
-        android:title="Clear"
+        android:orderInCategory="500"
+        android:title="@string/clear"
         app:showAsAction="ifRoom" />
 </menu>
