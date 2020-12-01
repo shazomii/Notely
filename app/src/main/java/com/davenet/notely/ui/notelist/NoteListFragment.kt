@@ -27,7 +27,6 @@ import com.davenet.notely.util.UIState
 import com.davenet.notely.util.calculateNoOfColumns
 import com.davenet.notely.viewmodels.NoteListViewModel
 import com.davenet.notely.viewmodels.NoteListViewModelFactory
-import com.google.firebase.auth.FirebaseAuth
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -46,7 +45,6 @@ class NoteListFragment : Fragment() {
     private lateinit var binding: FragmentNoteListBinding
     private lateinit var coordinator: CoordinatorLayout
     private lateinit var noteList: LiveData<List<NoteEntry>>
-    private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,8 +58,6 @@ class NoteListFragment : Fragment() {
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_note_list, container, false
         )
-
-        auth = FirebaseAuth.getInstance()
 
         val application = requireNotNull(this.activity).application
 
@@ -168,7 +164,7 @@ class NoteListFragment : Fragment() {
                 )
                     .addActionIcon(R.drawable.ic_baseline_delete_24)
                     .setActionIconTint(Color.WHITE)
-                    .addBackgroundColor(Color.RED)
+                    .addBackgroundColor(-2277816)
                     .create()
                     .decorate()
 
@@ -183,13 +179,6 @@ class NoteListFragment : Fragment() {
                 )
             }
         }).attachToRecyclerView(binding.noteList)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        if (auth.currentUser == null) {
-            findNavController().navigate(R.id.action_noteListFragment_to_loginFragment)
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/noteListFragment">
     <fragment
         android:id="@+id/noteListFragment"
         android:name="com.davenet.notely.ui.notelist.NoteListFragment"
@@ -24,6 +24,8 @@
             app:destination="@id/loginFragment"
             app:enterAnim="@anim/fragment_fade_enter"
             app:exitAnim="@anim/fragment_fade_exit"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit"
             app:popUpTo="@id/noteListFragment"
             app:popUpToInclusive="true" />
     </fragment>
@@ -54,6 +56,8 @@
             app:destination="@id/noteListFragment"
             app:enterAnim="@anim/fragment_fade_enter"
             app:exitAnim="@anim/fragment_fade_exit"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit"
             app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true" />
         <action

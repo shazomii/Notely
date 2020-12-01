@@ -33,7 +33,7 @@
         android:backgroundTint="#27FFFFFF"
         android:backgroundTintMode="screen">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/textNoteTitle"
             style="@style/TextAppearance.MaterialComponents.Headline6"
             android:layout_width="0dp"
@@ -45,7 +45,8 @@
             android:ems="10"
             android:gravity="start|top"
             android:hint="@string/note_title"
-            android:inputType="textShortMessage"
+            android:inputType="textMultiLine"
+            android:maxLength="50"
             android:text="@={editviewmodel.noteBeingModified.title}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

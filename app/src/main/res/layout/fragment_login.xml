@@ -81,17 +81,29 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/userPasswordTIL" />
 
+        <Button
+            android:id="@+id/buttonSkip"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/skip_login"
+            app:layout_constraintEnd_toEndOf="@id/buttonLogin"
+            app:layout_constraintStart_toStartOf="@id/buttonLogin"
+            app:layout_constraintTop_toBottomOf="@id/buttonLogin" />
+
         <TextView
             android:id="@+id/textView2"
             style="@style/TextAppearance.MaterialComponents.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:layout_marginBottom="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="32dp"
             android:text="@string/newUser"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/buttonRegister"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buttonLogin" />
+            app:layout_constraintStart_toStartOf="@+id/buttonSkip"
+            app:layout_constraintTop_toBottomOf="@+id/buttonSkip" />
 
         <Button
             android:id="@+id/buttonRegister"
@@ -100,10 +112,9 @@
             android:layout_height="wrap_content"
             android:text="@string/userRegister"
             app:layout_constraintBaseline_toBaselineOf="@+id/textView2"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/buttonSkip"
             app:layout_constraintStart_toEndOf="@+id/textView2"
-            app:layout_constraintTop_toBottomOf="@+id/buttonLogin" />
-
+            app:layout_constraintTop_toBottomOf="@id/buttonSkip" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

@@ -29,7 +29,7 @@ class NotifyWork(context: Context, params: WorkerParameters) : Worker(context, p
 
         val deepLink = NavDeepLinkBuilder(applicationContext)
             .setGraph(R.navigation.nav_graph)
-            .setDestination(R.id.loginFragment)
+            .setDestination(R.id.noteListFragment)
             .setArguments(bundle)
             .createPendingIntent()
 

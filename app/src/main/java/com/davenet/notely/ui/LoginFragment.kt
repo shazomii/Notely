@@ -62,6 +62,10 @@ class LoginFragment : Fragment() {
         buttonLogin.setOnClickListener {
             loginUser()
         }
+
+        buttonSkip.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_noteListFragment)
+        }
     }
 
     private fun loginUser() {
@@ -94,9 +98,12 @@ class LoginFragment : Fragment() {
                 if (arguments?.getInt(Constants.NOTE_ID) != null) {
                     val bundle = Bundle()
                     bundle.putInt(Constants.NOTE_ID, arguments?.getInt(Constants.NOTE_ID, 0)!!)
-                    findNavController().navigate(R.id.action_loginFragment_to_noteListFragment, bundle)
-                }
-                else {
+                    findNavController().navigate(
+                        R.id.action_loginFragment_to_noteListFragment,
+                        bundle
+                    )
+                } else {
+                    activity?.recreate()
                     findNavController().navigate(R.id.action_loginFragment_to_noteListFragment)
                 }
             } else {
