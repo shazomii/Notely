@@ -24,24 +24,51 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
+        val user = auth.currentUser
 
         val darkModeValues = resources.getStringArray(R.array.pref_theme_values)
+
         when (PreferenceManager.getDefaultSharedPreferences(this)
             .getString(getString(R.string.key_theme), getString(R.string.default_theme))) {
             darkModeValues[0] -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
             darkModeValues[1] -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             darkModeValues[2] -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
+
         setContentView(R.layout.activity_main)
+
         setSupportActionBar(toolbar)
+
         val navController = findNavController(R.id.nav_host_fragment)
+
         appBarConfiguration = AppBarConfiguration(setOf(R.id.noteListFragment), drawer_layout)
         setupActionBarWithNavController(navController, appBarConfiguration)
+
         nav_view.setupWithNavController(navController)
+
+        val menu = nav_view.menu
+        val logoutItem = menu.findItem(R.id.action_logout)
+        val loginItem = menu.findItem(R.id.action_signIn)
+
+        if (user != null) {
+            val navHeader = nav_view.getHeaderView(0)
+            navHeader.currentUserEmail.text = user.email
+            logoutItem.isVisible = true
+            loginItem.isVisible = false
+        } else {
+            logoutItem.isVisible = false
+            loginItem.isVisible = true
+        }
+
         nav_view.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.action_logout -> {
                     auth.signOut()
+                    navController.navigate(R.id.action_noteListFragment_to_loginFragment)
+                    recreate()
+                    true
+                }
+                R.id.action_signIn -> {
                     navController.navigate(R.id.action_noteListFragment_to_loginFragment)
                     true
                 }
@@ -52,13 +79,7 @@ class MainActivity : AppCompatActivity() {
                 else -> true
             }
         }
-        val user = auth.currentUser
-        if (user != null) {
-            val navHeader = nav_view.getHeaderView(0)
-            navHeader.currentUserEmail.text = user.email
-        }
     }
-
 
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
