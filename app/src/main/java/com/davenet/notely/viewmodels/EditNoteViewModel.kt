@@ -17,9 +17,12 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 
 @InternalCoroutinesApi
+@ExperimentalCoroutinesApi
 class EditNoteViewModel(private val selectedNoteId: Int?, application: Application) :
     AndroidViewModel(application) {
     private lateinit var selectedNote: NoteEntry
+    private lateinit var scheduledNote: NoteEntry
+
     private var viewModelJob = Job()
     private val viewModelScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
@@ -55,6 +58,14 @@ class EditNoteViewModel(private val selectedNoteId: Int?, application: Applicati
         }
     }
 
+    private fun getUpdatedNote() {
+        runBlocking {
+            noteRepository.getLatestNote().collect {
+                scheduledNote = it!!
+            }
+        }
+    }
+
     var isChanged: Boolean = false
         get() = if (_mIsEdit.value!!) {
             _noteBeingModified.value != selectedNote
@@ -73,8 +84,14 @@ class EditNoteViewModel(private val selectedNoteId: Int?, application: Applicati
 
     fun scheduleReminder(context: Context, note: NoteEntry) {
         if (_noteBeingModified.value!!.reminder != null && _noteBeingModified.value!!.reminder!! > currentDate().timeInMillis) {
-            noteRepository.createSchedule(context, note)
-            updateNote(note)
+            if (_mIsEdit.value!!) {
+                noteRepository.createSchedule(context, note)
+                updateNote(note)
+            } else {
+                getUpdatedNote()
+                noteRepository.createSchedule(context, scheduledNote)
+                updateNote(scheduledNote)
+            }
             reminderCompletion.set(ReminderCompletion.ONGOING)
         }
     }
@@ -93,14 +110,14 @@ class EditNoteViewModel(private val selectedNoteId: Int?, application: Applicati
 
     private fun insertNote(note: NoteEntry) {
         val newNote = note.copy(date = currentDate().timeInMillis)
-        viewModelScope.launch {
+        runBlocking {
             noteRepository.insertNote(newNote)
         }
     }
 
     private fun updateNote(note: NoteEntry) {
         val updatedNote = note.copy(date = currentDate().timeInMillis)
-        viewModelScope.launch {
+        runBlocking {
             noteRepository.updateNote(updatedNote)
         }
     }
@@ -114,6 +131,7 @@ class EditNoteViewModel(private val selectedNoteId: Int?, application: Applicati
     }
 }
 
+@ExperimentalCoroutinesApi
 class EditNoteViewModelFactory(
     private val application: Application,
     private val selectedNoteId: Int?

@@ -36,6 +36,12 @@ class NoteRepository(private val database: NotesDatabase) {
         }.flowOn(Dispatchers.IO)
     }
 
+    suspend fun getLatestNote(): Flow<NoteEntry?> {
+        return flow {
+            emit(database.noteDao.getNote().asDomainModelEntry())
+        }.flowOn(Dispatchers.IO)
+    }
+
     val emptyNote: NoteEntry
         get() {
             return NoteEntry(

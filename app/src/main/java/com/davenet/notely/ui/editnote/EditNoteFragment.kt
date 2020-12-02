@@ -21,9 +21,11 @@ import com.davenet.notely.viewmodels.EditNoteViewModel
 import com.davenet.notely.viewmodels.EditNoteViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_edit_note.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
 
 @InternalCoroutinesApi
+@ExperimentalCoroutinesApi
 class EditNoteFragment : Fragment(), BottomSheetClickListener {
     private lateinit var binding: FragmentEditNoteBinding
     private lateinit var viewModel: EditNoteViewModel
@@ -118,8 +120,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
                 it?.let {
                     val isNotBlank = it.title.isNotBlank() && it.text.isNotBlank()
                     menu.findItem(R.id.action_save).isEnabled = isNotBlank
-                    menu.findItem(R.id.action_remind).isVisible =
-                        isNotBlank && it.reminder == null && viewModel.mIsEdit.value!!
+                    menu.findItem(R.id.action_remind).isVisible = isNotBlank && it.reminder == null
 
                     when {
                         it.reminder != null -> {
@@ -181,13 +182,18 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
 
     private fun openAlertDialog() {
         AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.discard))
             .setMessage(getString(R.string.discard_changes))
             .setPositiveButton(getString(R.string.save)) { _, _ ->
                 val note = viewModel.noteBeingModified.value!!
                 if (note.title.isNotEmpty() and note.text.isNotEmpty()) {
                     saveNote()
                 } else {
-                    Toast.makeText(requireContext(), getString(R.string.not_be_blank), Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.not_be_blank),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
             .setNegativeButton(getString(R.string.discard_note)) { _, _ ->
@@ -219,11 +225,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
     }
 
     private fun saveNote() {
-        CoroutineScope(Dispatchers.Default).launch {
-            withContext(Dispatchers.Main) {
-                viewModel.saveNote()
-            }
-        }
+        viewModel.saveNote()
         scheduleReminder()
         findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
         Toast.makeText(context, getString(R.string.changes_saved), Toast.LENGTH_LONG).show()
