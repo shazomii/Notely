@@ -3,14 +3,11 @@
     <string name="action_settings">Settings</string>
     <string name="empty_quote">The way to get started is to quit talking and begin doing. -Walt Disney</string>
     <string name="title_activity_settings">Settings</string>
-
-    <!-- Sync Preferences -->
     <string name="theme">Theme</string>
     <string name="key_theme">theme</string>
     <string name="category_display">Display</string>
     <string name="choose_theme">Choose theme</string>
     <string name="default_theme">MODE_NIGHT_FOLLOW_SYSTEM</string>
-
     <string name="username">Name</string>
     <string name="userEmail">Email</string>
     <string name="userPassword">Password</string>
@@ -24,7 +21,7 @@
     <string name="app_logo">App Logo</string>
     <string name="share">Share</string>
     <string name="set_reminder">Set reminder</string>
-    <string name="discard_changes">Any changes you have made will be discarded. Continue anyway?</string>
+    <string name="discard_changes">Any changes you have made will be discarded.</string>
     <string name="changes_saved">Changes saved</string>
     <string name="modify">Modify</string>
     <string name="delete">Delete</string>
@@ -38,7 +35,7 @@
     <string name="note_text">Note text (required)</string>
     <string name="reminder_icon">Reminder icon</string>
     <string name="delete_reminder">Delete reminder</string>
-    <string name="confirm_delete_message">You are about to delete all notes. Continue?</string>
+    <string name="confirm_delete_message">You are about to delete all notes.</string>
     <string name="save">Save</string>
     <string name="discard_note">Discard</string>
     <string name="not_be_blank">Title and content cannot be blank</string>
@@ -48,4 +45,7 @@
     <string name="add_new_note">Add new note</string>
     <string name="clear">Clear</string>
     <string name="ok">OK</string>
+    <string name="delete_all_notes">Delete all notes</string>
+    <string name="discard">Discard changes</string>
+    <string name="cancel">Cancel</string>
 </resources>
