@@ -14,6 +14,7 @@ import com.davenet.notely.database.NotesDatabase
 import com.davenet.notely.database.asDomainModelEntry
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.util.Constants
+import com.davenet.notely.util.colors
 import com.davenet.notely.util.currentDate
 import com.davenet.notely.util.formatReminderDate
 import com.davenet.notely.work.NotifyWork
@@ -29,6 +30,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 class NoteRepository(private val database: NotesDatabase) {
+    val color = colors.random()
 
     suspend fun getNote(noteId: Int): Flow<NoteEntry?> {
         return flow {
@@ -44,15 +46,7 @@ class NoteRepository(private val database: NotesDatabase) {
 
     val emptyNote: NoteEntry
         get() {
-            return NoteEntry(
-                id = null,
-                title = "",
-                text = "",
-                date = null,
-                reminder = null,
-                started = false,
-                color = -4224594
-            )
+            return NoteEntry(null, "", "", null, null, false, color)
         }
 
     fun pickDateTime(context: Context, note: NoteEntry, reminder: TextView) {
