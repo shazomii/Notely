@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class NotesAdapter(private val clickListener: NoteListener) :
-    ListAdapter<DataItem, RecyclerView.ViewHolder>(NoteDiffCallback()) {
+    ListAdapter<NoteEntry, RecyclerView.ViewHolder>(NoteDiffCallback()) {
     private val adapterScope = CoroutineScope(Dispatchers.Default)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -23,7 +23,7 @@ class NotesAdapter(private val clickListener: NoteListener) :
 
     fun submitToList(list: List<NoteEntry>?) {
         adapterScope.launch {
-            val items = list?.map { DataItem.NoteItem(it) }
+            val items = list?.map { it }
             withContext(Dispatchers.Main) {
                 submitList(items)
             }
@@ -33,8 +33,8 @@ class NotesAdapter(private val clickListener: NoteListener) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is ViewHolder -> {
-                val noteItem = getItem(position) as DataItem.NoteItem
-                holder.bind(noteItem.note, clickListener)
+                val noteItem = getItem(position)
+                holder.bind(noteItem, clickListener)
             }
         }
     }
@@ -62,21 +62,13 @@ class NotesAdapter(private val clickListener: NoteListener) :
     }
 }
 
-class NoteDiffCallback : DiffUtil.ItemCallback<DataItem>() {
-    override fun areItemsTheSame(oldItem: DataItem, newItem: DataItem): Boolean {
+class NoteDiffCallback : DiffUtil.ItemCallback<NoteEntry>() {
+    override fun areItemsTheSame(oldItem: NoteEntry, newItem: NoteEntry): Boolean {
         return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: DataItem, newItem: DataItem): Boolean {
+    override fun areContentsTheSame(oldItem: NoteEntry, newItem: NoteEntry): Boolean {
         return oldItem == newItem
-    }
-}
-
-sealed class DataItem {
-    abstract val id: Int?
-
-    data class NoteItem(val note: NoteEntry) : DataItem() {
-        override val id: Int? = note.id
     }
 }
 

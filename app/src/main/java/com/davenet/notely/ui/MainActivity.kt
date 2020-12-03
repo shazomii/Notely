@@ -60,8 +60,8 @@ class MainActivity : AppCompatActivity() {
             loginItem.isVisible = true
         }
 
-        nav_view.setNavigationItemSelectedListener {
-            when (it.itemId) {
+        nav_view.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
                 R.id.action_logout -> {
                     auth.signOut()
                     navController.navigate(R.id.action_noteListFragment_to_loginFragment)

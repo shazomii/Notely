@@ -44,7 +44,7 @@ class NoteListFragment : Fragment() {
     private lateinit var uiScope: CoroutineScope
     private lateinit var binding: FragmentNoteListBinding
     private lateinit var coordinator: CoordinatorLayout
-    private lateinit var noteList: LiveData<List<NoteEntry>>
+    private lateinit var noteListData: LiveData<List<NoteEntry>>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,8 +66,8 @@ class NoteListFragment : Fragment() {
         noteListViewModel =
             ViewModelProvider(this, viewModelFactory).get(NoteListViewModel::class.java)
 
-        val adapter = NotesAdapter(NoteListener {
-            noteListViewModel.onNoteClicked(it)
+        val adapter = NotesAdapter(NoteListener { noteId ->
+            noteListViewModel.onNoteClicked(noteId)
         })
 
         if (arguments?.getInt(Constants.NOTE_ID) != null) {
@@ -88,14 +88,14 @@ class NoteListFragment : Fragment() {
 
     private fun observeViewModel(adapter: NotesAdapter) {
         noteListViewModel.apply {
-            notes.observe(viewLifecycleOwner, {
-                it?.let {
-                    if (it.isNotEmpty()) {
+            notes.observe(viewLifecycleOwner, { noteList ->
+                noteList?.let {
+                    if (noteList.isNotEmpty()) {
                         noteListViewModel.uiState.set(UIState.HAS_DATA)
                     } else {
                         noteListViewModel.uiState.set(UIState.EMPTY)
                     }
-                    adapter.submitToList(it)
+                    adapter.submitToList(noteList)
                 }
             })
 
@@ -119,7 +119,7 @@ class NoteListFragment : Fragment() {
 
         uiScope = CoroutineScope(Dispatchers.Default)
 
-        noteList = noteListViewModel.notes
+        noteListData = noteListViewModel.notes
         coordinator = activity?.findViewById(R.id.list_coordinator)!!
         ItemTouchHelper(object :
             ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
@@ -133,7 +133,7 @@ class NoteListFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
-                val noteToErase = noteList.value?.get(position)
+                val noteToErase = noteListData.value?.get(position)
                 deleteNote(requireContext(), noteToErase!!)
                 coordinator.longSnackbar(
                     getString(R.string.note_deleted),
@@ -198,9 +198,9 @@ class NoteListFragment : Fragment() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
-        noteListViewModel.notes.observe(viewLifecycleOwner, {
-            it?.let {
-                menu.findItem(R.id.action_clear).isVisible = it.isNotEmpty()
+        noteListViewModel.notes.observe(viewLifecycleOwner, { noteList ->
+            noteList?.let {
+                menu.findItem(R.id.action_clear).isVisible = noteList.isNotEmpty()
             }
         })
         return super.onPrepareOptionsMenu(menu)
@@ -213,7 +213,7 @@ class NoteListFragment : Fragment() {
             .setNegativeButton(getString(R.string.cancel), null)
             .setPositiveButton(getString(R.string.delete)) { _, _ ->
                 deleteAllNotes()
-                undoDeleteNotes(requireContext(), noteList.value!!)
+                undoDeleteNotes(requireContext(), noteListData.value!!)
             }
             .show()
     }

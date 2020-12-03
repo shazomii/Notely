@@ -51,17 +51,17 @@ class EditNoteViewModel(private val selectedNoteId: Int?, application: Applicati
 
     private fun getSelectedNote() {
         viewModelScope.launch {
-            noteRepository.getNote(selectedNoteId!!).collect {
-                _noteBeingModified.postValue(it)
-                selectedNote = it!!.copy().asDomainModelEntry()
+            noteRepository.getNote(selectedNoteId!!).collect { noteEntry ->
+                _noteBeingModified.postValue(noteEntry)
+                selectedNote = noteEntry!!.copy().asDomainModelEntry()
             }
         }
     }
 
     private fun getUpdatedNote() {
         runBlocking {
-            noteRepository.getLatestNote().collect {
-                scheduledNote = it!!
+            noteRepository.getLatestNote().collect { noteEntry ->
+                scheduledNote = noteEntry!!
             }
         }
     }

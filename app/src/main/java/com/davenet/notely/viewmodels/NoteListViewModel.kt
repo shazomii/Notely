@@ -41,19 +41,11 @@ class NoteListViewModel(application: Application) : AndroidViewModel(application
 
     fun deleteNote(context: Context, note: NoteEntry) {
         if (note.started) {
-            cancelAlarm(context, note)
+            noteListRepository.cancelAlarm(context, note)
         }
         viewModelScope.launch {
             noteListRepository.deleteNote(note)
         }
-    }
-
-    private fun cancelAlarm(context: Context, note: NoteEntry) {
-        noteListRepository.cancelAlarm(context, note)
-    }
-
-    private fun scheduleAlarm(context: Context, note: NoteEntry) {
-        noteRepository.createSchedule(context, note)
     }
 
     fun restoreNote(context: Context, note: NoteEntry) {
@@ -74,6 +66,10 @@ class NoteListViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             noteListRepository.insertAllNotes(noteList)
         }
+    }
+
+    private fun scheduleAlarm(context: Context, note: NoteEntry) {
+        noteRepository.createSchedule(context, note)
     }
 }
 

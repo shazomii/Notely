@@ -29,15 +29,7 @@ data class DatabaseNote(
  */
 fun List<DatabaseNote>.asDomainModel(): List<NoteEntry> {
     return map {
-        NoteEntry(
-            id = it.id,
-            title = it.title,
-            text = it.text,
-            date = it.date,
-            reminder = it.reminder,
-            started = it.started,
-            color = it.color
-        )
+        NoteEntry(it.id, it.title, it.text, it.date, it.reminder, it.started, it.color)
     }
 }
 

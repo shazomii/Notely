@@ -25,14 +25,6 @@ data class NoteEntry(
 
 fun List<NoteEntry>.asDataBaseModel(): List<DatabaseNote> {
     return map {
-        DatabaseNote(
-            id = it.id,
-            title = it.title,
-            text = it.text,
-            date = it.date,
-            reminder = it.reminder,
-            started = it.started,
-            color = it.color
-        )
+        DatabaseNote(it.id, it.title, it.text, it.date, it.reminder, it.started, it.color)
     }
 }
