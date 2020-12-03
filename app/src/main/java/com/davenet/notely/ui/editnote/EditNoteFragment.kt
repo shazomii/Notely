@@ -116,29 +116,22 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
                 }
             })
 
-            noteBeingModified.observe(viewLifecycleOwner, {
-                it?.let {
-                    val isNotBlank = it.title.isNotBlank() && it.text.isNotBlank()
-                    menu.findItem(R.id.action_save).isEnabled = isNotBlank
-                    menu.findItem(R.id.action_remind).isVisible = isNotBlank && it.reminder == null
+            noteBeingModified.observe(viewLifecycleOwner, { note ->
+                note?.let {
+                    val isNotBlank = note.title.isNotBlank() && note.text.isNotBlank()
+                    menu.findItem(R.id.action_save).isEnabled = viewModel.isChanged && isNotBlank
+                    menu.findItem(R.id.action_remind).isVisible =
+                        isNotBlank && note.reminder == null
 
-                    when {
-                        it.reminder != null -> {
-                            viewModel.reminderState.set(ReminderState.HAS_REMINDER)
+                    if (note.reminder != null) {
+                        viewModel.reminderState.set(ReminderState.HAS_REMINDER)
+                        if (currentDate().timeInMillis > note.reminder!!) {
+                            viewModel.reminderCompletion.set(ReminderCompletion.COMPLETED)
+                        } else {
+                            viewModel.reminderCompletion.set(ReminderCompletion.ONGOING)
                         }
-                        else -> {
-                            viewModel.reminderState.set(ReminderState.NO_REMINDER)
-                        }
-                    }
-                    it.reminder?.let { reminder ->
-                        when {
-                            currentDate().timeInMillis > reminder -> {
-                                viewModel.reminderCompletion.set(ReminderCompletion.COMPLETED)
-                            }
-                            else -> {
-                                viewModel.reminderCompletion.set(ReminderCompletion.ONGOING)
-                            }
-                        }
+                    } else {
+                        viewModel.reminderState.set(ReminderState.NO_REMINDER)
                     }
                 }
             })
@@ -170,13 +163,10 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
     }
 
     private fun onBackClicked() {
-        when {
-            viewModel.isChanged -> {
-                openAlertDialog()
-            }
-            else -> {
-                findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
-            }
+        if (viewModel.isChanged) {
+            openAlertDialog()
+        } else {
+            findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
         }
     }
 
@@ -225,10 +215,12 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
     }
 
     private fun saveNote() {
-        viewModel.saveNote()
-        scheduleReminder()
+        if (viewModel.isChanged) {
+            viewModel.saveNote()
+            scheduleReminder()
+            Toast.makeText(context, getString(R.string.changes_saved), Toast.LENGTH_LONG).show()
+        }
         findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
-        Toast.makeText(context, getString(R.string.changes_saved), Toast.LENGTH_LONG).show()
     }
 
     private fun cancelReminder() {
