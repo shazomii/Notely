@@ -3,7 +3,6 @@ package com.davenet.notely.viewmodels
 import android.app.Activity
 import android.app.Application
 import android.content.Context
-import android.widget.TextView
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.davenet.notely.database.asDomainModelEntry
@@ -13,8 +12,11 @@ import com.davenet.notely.repository.NoteRepository
 import com.davenet.notely.util.ReminderCompletion
 import com.davenet.notely.util.ReminderState
 import com.davenet.notely.util.currentDate
-import kotlinx.coroutines.*
+import com.davenet.notely.work.Utility
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.runBlocking
 
 @InternalCoroutinesApi
 @ExperimentalCoroutinesApi
@@ -23,9 +25,6 @@ class EditNoteViewModel(private val selectedNoteId: Int?, application: Applicati
     private lateinit var selectedNote: NoteEntry
     private lateinit var scheduledNote: NoteEntry
 
-    private var viewModelJob = Job()
-    private val viewModelScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-
     val reminderState = ObservableField(ReminderState.NO_REMINDER)
     val reminderCompletion = ObservableField(ReminderCompletion.ONGOING)
 
@@ -33,9 +32,9 @@ class EditNoteViewModel(private val selectedNoteId: Int?, application: Applicati
     val noteBeingModified: LiveData<NoteEntry?> get() = _noteBeingModified
 
     private var _mIsEdit = MutableLiveData<Boolean>()
-    val mIsEdit: LiveData<Boolean> get() = _mIsEdit
 
     private val noteRepository = NoteRepository(getDatabase(application))
+    private val utility = Utility()
 
 
     init {
@@ -50,9 +49,9 @@ class EditNoteViewModel(private val selectedNoteId: Int?, application: Applicati
     }
 
     private fun getSelectedNote() {
-        viewModelScope.launch {
+        runBlocking {
             noteRepository.getNote(selectedNoteId!!).collect { noteEntry ->
-                _noteBeingModified.postValue(noteEntry)
+                _noteBeingModified.value = noteEntry
                 selectedNote = noteEntry!!.copy().asDomainModelEntry()
             }
         }
@@ -66,30 +65,31 @@ class EditNoteViewModel(private val selectedNoteId: Int?, application: Applicati
         }
     }
 
-    var isChanged: Boolean = false
+    private val _isChanged: MutableLiveData<Boolean>
         get() = if (_mIsEdit.value!!) {
-            _noteBeingModified.value != selectedNote
+            MutableLiveData(_noteBeingModified.value != selectedNote)
         } else {
-            _noteBeingModified.value != noteRepository.emptyNote
+            MutableLiveData(_noteBeingModified.value != noteRepository.emptyNote)
         }
-        private set
 
-    fun pickDate(context: Context, note: NoteEntry, reminder: TextView) {
-        noteRepository.pickDateTime(context, note, reminder)
+    val isChanged: LiveData<Boolean> get() = _isChanged
+
+    fun setDateTime(dateTime: Long) {
+        _noteBeingModified.value = _noteBeingModified.value!!.copy(reminder = dateTime)
     }
 
     fun pickColor(activity: Activity, note: NoteEntry) {
-        noteRepository.pickColor(activity, note)
+        utility.pickColor(activity, note)
     }
 
     fun scheduleReminder(context: Context, note: NoteEntry) {
         if (_noteBeingModified.value!!.reminder != null && _noteBeingModified.value!!.reminder!! > currentDate().timeInMillis) {
             if (_mIsEdit.value!!) {
-                noteRepository.createSchedule(context, note)
+                utility.createSchedule(context, note)
                 updateNote(note)
             } else {
                 getUpdatedNote()
-                noteRepository.createSchedule(context, scheduledNote)
+                utility.createSchedule(context, scheduledNote)
                 updateNote(scheduledNote)
             }
             reminderCompletion.set(ReminderCompletion.ONGOING)
@@ -97,7 +97,8 @@ class EditNoteViewModel(private val selectedNoteId: Int?, application: Applicati
     }
 
     fun cancelReminder(context: Context, note: NoteEntry) {
-        noteRepository.cancelAlarm(context, note)
+        _noteBeingModified.value = _noteBeingModified.value!!.copy(reminder = null, started = false)
+        utility.cancelAlarm(context, note)
     }
 
     fun saveNote() {
