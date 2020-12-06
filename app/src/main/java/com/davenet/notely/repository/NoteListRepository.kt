@@ -1,9 +1,7 @@
 package com.davenet.notely.repository
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
-import androidx.work.WorkManager
 import com.davenet.notely.database.NotesDatabase
 import com.davenet.notely.database.asDomainModel
 import com.davenet.notely.domain.NoteEntry
@@ -38,11 +36,5 @@ class NoteListRepository(private val database: NotesDatabase) {
         withContext(Dispatchers.IO) {
             database.noteDao.insertNotesList(noteList.asDataBaseModel())
         }
-    }
-
-    fun cancelAlarm(context: Context, note: NoteEntry) {
-        val workName = "Work ${note.id}"
-        val instanceWorkManager = WorkManager.getInstance(context)
-        instanceWorkManager.cancelUniqueWork(workName)
     }
 }
