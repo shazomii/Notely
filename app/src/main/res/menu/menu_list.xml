@@ -6,5 +6,6 @@
         android:icon="@drawable/ic_baseline_delete_24"
         android:orderInCategory="500"
         android:title="@string/clear"
+        android:visible="false"
         app:showAsAction="ifRoom" />
 </menu>
