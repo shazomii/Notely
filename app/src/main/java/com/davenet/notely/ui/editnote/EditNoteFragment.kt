@@ -121,6 +121,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
                 true
             }
             R.id.action_remind -> {
+                hideKeyboard(view, requireContext())
                 pickDate()
                 true
             }

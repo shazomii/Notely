@@ -1,5 +1,6 @@
 package com.davenet.notely.ui
 
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -8,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.davenet.notely.databinding.NoteItemBinding
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.ui.NotesAdapter.ViewHolder.Companion.from
+import com.davenet.notely.util.NoteFilter
+import com.davenet.notely.util.currentDate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,9 +24,18 @@ class NotesAdapter(private val clickListener: NoteListener) :
         return from(parent)
     }
 
-    fun submitToList(list: List<NoteEntry>?) {
+    fun submitToList(list: List<NoteEntry>?, noteFilter: NoteFilter) {
         adapterScope.launch {
-            val items = list?.map { it }
+            val items = when (noteFilter)  {
+                NoteFilter.ALL -> {
+                    list?.map { it }
+                        ?.filter { DateUtils.isToday(it.reminder!!) }
+                }
+                NoteFilter.UPCOMING -> {
+                    list?.map { it }
+                        ?.filter { it.reminder!! > currentDate().timeInMillis}
+                } else -> list?.map { it }
+            }
             withContext(Dispatchers.Main) {
                 submitList(items)
             }

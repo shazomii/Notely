@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -19,12 +20,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.davenet.notely.R
 import com.davenet.notely.databinding.FragmentNoteListBinding
 import com.davenet.notely.domain.NoteEntry
+import com.davenet.notely.ui.MainActivity
 import com.davenet.notely.ui.NoteListener
 import com.davenet.notely.ui.NotesAdapter
-import com.davenet.notely.util.Constants
-import com.davenet.notely.util.UIState
-import com.davenet.notely.util.calculateNoOfColumns
-import com.davenet.notely.util.setVisible
+import com.davenet.notely.util.*
 import com.davenet.notely.viewmodels.NoteListViewModel
 import com.davenet.notely.viewmodels.NoteListViewModelFactory
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
@@ -45,6 +44,7 @@ class NoteListFragment : Fragment() {
     private lateinit var binding: FragmentNoteListBinding
     private lateinit var coordinator: CoordinatorLayout
     private lateinit var noteListData: LiveData<List<NoteEntry>>
+    private lateinit var filter: NoteFilter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,6 +73,7 @@ class NoteListFragment : Fragment() {
         if (arguments?.getInt(Constants.NOTE_ID) != null) {
             noteListViewModel.onNoteClicked(arguments?.getInt(Constants.NOTE_ID))
         }
+        filter = MainActivity().noteFilter.get()!!
 
         observeViewModel(adapter)
 
@@ -95,7 +96,8 @@ class NoteListFragment : Fragment() {
                     } else {
                         noteListViewModel.uiState.set(UIState.EMPTY)
                     }
-                    adapter.submitToList(noteList)
+                    Log.d("notefilter", filter.name)
+                    adapter.submitToList(noteList, filter)
                     activity?.invalidateOptionsMenu()
                 }
             })
