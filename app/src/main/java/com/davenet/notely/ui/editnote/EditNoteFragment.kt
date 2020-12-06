@@ -1,9 +1,13 @@
 package com.davenet.notely.ui.editnote
 
 import android.app.Activity
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import android.widget.DatePicker
+import android.widget.TimePicker
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
@@ -23,12 +27,16 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_edit_note.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
+import java.util.*
 
 @InternalCoroutinesApi
 @ExperimentalCoroutinesApi
-class EditNoteFragment : Fragment(), BottomSheetClickListener {
+class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.OnDateSetListener,
+    TimePickerDialog.OnTimeSetListener {
     private lateinit var binding: FragmentEditNoteBinding
     private lateinit var viewModel: EditNoteViewModel
+    private lateinit var pickedDateTime: Calendar
+    private lateinit var currentDateTime: Calendar
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,6 +69,27 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+        observeViewModel()
+    }
+
+    private fun observeViewModel() {
+        viewModel.apply {
+            noteBeingModified.observe(viewLifecycleOwner, { note ->
+                note?.let {
+                    if (it.reminder != null) {
+                        viewModel.reminderState.set(ReminderState.HAS_REMINDER)
+                        if (currentDate().timeInMillis > note.reminder!!) {
+                            viewModel.reminderCompletion.set(ReminderCompletion.COMPLETED)
+                        } else {
+                            viewModel.reminderCompletion.set(ReminderCompletion.ONGOING)
+                        }
+                    } else {
+                        viewModel.reminderState.set(ReminderState.NO_REMINDER)
+                    }
+                    activity?.invalidateOptionsMenu()
+                }
+            })
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -78,7 +107,6 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_edit, menu)
-        activity?.invalidateOptionsMenu()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -109,34 +137,9 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
-        viewModel.apply {
-            mIsEdit.observe(viewLifecycleOwner, {
-                it?.let { isEdit ->
-                    menu.findItem(R.id.action_share).isVisible = isEdit
-                }
-            })
-
-            noteBeingModified.observe(viewLifecycleOwner, { note ->
-                note?.let {
-                    val isNotBlank = note.title.isNotBlank() && note.text.isNotBlank()
-                    menu.findItem(R.id.action_save).isEnabled = viewModel.isChanged && isNotBlank
-                    menu.findItem(R.id.action_remind).isVisible =
-                        isNotBlank && note.reminder == null
-
-                    if (note.reminder != null) {
-                        viewModel.reminderState.set(ReminderState.HAS_REMINDER)
-                        if (currentDate().timeInMillis > note.reminder!!) {
-                            viewModel.reminderCompletion.set(ReminderCompletion.COMPLETED)
-                        } else {
-                            viewModel.reminderCompletion.set(ReminderCompletion.ONGOING)
-                        }
-                    } else {
-                        viewModel.reminderState.set(ReminderState.NO_REMINDER)
-                    }
-                }
-            })
-        }
-        return super.onPrepareOptionsMenu(menu)
+        super.onPrepareOptionsMenu(menu)
+        val isVisible = viewModel.reminderState.get()?.equals(ReminderState.NO_REMINDER)
+        menu.findItem(R.id.action_remind).isVisible = isVisible!!
     }
 
     override fun onPause() {
@@ -163,7 +166,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
     }
 
     private fun onBackClicked() {
-        if (viewModel.isChanged) {
+        if (viewModel.isChanged.value!!) {
             openAlertDialog()
         } else {
             findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
@@ -202,25 +205,30 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
         startActivity(shareIntent)
     }
 
-    private fun pickDate() {
-        viewModel.pickDate(
-            requireContext(),
-            viewModel.noteBeingModified.value!!,
-            textNoteReminder
-        )
-    }
-
     private fun pickColor(activity: Activity, note: NoteEntry) {
         viewModel.pickColor(activity, note)
     }
 
     private fun saveNote() {
-        if (viewModel.isChanged) {
-            viewModel.saveNote()
-            scheduleReminder()
-            Toast.makeText(context, getString(R.string.changes_saved), Toast.LENGTH_LONG).show()
+        when {
+            viewModel.noteBeingModified.value!!.title.isBlank() or viewModel.noteBeingModified.value!!.text.isBlank() -> {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.not_be_blank),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            viewModel.isChanged.value!! -> {
+                viewModel.saveNote()
+                scheduleReminder()
+                Toast.makeText(context, getString(R.string.changes_saved), Toast.LENGTH_LONG).show()
+                findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
+            }
+            else -> {
+                findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
+
+            }
         }
-        findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
     }
 
     private fun cancelReminder() {
@@ -229,5 +237,39 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener {
 
     private fun scheduleReminder() {
         viewModel.scheduleReminder(requireContext(), viewModel.noteBeingModified.value!!)
+    }
+
+    private fun pickDate() {
+        currentDateTime = currentDate()
+        val startYear = currentDateTime.get(Calendar.YEAR)
+        val startMonth = currentDateTime.get(Calendar.MONTH)
+        val startDay = currentDateTime.get(Calendar.DAY_OF_MONTH)
+        val datePickerDialog =
+            DatePickerDialog(requireContext(), this, startYear, startMonth, startDay)
+        datePickerDialog.show()
+    }
+
+    override fun onDateSet(p0: DatePicker?, p1: Int, p2: Int, p3: Int) {
+        pickedDateTime = currentDate()
+        pickedDateTime.set(p1, p2, p3)
+        currentDateTime = currentDate()
+        val hourOfDay = currentDateTime.get(Calendar.HOUR_OF_DAY)
+        val minuteOfDay = currentDateTime.get(Calendar.MINUTE)
+        val timePickerDialog =
+            TimePickerDialog(requireContext(), this, hourOfDay, minuteOfDay, false)
+        timePickerDialog.show()
+    }
+
+    override fun onTimeSet(p0: TimePicker?, p1: Int, p2: Int) {
+        pickedDateTime.set(Calendar.HOUR_OF_DAY, p1)
+        pickedDateTime.set(Calendar.MINUTE, p2)
+        if (pickedDateTime.timeInMillis <= currentDate().timeInMillis) {
+            pickedDateTime.run {
+                set(Calendar.DAY_OF_MONTH, currentDateTime.get(Calendar.DAY_OF_MONTH) + 1)
+                set(Calendar.YEAR, currentDateTime.get(Calendar.YEAR))
+                set(Calendar.MONTH, currentDateTime.get(Calendar.MONTH))
+            }
+        }
+        viewModel.setDateTime(pickedDateTime.timeInMillis)
     }
 }
