@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED
 import androidx.fragment.app.Fragment
@@ -25,6 +24,7 @@ import com.davenet.notely.ui.NotesAdapter
 import com.davenet.notely.util.Constants
 import com.davenet.notely.util.UIState
 import com.davenet.notely.util.calculateNoOfColumns
+import com.davenet.notely.util.setVisible
 import com.davenet.notely.viewmodels.NoteListViewModel
 import com.davenet.notely.viewmodels.NoteListViewModelFactory
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
@@ -53,7 +53,7 @@ class NoteListFragment : Fragment() {
         setHasOptionsMenu(true)
         requireActivity().apply {
             drawer_layout.setDrawerLockMode(LOCK_MODE_UNLOCKED)
-            toolbar.isVisible = true
+            toolbar.setVisible(true)
         }
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_note_list, container, false
@@ -96,6 +96,7 @@ class NoteListFragment : Fragment() {
                         noteListViewModel.uiState.set(UIState.EMPTY)
                     }
                     adapter.submitToList(noteList)
+                    activity?.invalidateOptionsMenu()
                 }
             })
 
@@ -190,7 +191,6 @@ class NoteListFragment : Fragment() {
         return when (item.itemId) {
             R.id.action_clear -> {
                 openAlertDialog()
-                activity?.invalidateOptionsMenu()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -198,12 +198,9 @@ class NoteListFragment : Fragment() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
-        noteListViewModel.notes.observe(viewLifecycleOwner, { noteList ->
-            noteList?.let {
-                menu.findItem(R.id.action_clear).isVisible = noteList.isNotEmpty()
-            }
-        })
-        return super.onPrepareOptionsMenu(menu)
+        super.onPrepareOptionsMenu(menu)
+        val isVisible = noteListViewModel.uiState.get()?.equals(UIState.HAS_DATA)
+        menu.findItem(R.id.action_clear).isVisible = isVisible!!
     }
 
     private fun openAlertDialog() {
