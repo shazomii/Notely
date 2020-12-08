@@ -170,7 +170,9 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
         if (viewModel.isChanged.value!!) {
             openAlertDialog()
         } else {
-            findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
+//            findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
+            findNavController().popBackStack()
+//            findNavController().navigate(requireParentFragment().id)
         }
     }
 
@@ -191,7 +193,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
                 }
             }
             .setNegativeButton(getString(R.string.discard_note)) { _, _ ->
-                findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
+                findNavController().popBackStack()
             }
             .show()
     }
@@ -223,10 +225,10 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
                 viewModel.saveNote()
                 scheduleReminder()
                 Toast.makeText(context, getString(R.string.changes_saved), Toast.LENGTH_LONG).show()
-                findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
+                findNavController().popBackStack()
             }
             else -> {
-                findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
+                findNavController().popBackStack()
 
             }
         }

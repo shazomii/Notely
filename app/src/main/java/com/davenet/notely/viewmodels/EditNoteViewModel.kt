@@ -12,7 +12,6 @@ import com.davenet.notely.repository.NoteRepository
 import com.davenet.notely.util.ReminderCompletion
 import com.davenet.notely.util.ReminderState
 import com.davenet.notely.util.currentDate
-import com.davenet.notely.work.Utility
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -34,8 +33,6 @@ class EditNoteViewModel(private val selectedNoteId: Int?, application: Applicati
     private var _mIsEdit = MutableLiveData<Boolean>()
 
     private val noteRepository = NoteRepository(getDatabase(application))
-    private val utility = Utility()
-
 
     init {
         if (selectedNoteId != null) {
@@ -79,17 +76,17 @@ class EditNoteViewModel(private val selectedNoteId: Int?, application: Applicati
     }
 
     fun pickColor(activity: Activity, note: NoteEntry) {
-        utility.pickColor(activity, note)
+        noteRepository.pickColor(activity, note)
     }
 
     fun scheduleReminder(context: Context, note: NoteEntry) {
         if (_noteBeingModified.value!!.reminder != null && _noteBeingModified.value!!.reminder!! > currentDate().timeInMillis) {
             if (_mIsEdit.value!!) {
-                utility.createSchedule(context, note)
+                noteRepository.createSchedule(context, note)
                 updateNote(note)
             } else {
                 getUpdatedNote()
-                utility.createSchedule(context, scheduledNote)
+                noteRepository.createSchedule(context, scheduledNote)
                 updateNote(scheduledNote)
             }
             reminderCompletion.set(ReminderCompletion.ONGOING)
@@ -98,7 +95,7 @@ class EditNoteViewModel(private val selectedNoteId: Int?, application: Applicati
 
     fun cancelReminder(context: Context, note: NoteEntry) {
         _noteBeingModified.value = _noteBeingModified.value!!.copy(reminder = null, started = false)
-        utility.cancelAlarm(context, note)
+        noteRepository.cancelAlarm(context, note)
     }
 
     fun saveNote() {

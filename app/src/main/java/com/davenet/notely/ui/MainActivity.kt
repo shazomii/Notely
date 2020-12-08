@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GravityCompat
-import androidx.databinding.ObservableField
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -12,7 +11,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.davenet.notely.R
-import com.davenet.notely.util.NoteFilter
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -22,7 +20,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var auth: FirebaseAuth
-    val noteFilter = ObservableField(NoteFilter.ALL)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,21 +62,6 @@ class MainActivity : AppCompatActivity() {
 
         nav_view.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.allNotes -> {
-                    noteFilter.set(NoteFilter.ALL)
-                    navController.navigate(R.id.noteListFragment)
-                    true
-                }
-                R.id.todayNotes -> {
-                    noteFilter.set(NoteFilter.TODAY)
-                    navController.navigate(R.id.noteListFragment)
-                    true
-                }
-                R.id.upcomingNotes -> {
-                    noteFilter.set(NoteFilter.UPCOMING)
-                    navController.navigate(R.id.noteListFragment)
-                    true
-                }
                 R.id.action_logout -> {
                     auth.signOut()
                     navController.navigate(R.id.action_noteListFragment_to_loginFragment)

@@ -16,7 +16,7 @@
         <import type="com.davenet.notely.util.UtilKt" />
     </data>
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -100,5 +100,5 @@
                 app:visible="@{note.reminder > UtilKt.currentDate().timeInMillis}" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 </layout>
