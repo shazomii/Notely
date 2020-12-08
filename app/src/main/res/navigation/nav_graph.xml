@@ -33,13 +33,7 @@
         android:id="@+id/editNoteFragment"
         android:name="com.davenet.notely.ui.editnote.EditNoteFragment"
         android:label="Add Note"
-        tools:layout="@layout/fragment_edit_note">
-        <action
-            android:id="@+id/action_editNoteFragment_to_noteListFragment"
-            app:destination="@id/noteListFragment"
-            app:popUpTo="@id/noteListFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
+        tools:layout="@layout/fragment_edit_note"/>
     <fragment
         android:id="@+id/settingsFragment2"
         android:name="com.davenet.notely.ui.SettingsFragment"

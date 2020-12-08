@@ -20,26 +20,37 @@ class NotesAdapter(private val clickListener: NoteListener) :
     ListAdapter<NoteEntry, RecyclerView.ViewHolder>(NoteDiffCallback()) {
     private val adapterScope = CoroutineScope(Dispatchers.Default)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return from(parent)
-    }
-
     fun submitToList(list: List<NoteEntry>?, noteFilter: NoteFilter) {
         adapterScope.launch {
-            val items = when (noteFilter)  {
-                NoteFilter.ALL -> {
-                    list?.map { it }
-                        ?.filter { DateUtils.isToday(it.reminder!!) }
-                }
-                NoteFilter.UPCOMING -> {
-                    list?.map { it }
-                        ?.filter { it.reminder!! > currentDate().timeInMillis}
-                } else -> list?.map { it }
-            }
             withContext(Dispatchers.Main) {
+                val items = when (noteFilter.ordinal) {
+                    1 -> {
+                        list?.map { it }
+//                            ?.filter { noteEntry ->  noteEntry.reminder != null }
+                            ?.filter { noteEntry ->
+                                noteEntry.reminder != null && DateUtils.isToday(
+                                    noteEntry.reminder!!
+                                )
+                            }
+                    }
+                    2 -> {
+                        list?.map { it }
+//                            ?.filter { noteEntry ->  noteEntry.reminder != null }
+                            ?.filter { noteEntry -> noteEntry.reminder != null && noteEntry.reminder!! > currentDate().timeInMillis }
+                    }
+                    3 -> {
+                        list?.map { it }
+                            ?.filter { noteEntry -> noteEntry.reminder != null && noteEntry.reminder!! < currentDate().timeInMillis }
+                    }
+                    else -> list?.map { it }
+                }
                 submitList(items)
             }
         }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return from(parent)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {

@@ -7,9 +7,9 @@ import androidx.lifecycle.*
 import com.davenet.notely.database.getDatabase
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.repository.NoteListRepository
+import com.davenet.notely.util.NoteFilter
 import com.davenet.notely.util.UIState
 import com.davenet.notely.util.currentDate
-import com.davenet.notely.work.Utility
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -17,9 +17,9 @@ import kotlinx.coroutines.launch
 
 class NoteListViewModel(application: Application) : AndroidViewModel(application) {
     private val noteListRepository = NoteListRepository(getDatabase(application))
-    private val utility = Utility()
 
     val uiState = ObservableField(UIState.LOADING)
+    val noteFilter = ObservableField(NoteFilter.ALL)
 
     private var viewModelJob = Job()
     private val viewModelScope = CoroutineScope(Dispatchers.Main + viewModelJob)
@@ -33,6 +33,10 @@ class NoteListViewModel(application: Application) : AndroidViewModel(application
         _navigateToNoteDetail.value = noteId
     }
 
+    fun onNoteDetailNavigated() {
+        _navigateToNoteDetail.value = null
+    }
+
     fun deleteAllNotes() {
         viewModelScope.launch {
             noteListRepository.deleteAllNotes()
@@ -41,7 +45,7 @@ class NoteListViewModel(application: Application) : AndroidViewModel(application
 
     fun deleteNote(context: Context, note: NoteEntry) {
         if (note.started) {
-            utility.cancelAlarm(context, note)
+            noteListRepository.cancelAlarm(context, note)
         }
         viewModelScope.launch {
             noteListRepository.deleteNote(note)
@@ -50,7 +54,7 @@ class NoteListViewModel(application: Application) : AndroidViewModel(application
 
     fun restoreNote(context: Context, note: NoteEntry) {
         if (note.started && note.reminder!! > currentDate().timeInMillis) {
-            utility.createSchedule(context, note)
+            noteListRepository.createSchedule(context, note)
         }
         viewModelScope.launch {
             noteListRepository.restoreNote(note)
@@ -60,7 +64,7 @@ class NoteListViewModel(application: Application) : AndroidViewModel(application
     fun insertAllNotes(context: Context, noteList: List<NoteEntry>) {
         for (note in noteList) {
             if (note.started && note.reminder!! > currentDate().timeInMillis) {
-                utility.createSchedule(context, note)
+                noteListRepository.createSchedule(context, note)
             }
         }
         viewModelScope.launch {

@@ -11,4 +11,11 @@
         <item>MODE_NIGHT_NO</item>
         <item>MODE_NIGHT_YES</item>
     </string-array>
+
+    <string-array name="filter_array">
+        <item>All</item>
+        <item>Today</item>
+        <item>Upcoming</item>
+        <item>Completed</item>
+    </string-array>
 </resources>

@@ -19,5 +19,6 @@ enum class ReminderCompletion {
 enum class NoteFilter {
     ALL,
     TODAY,
-    UPCOMING
+    UPCOMING,
+    COMPLETED
 }
