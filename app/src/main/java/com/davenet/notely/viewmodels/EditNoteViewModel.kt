@@ -12,10 +12,8 @@ import com.davenet.notely.repository.NoteRepository
 import com.davenet.notely.util.ReminderCompletion
 import com.davenet.notely.util.ReminderState
 import com.davenet.notely.util.currentDate
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.runBlocking
 
 @InternalCoroutinesApi
 @ExperimentalCoroutinesApi
@@ -27,10 +25,14 @@ class EditNoteViewModel(private val selectedNoteId: Int?, application: Applicati
     val reminderState = ObservableField(ReminderState.NO_REMINDER)
     val reminderCompletion = ObservableField(ReminderCompletion.ONGOING)
 
+    private var viewModelJob = Job()
+    private val viewModelScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+
     private var _noteBeingModified = MutableLiveData<NoteEntry?>()
     val noteBeingModified: LiveData<NoteEntry?> get() = _noteBeingModified
 
     private var _mIsEdit = MutableLiveData<Boolean>()
+    val mIsEdit: LiveData<Boolean> get() = _mIsEdit
 
     private val noteRepository = NoteRepository(getDatabase(application))
 
@@ -90,6 +92,15 @@ class EditNoteViewModel(private val selectedNoteId: Int?, application: Applicati
                 updateNote(scheduledNote)
             }
             reminderCompletion.set(ReminderCompletion.ONGOING)
+        }
+    }
+
+    fun deleteNote(context: Context, note: NoteEntry) {
+        if (note.started) {
+            cancelReminder(context, note)
+        }
+        viewModelScope.launch {
+            noteRepository.deleteNote(note.id!!)
         }
     }
 

@@ -6,7 +6,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.davenet.notely.database.getDatabase
 import com.davenet.notely.domain.NoteEntry
-import com.davenet.notely.repository.NoteListRepository
+import com.davenet.notely.repository.NoteRepository
 import com.davenet.notely.util.NoteFilter
 import com.davenet.notely.util.UIState
 import com.davenet.notely.util.currentDate
@@ -16,7 +16,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class NoteListViewModel(application: Application) : AndroidViewModel(application) {
-    private val noteListRepository = NoteListRepository(getDatabase(application))
+    private val noteListRepository by lazy { NoteRepository(getDatabase(application)) }
 
     val uiState = ObservableField(UIState.LOADING)
     val noteFilter = ObservableField(NoteFilter.ALL)
@@ -48,7 +48,7 @@ class NoteListViewModel(application: Application) : AndroidViewModel(application
             noteListRepository.cancelAlarm(context, note)
         }
         viewModelScope.launch {
-            noteListRepository.deleteNote(note)
+            noteListRepository.deleteNote(note.id!!)
         }
     }
 
@@ -57,7 +57,7 @@ class NoteListViewModel(application: Application) : AndroidViewModel(application
             noteListRepository.createSchedule(context, note)
         }
         viewModelScope.launch {
-            noteListRepository.restoreNote(note)
+            noteListRepository.insertNote(note)
         }
     }
 

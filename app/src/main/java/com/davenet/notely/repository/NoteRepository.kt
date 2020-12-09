@@ -2,9 +2,13 @@ package com.davenet.notely.repository
 
 import android.app.Activity
 import android.content.Context
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
 import com.davenet.notely.database.NotesDatabase
+import com.davenet.notely.database.asDomainModel
 import com.davenet.notely.database.asDomainModelEntry
 import com.davenet.notely.domain.NoteEntry
+import com.davenet.notely.domain.asDataBaseModel
 import com.davenet.notely.util.colors
 import com.davenet.notely.work.Utility
 import kotlinx.coroutines.Dispatchers
@@ -14,8 +18,32 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 
 class NoteRepository(private val database: NotesDatabase) {
-    val color = colors.random()
-    private val utility = Utility()
+    val color by lazy { colors.random() }
+
+    private val utility by lazy { Utility() }
+
+    val notes: LiveData<List<NoteEntry>> by lazy {
+        Transformations.map(database.noteDao.getAllNotes()) {
+            it.asDomainModel()
+        }
+    }
+
+    val emptyNote: NoteEntry
+        get() {
+            return NoteEntry(null, "", "", null, null, false, color)
+        }
+
+    suspend fun deleteAllNotes() {
+        withContext(Dispatchers.IO) {
+            database.noteDao.deleteAllNotes()
+        }
+    }
+
+    suspend fun insertAllNotes(noteList: List<NoteEntry>) {
+        withContext(Dispatchers.IO) {
+            database.noteDao.insertNotesList(noteList.asDataBaseModel())
+        }
+    }
 
     suspend fun getNote(noteId: Int): Flow<NoteEntry?> {
         return flow {
@@ -29,11 +57,6 @@ class NoteRepository(private val database: NotesDatabase) {
         }.flowOn(Dispatchers.IO)
     }
 
-    val emptyNote: NoteEntry
-        get() {
-            return NoteEntry(null, "", "", null, null, false, color)
-        }
-
     suspend fun insertNote(note: NoteEntry) {
         withContext(Dispatchers.IO) {
             database.noteDao.insert(note.copy())
@@ -43,6 +66,12 @@ class NoteRepository(private val database: NotesDatabase) {
     suspend fun updateNote(note: NoteEntry) {
         withContext(Dispatchers.IO) {
             database.noteDao.update(note.copy())
+        }
+    }
+
+    suspend fun deleteNote(id: Int) {
+        withContext(Dispatchers.IO) {
+            database.noteDao.deleteNote(id)
         }
     }
 
