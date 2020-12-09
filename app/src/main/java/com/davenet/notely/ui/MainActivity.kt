@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
         auth = FirebaseAuth.getInstance()
         val user = auth.currentUser
 
@@ -34,8 +35,6 @@ class MainActivity : AppCompatActivity() {
             darkModeValues[1] -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             darkModeValues[2] -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
-
-        setContentView(R.layout.activity_main)
 
         setSupportActionBar(toolbar)
 
