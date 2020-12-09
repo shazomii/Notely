@@ -3,6 +3,7 @@ package com.davenet.notely.ui.editnote
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -25,8 +26,7 @@ import com.davenet.notely.viewmodels.EditNoteViewModel
 import com.davenet.notely.viewmodels.EditNoteViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_edit_note.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.*
 import java.util.*
 
 @InternalCoroutinesApi
@@ -37,6 +37,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
     private lateinit var viewModel: EditNoteViewModel
     private lateinit var pickedDateTime: Calendar
     private lateinit var currentDateTime: Calendar
+    private lateinit var uiScope: CoroutineScope
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -94,6 +95,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        uiScope = CoroutineScope(Dispatchers.Default)
 
         reminderCard?.setOnClickListener {
             childFragmentManager.let {
@@ -129,6 +131,10 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
                 pickColor(requireActivity(), viewModel.noteBeingModified.value!!)
                 true
             }
+            R.id.action_delete -> {
+                openDeleteDialog()
+                true
+            }
             android.R.id.home -> {
                 onBackClicked()
                 true
@@ -137,10 +143,32 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
         }
     }
 
+    private fun openDeleteDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete note")
+            .setMessage("This action cannot be undone. Sure to delete?")
+            .setPositiveButton("Delete") { _, _ ->
+                val note = viewModel.noteBeingModified.value!!
+                deleteNote(requireContext(), note)
+                findNavController().popBackStack()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun deleteNote(context: Context, note: NoteEntry) {
+        uiScope.launch {
+            withContext(Dispatchers.Main) {
+                viewModel.deleteNote(context, note)
+            }
+        }
+    }
+
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
         val isVisible = viewModel.reminderState.get()?.equals(ReminderState.NO_REMINDER)
         menu.findItem(R.id.action_remind).isVisible = isVisible!!
+        menu.findItem(R.id.action_delete).isVisible = viewModel.mIsEdit.value!!
     }
 
     override fun onPause() {
@@ -170,9 +198,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
         if (viewModel.isChanged.value!!) {
             openAlertDialog()
         } else {
-//            findNavController().navigate(R.id.action_editNoteFragment_to_noteListFragment)
             findNavController().popBackStack()
-//            findNavController().navigate(requireParentFragment().id)
         }
     }
 
