@@ -37,14 +37,19 @@ class NoteListViewModel(application: Application) : AndroidViewModel(application
         _navigateToNoteDetail.value = null
     }
 
-    fun deleteAllNotes() {
+    fun deleteAllNotes(context: Context, noteList: List<NoteEntry>) {
+        for (note in noteList) {
+            if (note.started && note.reminder!! > currentDate().timeInMillis) {
+                noteListRepository.cancelAlarm(context, note)
+            }
+        }
         viewModelScope.launch {
             noteListRepository.deleteAllNotes()
         }
     }
 
     fun deleteNote(context: Context, note: NoteEntry) {
-        if (note.started) {
+        if (note.started && note.reminder!! > currentDate().timeInMillis) {
             noteListRepository.cancelAlarm(context, note)
         }
         viewModelScope.launch {

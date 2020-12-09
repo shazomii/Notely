@@ -220,7 +220,7 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
             .setMessage(getString(R.string.confirm_delete_message))
             .setNegativeButton(getString(R.string.cancel), null)
             .setPositiveButton(getString(R.string.delete)) { _, _ ->
-                deleteAllNotes()
+                deleteAllNotes(requireContext(), noteListViewModel.notes.value!!)
                 undoDeleteNotes(requireContext(), noteListViewModel.notes.value!!)
             }
             .show()
@@ -240,10 +240,10 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
     }
 
-    private fun deleteAllNotes() {
+    private fun deleteAllNotes(context: Context, noteList: List<NoteEntry>) {
         uiScope.launch {
             withContext(Dispatchers.Main) {
-                noteListViewModel.deleteAllNotes()
+                noteListViewModel.deleteAllNotes(context, noteList)
             }
         }
     }
