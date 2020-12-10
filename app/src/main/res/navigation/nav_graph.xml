@@ -19,60 +19,20 @@
         <action
             android:id="@+id/action_noteListFragment_to_settingsFragment2"
             app:destination="@id/settingsFragment2" />
-        <action
-            android:id="@+id/action_noteListFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit"
-            app:popUpTo="@id/noteListFragment"
-            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/editNoteFragment"
         android:name="com.davenet.notely.ui.editnote.EditNoteFragment"
         android:label="Add Note"
-        tools:layout="@layout/fragment_edit_note"/>
+        tools:layout="@layout/fragment_edit_note">
+        <argument
+            android:name="noteId"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment2"
         android:name="com.davenet.notely.ui.SettingsFragment"
         android:label="@string/title_activity_settings"
         tools:layout="@layout/fragment_settings" />
-    <fragment
-        android:id="@+id/loginFragment"
-        android:name="com.davenet.notely.ui.LoginFragment"
-        android:label="LoginFragment"
-        app:startDestination="@id/action_loginFragment_to_noteListFragment"
-        tools:layout="@layout/fragment_login">
-        <action
-            android:id="@+id/action_loginFragment_to_noteListFragment"
-            app:destination="@id/noteListFragment"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit"
-            app:popUpTo="@id/loginFragment"
-            app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_loginFragment_to_signUpFragment"
-            app:destination="@id/signUpFragment"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popUpTo="@id/loginFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
-    <fragment
-        android:id="@+id/signUpFragment"
-        android:name="com.davenet.notely.ui.SignUpFragment"
-        android:label="fragment_signup"
-        tools:layout="@layout/fragment_signup">
-        <action
-            android:id="@+id/action_signUpFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popUpTo="@id/signUpFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
 </navigation>

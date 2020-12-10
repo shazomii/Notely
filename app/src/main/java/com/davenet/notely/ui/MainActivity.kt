@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GravityCompat
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -11,21 +12,20 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.davenet.notely.R
-import com.google.firebase.auth.FirebaseAuth
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.nav_header_main.view.*
+import com.davenet.notely.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var auth: FirebaseAuth
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        auth = FirebaseAuth.getInstance()
-        val user = auth.currentUser
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val darkModeValues = resources.getStringArray(R.array.pref_theme_values)
 
@@ -36,41 +36,17 @@ class MainActivity : AppCompatActivity() {
             darkModeValues[2] -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
 
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.appBarMain.toolbar)
 
-        val navController = findNavController(R.id.nav_host_fragment)
+        navController = findNavController(R.id.nav_host_fragment)
 
-        appBarConfiguration = AppBarConfiguration(setOf(R.id.noteListFragment), drawer_layout)
+        appBarConfiguration = AppBarConfiguration(setOf(R.id.noteListFragment), binding.drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        nav_view.setupWithNavController(navController)
+        binding.navView.setupWithNavController(navController)
 
-        val menu = nav_view.menu
-        val logoutItem = menu.findItem(R.id.action_logout)
-        val loginItem = menu.findItem(R.id.action_signIn)
-
-        if (user != null) {
-            val navHeader = nav_view.getHeaderView(0)
-            navHeader.currentUserEmail.text = user.email
-            logoutItem.isVisible = true
-            loginItem.isVisible = false
-        } else {
-            logoutItem.isVisible = false
-            loginItem.isVisible = true
-        }
-
-        nav_view.setNavigationItemSelectedListener { menuItem ->
+        binding.navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.action_logout -> {
-                    auth.signOut()
-                    navController.navigate(R.id.action_noteListFragment_to_loginFragment)
-                    recreate()
-                    true
-                }
-                R.id.action_signIn -> {
-                    navController.navigate(R.id.action_noteListFragment_to_loginFragment)
-                    true
-                }
                 R.id.settingsFragment2 -> {
                     navController.navigate(R.id.action_noteListFragment_to_settingsFragment2)
                     true
@@ -81,15 +57,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
         }
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 }

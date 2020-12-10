@@ -11,7 +11,7 @@
 
         <variable
             name="clickListener"
-            type="com.davenet.notely.ui.NoteListener" />
+            type="android.view.View.OnClickListener" />
 
         <import type="com.davenet.notely.util.UtilKt" />
     </data>
@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:onClick="@{() -> clickListener.onClick(note.id)}"
+        android:onClick="@{clickListener}"
         app:cardCornerRadius="4dp"
         app:cardElevation="4dp"
         app:cardUseCompatPadding="false">

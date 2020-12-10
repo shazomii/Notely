@@ -1,4 +1,4 @@
-package com.davenet.notely.util
+package com.davenet.notely.adapters
 
 import android.graphics.Paint
 import android.view.View

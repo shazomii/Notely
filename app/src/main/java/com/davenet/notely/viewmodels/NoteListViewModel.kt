@@ -1,10 +1,9 @@
 package com.davenet.notely.viewmodels
 
-import android.app.Application
 import android.content.Context
 import androidx.databinding.ObservableField
-import androidx.lifecycle.*
-import com.davenet.notely.database.getDatabase
+import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.ViewModel
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.repository.NoteRepository
 import com.davenet.notely.util.NoteFilter
@@ -15,27 +14,25 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class NoteListViewModel(application: Application) : AndroidViewModel(application) {
-    private val noteListRepository by lazy { NoteRepository(getDatabase(application)) }
-
+class NoteListViewModel @ViewModelInject internal constructor(private val noteListRepository: NoteRepository) : ViewModel() {
     val uiState = ObservableField(UIState.LOADING)
     val noteFilter = ObservableField(NoteFilter.ALL)
 
     private var viewModelJob = Job()
     private val viewModelScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    private val _navigateToNoteDetail = MutableLiveData<Int?>()
-    val navigateToNoteDetail: LiveData<Int?> get() = _navigateToNoteDetail
+//    private val _navigateToNoteDetail = MutableLiveData<Int?>()
+//    val navigateToNoteDetail: LiveData<Int?> get() = _navigateToNoteDetail
 
     var notes = noteListRepository.notes
 
-    fun onNoteClicked(noteId: Int?) {
-        _navigateToNoteDetail.value = noteId
-    }
-
-    fun onNoteDetailNavigated() {
-        _navigateToNoteDetail.value = null
-    }
+//    fun onNoteClicked(noteId: Int?) {
+//        _navigateToNoteDetail.value = noteId
+//    }
+//
+//    fun onNoteDetailNavigated() {
+//        _navigateToNoteDetail.value = null
+//    }
 
     fun deleteAllNotes(context: Context, noteList: List<NoteEntry>) {
         for (note in noteList) {
@@ -75,15 +72,5 @@ class NoteListViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             noteListRepository.insertAllNotes(noteList)
         }
-    }
-}
-
-class NoteListViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
-    @Suppress("unchecked_cast")
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(NoteListViewModel::class.java)) {
-            return NoteListViewModel(application) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel Class")
     }
 }

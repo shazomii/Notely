@@ -7,13 +7,5 @@
             android:id="@+id/settingsFragment2"
             android:icon="@drawable/ic_baseline_settings_24"
             android:title="@string/action_settings" />
-        <item
-            android:id="@+id/action_signIn"
-            android:icon="@drawable/ic_baseline_login_24"
-            android:title="@string/login_register" />
-        <item
-            android:id="@+id/action_logout"
-            android:icon="@drawable/ic_logout"
-            android:title="@string/logout" />
     </group>
 </menu>

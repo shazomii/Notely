@@ -1,9 +1,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-parcelize'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
-apply plugin: 'com.google.gms.google-services'
+apply plugin: 'dagger.hilt.android.plugin'
 
 
 android {
@@ -23,6 +23,11 @@ android {
                 arg("room.schemaLocation", "$projectDir/schemas")
             }
         }
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments["dagger.hilt.disableModulesHaveInstallInCheck"] = "true"
+            }
+        }
     }
 
     buildTypes {
@@ -33,6 +38,7 @@ android {
     }
     buildFeatures {
         dataBinding true
+        viewBinding true
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -50,24 +56,30 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.1'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.3.1'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.2'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     // Room and Lifecycle dependencies
     implementation "androidx.room:room-runtime:2.2.5"
     implementation 'androidx.preference:preference-ktx:1.1.1'
-    implementation 'com.google.firebase:firebase-auth:20.0.1'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.work:work-runtime:2.4.0'
+    implementation 'androidx.recyclerview:recyclerview-selection:1.1.0-rc03'
     kapt "androidx.room:room-compiler:2.2.5"
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
     implementation 'it.xabaras.android:recyclerview-swipedecorator:1.2.3'
     implementation 'petrov.kristiyan:colorpicker-library:1.1.10'
+    compileOnly "com.squareup.inject:assisted-inject-annotations-dagger2:$assistedInjectVersion"
+    kapt "com.google.dagger:hilt-android-compiler:$hiltVersion"
+    kapt "androidx.hilt:hilt-compiler:$hiltViewModelVersion"
+    kapt "com.squareup.inject:assisted-inject-processor-dagger2:$assistedInjectVersion"
+    implementation "com.google.dagger:hilt-android:$hiltVersion"
+    implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hiltViewModelVersion"
 
     // Coroutines
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9"
-    implementation "androidx.datastore:datastore-preferences:1.0.0-alpha04"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1"
+    implementation "androidx.datastore:datastore-preferences:1.0.0-alpha05"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.8"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
     testImplementation 'junit:junit:4.13.1'

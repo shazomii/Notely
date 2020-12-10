@@ -13,53 +13,64 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
-import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.davenet.notely.R
 import com.davenet.notely.databinding.FragmentEditNoteBinding
 import com.davenet.notely.domain.NoteEntry
-import com.davenet.notely.util.*
+import com.davenet.notely.util.ReminderCompletion
+import com.davenet.notely.util.ReminderState
+import com.davenet.notely.util.currentDate
+import com.davenet.notely.util.hideKeyboard
 import com.davenet.notely.viewmodels.EditNoteViewModel
-import com.davenet.notely.viewmodels.EditNoteViewModelFactory
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_edit_note.*
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import java.util.*
+import javax.inject.Inject
 
 @InternalCoroutinesApi
 @ExperimentalCoroutinesApi
+@AndroidEntryPoint
 class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.OnDateSetListener,
     TimePickerDialog.OnTimeSetListener {
-    private lateinit var binding: FragmentEditNoteBinding
-    private lateinit var viewModel: EditNoteViewModel
+    private var _binding: FragmentEditNoteBinding? = null
+    private val binding get() = _binding!!
     private lateinit var pickedDateTime: Calendar
     private lateinit var currentDateTime: Calendar
     private lateinit var uiScope: CoroutineScope
+    private val args: EditNoteFragmentArgs by navArgs()
+
+    @Inject
+    lateinit var viewModelFactory: EditNoteViewModel.AssistedFactory
+
+    private val viewModel: EditNoteViewModel by viewModels {
+        EditNoteViewModel.provideFactory(
+            viewModelFactory,
+            args.noteId
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         setHasOptionsMenu(true)
-        requireActivity().drawer_layout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED)
-        binding = DataBindingUtil.inflate(
-            inflater, R.layout.fragment_edit_note, container, false
+        _binding = FragmentEditNoteBinding.inflate(
+            inflater, container, false
         )
+        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+
         return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        val application = requireNotNull(this.activity).application
-        val selectedNoteId: Int? = arguments?.getInt(Constants.NOTE_ID)
-        val viewModelFactory = EditNoteViewModelFactory(application, selectedNoteId)
-        viewModel = ViewModelProvider(this, viewModelFactory).get(EditNoteViewModel::class.java)
         binding.apply {
-            lifecycleOwner = this@EditNoteFragment
+            lifecycleOwner = viewLifecycleOwner
             editviewmodel = viewModel
             reminderState = viewModel.reminderState
             reminderCompletion = viewModel.reminderCompletion
@@ -97,7 +108,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
         super.onViewCreated(view, savedInstanceState)
         uiScope = CoroutineScope(Dispatchers.Default)
 
-        reminderCard?.setOnClickListener {
+        binding.reminderCard.setOnClickListener {
             childFragmentManager.let {
                 OptionsListDialogFragment.newInstance(Bundle()).apply {
                     show(it, tag)
@@ -300,5 +311,10 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
             }
         }
         viewModel.setDateTime(pickedDateTime.timeInMillis)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

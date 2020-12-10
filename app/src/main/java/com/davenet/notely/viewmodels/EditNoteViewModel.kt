@@ -1,24 +1,27 @@
 package com.davenet.notely.viewmodels
 
 import android.app.Activity
-import android.app.Application
 import android.content.Context
 import androidx.databinding.ObservableField
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.davenet.notely.database.asDomainModelEntry
-import com.davenet.notely.database.getDatabase
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.repository.NoteRepository
 import com.davenet.notely.util.ReminderCompletion
 import com.davenet.notely.util.ReminderState
 import com.davenet.notely.util.currentDate
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 
 @InternalCoroutinesApi
 @ExperimentalCoroutinesApi
-class EditNoteViewModel(private val selectedNoteId: Int?, application: Application) :
-    AndroidViewModel(application) {
+class EditNoteViewModel @AssistedInject constructor(private val noteRepository: NoteRepository, @Assisted private val selectedNoteId: Int?) :
+    ViewModel() {
     private lateinit var selectedNote: NoteEntry
     private lateinit var scheduledNote: NoteEntry
 
@@ -34,16 +37,14 @@ class EditNoteViewModel(private val selectedNoteId: Int?, application: Applicati
     private var _mIsEdit = MutableLiveData<Boolean>()
     val mIsEdit: LiveData<Boolean> get() = _mIsEdit
 
-    private val noteRepository = NoteRepository(getDatabase(application))
-
     init {
-        if (selectedNoteId != null) {
-            onNoteInserted()
-            getSelectedNote()
-        } else {
+        if (selectedNoteId == -1) {
             onNewNote()
             selectedNote = noteRepository.emptyNote
             _noteBeingModified.value = selectedNote
+        } else {
+            onNoteInserted()
+            getSelectedNote()
         }
     }
 
@@ -138,19 +139,21 @@ class EditNoteViewModel(private val selectedNoteId: Int?, application: Applicati
     private fun onNewNote() {
         _mIsEdit.value = false
     }
-}
 
-@ExperimentalCoroutinesApi
-class EditNoteViewModelFactory(
-    private val application: Application,
-    private val selectedNoteId: Int?
-) : ViewModelProvider.NewInstanceFactory() {
-    @InternalCoroutinesApi
-    @Suppress("unchecked_cast")
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(EditNoteViewModel::class.java)) {
-            return EditNoteViewModel(selectedNoteId, application) as T
+    @AssistedInject.Factory
+    interface AssistedFactory {
+        fun create(selectedNoteId: Int?): EditNoteViewModel
+    }
+
+    companion object {
+        fun provideFactory(
+            assistedFactory: AssistedFactory,
+            selectedNoteId: Int?
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return assistedFactory.create(selectedNoteId) as T
+            }
         }
-        throw IllegalArgumentException("Unknown ViewModel Class")
     }
 }

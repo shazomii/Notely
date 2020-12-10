@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.davenet.notely.R
+import com.davenet.notely.databinding.FragmentOptionsListDialogListDialogBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.fragment_options_list_dialog_list_dialog.*
 
 interface BottomSheetClickListener {
     fun onItemClick(item: String)
@@ -14,12 +14,16 @@ interface BottomSheetClickListener {
 
 class OptionsListDialogFragment : BottomSheetDialogFragment() {
     var mListener: BottomSheetClickListener? = null
+    private var _binding: FragmentOptionsListDialogListDialogBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_options_list_dialog_list_dialog, container, false)
+    ): View {
+        _binding = FragmentOptionsListDialogListDialogBinding.inflate(inflater, container, false)
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -27,14 +31,19 @@ class OptionsListDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupViews() {
-        modifyReminder.setOnClickListener {
+        binding.modifyReminder.setOnClickListener {
             dismissAllowingStateLoss()
             mListener?.onItemClick(getString(R.string.modify))
         }
-        deleteReminder.setOnClickListener {
+        binding.deleteReminder.setOnClickListener {
             dismissAllowingStateLoss()
             mListener?.onItemClick(getString(R.string.delete))
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {
@@ -42,6 +51,5 @@ class OptionsListDialogFragment : BottomSheetDialogFragment() {
             OptionsListDialogFragment().apply {
                 arguments = bundle
             }
-
     }
 }

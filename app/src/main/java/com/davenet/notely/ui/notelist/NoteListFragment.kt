@@ -7,73 +7,65 @@ import android.os.Bundle
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toolbar
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.databinding.DataBindingUtil
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.davenet.notely.R
+import com.davenet.notely.adapters.NotesAdapter
+import com.davenet.notely.adapters.setVisible
 import com.davenet.notely.databinding.FragmentNoteListBinding
 import com.davenet.notely.domain.NoteEntry
-import com.davenet.notely.ui.NoteListener
-import com.davenet.notely.ui.NotesAdapter
-import com.davenet.notely.util.*
+import com.davenet.notely.util.NoteFilter
+import com.davenet.notely.util.UIState
+import com.davenet.notely.util.calculateNoOfColumns
 import com.davenet.notely.viewmodels.NoteListViewModel
-import com.davenet.notely.viewmodels.NoteListViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.fragment_note_list.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.design.longSnackbar
 
-
+@AndroidEntryPoint
 class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
-    private  lateinit var noteListViewModel: NoteListViewModel
+    private val noteListViewModel: NoteListViewModel by viewModels()
     private lateinit var uiScope: CoroutineScope
-    private lateinit var binding: FragmentNoteListBinding
+    private var _binding: FragmentNoteListBinding? = null
+    private val binding get() = _binding!!
     private lateinit var coordinator: CoordinatorLayout
     private lateinit var adapter: NotesAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         setHasOptionsMenu(true)
         requireActivity().apply {
-            drawer_layout.setDrawerLockMode(LOCK_MODE_UNLOCKED)
-            toolbar.setVisible(true)
+            findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(LOCK_MODE_UNLOCKED)
+            findViewById<Toolbar>(R.id.toolbar).setVisible(true)
         }
-        binding = DataBindingUtil.inflate(
-            inflater, R.layout.fragment_note_list, container, false
-        )
+        _binding = FragmentNoteListBinding.inflate(inflater, container, false)
 
-        val application = requireNotNull(this.activity).application
+        adapter = NotesAdapter()
 
-        val viewModelFactory = NoteListViewModelFactory(application)
-
-        noteListViewModel =
-            ViewModelProvider(this, viewModelFactory).get(NoteListViewModel::class.java)
-
-        adapter = NotesAdapter(NoteListener { noteId ->
-            noteListViewModel.onNoteClicked(noteId)
-        })
-
-        arguments?.let {
-            if (it.containsKey(Constants.NOTE_ID)) {
-                noteListViewModel.onNoteClicked(it.getInt(Constants.NOTE_ID))
-                it.clear()
-            }
-        }
+//        arguments?.let {
+//            if (it.containsKey(Constants.NOTE_ID)) {
+//                adapter.
+//
+//                noteListViewModel.onNoteClicked(it.getInt(Constants.NOTE_ID))
+//                it.clear()
+//            }
+//        }
 
         observeViewModel()
 
@@ -101,22 +93,22 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 }
             })
 
-            navigateToNoteDetail.observe(viewLifecycleOwner, { noteId ->
-                noteId?.let {
-                    val bundle = Bundle()
-                    bundle.putInt(Constants.NOTE_ID, noteId)
-                    findNavController().navigate(
-                        R.id.action_noteListFragment_to_editNoteFragment, bundle
-                    )
-                    onNoteDetailNavigated()
-                }
-            })
+//            navigateToNoteDetail.observe(viewLifecycleOwner, { noteId ->
+//                noteId?.let {
+//                    val bundle = Bundle()
+//                    bundle.putInt(Constants.NOTE_ID, noteId)
+//                    findNavController().navigate(
+//                        R.id.action_noteListFragment_to_editNoteFragment, bundle
+//                    )
+//                    onNoteDetailNavigated()
+//                }
+//            })
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fab.setOnClickListener {
+        binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_noteListFragment_to_editNoteFragment)
         }
 
@@ -126,13 +118,15 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
             R.layout.spinner_item,
         ).also { adapter ->
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                spinnerNoteFilter.adapter = adapter
-                spinnerNoteFilter.onItemSelectedListener = this
+                binding.spinnerNoteFilter.apply {
+                    this.adapter = adapter
+                    onItemSelectedListener = this@NoteListFragment
+                }
             }
 
         uiScope = CoroutineScope(Dispatchers.Default)
 
-        coordinator = activity?.findViewById(R.id.list_coordinator)!!
+//        coordinator = activity?.findViewById(R.id.list_coordinator)!!
         ItemTouchHelper(object :
             ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             override fun onMove(
@@ -147,12 +141,12 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 val position = viewHolder.adapterPosition
                 val noteToErase = noteListViewModel.notes.value?.get(position)
                 deleteNote(requireContext(), noteToErase!!)
-                coordinator.longSnackbar(
-                    getString(R.string.note_deleted),
-                    getString(R.string.undo)
-                ) {
-                    restoreNote(requireContext(), noteToErase)
-                }
+//                coordinator.longSnackbar(
+//                    getString(R.string.note_deleted),
+//                    getString(R.string.undo)
+//                ) {
+//                    restoreNote(requireContext(), noteToErase)
+//                }
             }
 
             override fun onChildDraw(
@@ -282,5 +276,10 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
         return
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
