@@ -8,16 +8,7 @@
     <string name="category_display">Display</string>
     <string name="choose_theme">Choose theme</string>
     <string name="default_theme">MODE_NIGHT_FOLLOW_SYSTEM</string>
-    <string name="username">Name</string>
-    <string name="userEmail">Email</string>
-    <string name="userPassword">Password</string>
-    <string name="userRegister">Register</string>
-    <string name="userLogin">Login</string>
-    <string name="alreadyRegistered">Already have an account?</string>
-    <string name="newUser">Don\'t have an account?</string>
-    <string name="signIn">Sign In</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="please_wait">Please wait</string>
     <string name="app_logo">App Logo</string>
     <string name="share">Share</string>
     <string name="set_reminder">Set reminder</string>
@@ -25,7 +16,6 @@
     <string name="changes_saved">Changes saved</string>
     <string name="modify">Modify</string>
     <string name="delete">Delete</string>
-    <string name="verify">Please verify your  email.</string>
     <string name="notes_deleted">Notes deleted</string>
     <string name="undo">Undo</string>
     <string name="note_deleted">Note deleted</string>
@@ -39,9 +29,6 @@
     <string name="save">Save</string>
     <string name="discard_note">Discard</string>
     <string name="not_be_blank">Title and content cannot be blank</string>
-    <string name="logout">Logout</string>
-    <string name="login_register">Login/Register</string>
-    <string name="skip_login">Skip login</string>
     <string name="add_new_note">Add new note</string>
     <string name="clear">Clear</string>
     <string name="ok">OK</string>
