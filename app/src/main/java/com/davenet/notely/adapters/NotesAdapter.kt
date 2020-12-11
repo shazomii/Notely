@@ -1,6 +1,5 @@
 package com.davenet.notely.adapters
 
-import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.davenet.notely.databinding.NoteItemBinding
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.ui.notelist.NoteListFragmentDirections
-import com.davenet.notely.util.NoteFilter
-import com.davenet.notely.util.currentDate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,28 +18,10 @@ import kotlinx.coroutines.withContext
 class NotesAdapter : ListAdapter<NoteEntry, RecyclerView.ViewHolder>(NoteDiffCallback()) {
     private val adapterScope = CoroutineScope(Dispatchers.Default)
 
-    fun submitToList(list: List<NoteEntry>?, noteFilter: NoteFilter) {
+    fun submitToList(list: List<NoteEntry>?) {
         adapterScope.launch {
             withContext(Dispatchers.Main) {
-                val items = when (noteFilter.ordinal) {
-                    1 -> {
-                        list?.map { it }
-                            ?.filter { noteEntry ->
-                                noteEntry.reminder != null && DateUtils.isToday(
-                                    noteEntry.reminder!!
-                                )
-                            }
-                    }
-                    2 -> {
-                        list?.map { it }
-                            ?.filter { noteEntry -> noteEntry.reminder != null && noteEntry.reminder!! > currentDate().timeInMillis }
-                    }
-                    3 -> {
-                        list?.map { it }
-                            ?.filter { noteEntry -> noteEntry.reminder != null && noteEntry.reminder!! < currentDate().timeInMillis }
-                    }
-                    else -> list?.map { it }
-                }
+                val items = list?.map { it }
                 submitList(items)
             }
         }

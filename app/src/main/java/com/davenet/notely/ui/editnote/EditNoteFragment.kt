@@ -31,8 +31,6 @@ import kotlinx.coroutines.*
 import java.util.*
 import javax.inject.Inject
 
-@InternalCoroutinesApi
-@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.OnDateSetListener,
     TimePickerDialog.OnTimeSetListener {

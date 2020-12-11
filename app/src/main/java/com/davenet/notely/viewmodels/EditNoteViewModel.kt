@@ -18,8 +18,6 @@ import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 
-@InternalCoroutinesApi
-@ExperimentalCoroutinesApi
 class EditNoteViewModel @AssistedInject constructor(private val noteRepository: NoteRepository, @Assisted private val selectedNoteId: Int?) :
     ViewModel() {
     private lateinit var selectedNote: NoteEntry

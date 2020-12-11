@@ -7,9 +7,8 @@ import android.os.Bundle
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toolbar
 import androidx.appcompat.app.AlertDialog
-import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED
 import androidx.fragment.app.Fragment
@@ -20,10 +19,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.davenet.notely.R
 import com.davenet.notely.adapters.NotesAdapter
-import com.davenet.notely.adapters.setVisible
 import com.davenet.notely.databinding.FragmentNoteListBinding
 import com.davenet.notely.domain.NoteEntry
-import com.davenet.notely.util.NoteFilter
 import com.davenet.notely.util.UIState
 import com.davenet.notely.util.calculateNoOfColumns
 import com.davenet.notely.viewmodels.NoteListViewModel
@@ -42,30 +39,20 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var uiScope: CoroutineScope
     private var _binding: FragmentNoteListBinding? = null
     private val binding get() = _binding!!
-    private lateinit var coordinator: CoordinatorLayout
     private lateinit var adapter: NotesAdapter
+    private var _layout: ConstraintLayout? = null
+    private val layout get() = _layout!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         setHasOptionsMenu(true)
-        requireActivity().apply {
-            findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(LOCK_MODE_UNLOCKED)
-            findViewById<Toolbar>(R.id.toolbar).setVisible(true)
-        }
+        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
+            .setDrawerLockMode(LOCK_MODE_UNLOCKED)
         _binding = FragmentNoteListBinding.inflate(inflater, container, false)
 
         adapter = NotesAdapter()
-
-//        arguments?.let {
-//            if (it.containsKey(Constants.NOTE_ID)) {
-//                adapter.
-//
-//                noteListViewModel.onNoteClicked(it.getInt(Constants.NOTE_ID))
-//                it.clear()
-//            }
-//        }
 
         observeViewModel()
 
@@ -80,29 +67,16 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun observeViewModel() {
-        noteListViewModel.apply {
-            notes.observe(viewLifecycleOwner, { noteList ->
-                noteList?.let {
-                    if (noteList.isNotEmpty()) {
-                        uiState.set(UIState.HAS_DATA)
-                    } else {
-                        uiState.set(UIState.EMPTY)
-                    }
-                    adapter.submitToList(noteList, noteFilter.get()!!)
-                    activity?.invalidateOptionsMenu()
+        noteListViewModel.sortedNotes.observe(viewLifecycleOwner) { noteList ->
+            noteList?.let {
+                if (noteList.isNotEmpty()) {
+                    noteListViewModel.uiState.set(UIState.HAS_DATA)
+                } else {
+                    noteListViewModel.uiState.set(UIState.EMPTY)
                 }
-            })
-
-//            navigateToNoteDetail.observe(viewLifecycleOwner, { noteId ->
-//                noteId?.let {
-//                    val bundle = Bundle()
-//                    bundle.putInt(Constants.NOTE_ID, noteId)
-//                    findNavController().navigate(
-//                        R.id.action_noteListFragment_to_editNoteFragment, bundle
-//                    )
-//                    onNoteDetailNavigated()
-//                }
-//            })
+                adapter.submitToList(noteList)
+                activity?.invalidateOptionsMenu()
+            }
         }
     }
 
@@ -117,16 +91,16 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
             R.array.filter_array,
             R.layout.spinner_item,
         ).also { adapter ->
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                binding.spinnerNoteFilter.apply {
-                    this.adapter = adapter
-                    onItemSelectedListener = this@NoteListFragment
-                }
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.spinnerNoteFilter.apply {
+                this.adapter = adapter
+                onItemSelectedListener = this@NoteListFragment
             }
+        }
 
         uiScope = CoroutineScope(Dispatchers.Default)
 
-//        coordinator = activity?.findViewById(R.id.list_coordinator)!!
+        _layout = binding.noteListLayout
         ItemTouchHelper(object :
             ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             override fun onMove(
@@ -139,14 +113,14 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
-                val noteToErase = noteListViewModel.notes.value?.get(position)
+                val noteToErase = noteListViewModel.sortedNotes.value?.get(position)
                 deleteNote(requireContext(), noteToErase!!)
-//                coordinator.longSnackbar(
-//                    getString(R.string.note_deleted),
-//                    getString(R.string.undo)
-//                ) {
-//                    restoreNote(requireContext(), noteToErase)
-//                }
+                layout.longSnackbar(
+                    getString(R.string.note_deleted),
+                    getString(R.string.undo)
+                ) {
+                    restoreNote(requireContext(), noteToErase)
+                }
             }
 
             override fun onChildDraw(
@@ -214,14 +188,14 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
             .setMessage(getString(R.string.confirm_delete_message))
             .setNegativeButton(getString(R.string.cancel), null)
             .setPositiveButton(getString(R.string.delete)) { _, _ ->
-                deleteAllNotes(requireContext(), noteListViewModel.notes.value!!)
-                undoDeleteNotes(requireContext(), noteListViewModel.notes.value!!)
+                deleteAllNotes(requireContext(), noteListViewModel.sortedNotes.value!!)
+                undoDeleteNotes(requireContext(), noteListViewModel.sortedNotes.value!!)
             }
             .show()
     }
 
     private fun undoDeleteNotes(context: Context, noteList: List<NoteEntry>) {
-        coordinator.longSnackbar(getString(R.string.notes_deleted), getString(R.string.undo)) {
+        layout.longSnackbar(getString(R.string.notes_deleted), getString(R.string.undo)) {
             insertAllNotes(context, noteList)
         }
     }
@@ -259,19 +233,19 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
+        updateList(parent, pos)
+    }
+
+    private fun updateList(parent: AdapterView<*>?, pos: Int) {
         val itemArray = resources.getStringArray(R.array.filter_array)
-        when (parent?.getItemAtPosition(pos)) {
-            itemArray[1] -> {
-                noteListViewModel.noteFilter.set(NoteFilter.TODAY)
+        with(noteListViewModel) {
+            when (parent?.getItemAtPosition(pos)) {
+                itemArray[1] -> setFilter(1)
+                itemArray[2] -> setFilter(2)
+                itemArray[3] -> setFilter(3)
+                else -> setFilter(4)
             }
-            itemArray[2] -> {
-                noteListViewModel.noteFilter.set(NoteFilter.UPCOMING)
-            }
-            itemArray[3] -> {
-                noteListViewModel.noteFilter.set(NoteFilter.COMPLETED)
-            } else -> noteListViewModel.noteFilter.set(NoteFilter.ALL)
         }
-        adapter.submitToList(noteListViewModel.notes.value, noteListViewModel.noteFilter.get()!!)
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
