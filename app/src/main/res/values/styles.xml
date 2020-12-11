@@ -18,4 +18,9 @@
         <item name="android:padding">12dp</item>
     </style>
 
+    <style name="AddFab" parent="@style/Widget.MaterialComponents.FloatingActionButton">
+        <item name="android:layout_margin">@dimen/fab_margin</item>
+        <item name="srcCompat">@drawable/ic_baseline_add_circle_24</item>
+    </style>
+
 </resources>
