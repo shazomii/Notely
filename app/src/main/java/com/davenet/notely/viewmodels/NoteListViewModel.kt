@@ -11,9 +11,6 @@ import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.repository.NoteRepository
 import com.davenet.notely.util.UIState
 import com.davenet.notely.util.currentDate
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class NoteListViewModel @ViewModelInject internal constructor(
@@ -21,9 +18,6 @@ class NoteListViewModel @ViewModelInject internal constructor(
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     val uiState = ObservableField(UIState.LOADING)
-
-    private var viewModelJob = Job()
-    private val viewModelScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     private var notes = noteListRepository.notes
 

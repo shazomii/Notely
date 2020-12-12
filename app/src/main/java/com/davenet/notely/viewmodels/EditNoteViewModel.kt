@@ -3,10 +3,7 @@ package com.davenet.notely.viewmodels
 import android.app.Activity
 import android.content.Context
 import androidx.databinding.ObservableField
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import com.davenet.notely.database.asDomainModelEntry
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.repository.NoteRepository
@@ -15,8 +12,9 @@ import com.davenet.notely.util.ReminderState
 import com.davenet.notely.util.currentDate
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class EditNoteViewModel @AssistedInject constructor(private val noteRepository: NoteRepository, @Assisted private val selectedNoteId: Int?) :
     ViewModel() {
@@ -25,9 +23,6 @@ class EditNoteViewModel @AssistedInject constructor(private val noteRepository: 
 
     val reminderState = ObservableField(ReminderState.NO_REMINDER)
     val reminderCompletion = ObservableField(ReminderCompletion.ONGOING)
-
-    private var viewModelJob = Job()
-    private val viewModelScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     private var _noteBeingModified = MutableLiveData<NoteEntry?>()
     val noteBeingModified: LiveData<NoteEntry?> get() = _noteBeingModified
@@ -47,7 +42,7 @@ class EditNoteViewModel @AssistedInject constructor(private val noteRepository: 
     }
 
     private fun getSelectedNote() {
-        runBlocking {
+        viewModelScope.launch {
             noteRepository.getNote(selectedNoteId!!).collect { noteEntry ->
                 _noteBeingModified.value = noteEntry
                 selectedNote = noteEntry!!.copy().asDomainModelEntry()
@@ -125,7 +120,7 @@ class EditNoteViewModel @AssistedInject constructor(private val noteRepository: 
 
     private fun updateNote(note: NoteEntry) {
         val updatedNote = note.copy(date = currentDate().timeInMillis)
-        runBlocking {
+        viewModelScope.launch {
             noteRepository.updateNote(updatedNote)
         }
     }

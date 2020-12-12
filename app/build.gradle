@@ -73,6 +73,7 @@ dependencies {
     kapt "androidx.room:room-compiler:2.2.5"
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
     implementation 'it.xabaras.android:recyclerview-swipedecorator:1.2.3'
     implementation 'petrov.kristiyan:colorpicker-library:1.1.10'
     compileOnly "com.squareup.inject:assisted-inject-annotations-dagger2:$assistedInjectVersion"
