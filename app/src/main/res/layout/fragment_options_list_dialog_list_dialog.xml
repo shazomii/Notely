@@ -1,26 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingBottom="8dp">
+    xmlns:tools="http://schemas.android.com/tools" android:layout_height="wrap_content"
+    android:layout_width="wrap_content">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/bottomSheet"
+        android:padding="8dp">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/modifyReminder"
-        style="@style/BottomSheetDialogItems"
-        android:drawableStart="@drawable/ic_baseline_alarm_24"
-        android:text="@string/modify"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/alarmIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_alarm_48"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="Alarm icon"
+            android:layout_margin="8dp"
+            app:tint="@color/colorPrimary" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/deleteReminder"
-        style="@style/BottomSheetDialogItems"
-        android:drawableStart="@drawable/ic_baseline_delete_24"
-        android:text="@string/delete_reminder"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/modifyReminder" />
+        <TextView
+            android:id="@+id/timeBottomSheet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/alarmIcon"
+            app:layout_constraintTop_toTopOf="@id/alarmIcon"
+            tools:text="10:30 AM"
+            android:layout_marginStart="16dp"
+            style="@style/TextAppearance.MaterialComponents.Headline6" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/dateBottomSheet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/timeBottomSheet"
+            app:layout_constraintStart_toStartOf="@+id/timeBottomSheet"
+            style="@style/TextAppearance.MaterialComponents.Body1"
+            tools:text="13th Dec. 2020"/>
+
+        <Button
+            android:id="@+id/modifyReminder"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/modify"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintStart_toEndOf="@id/deleteReminder"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/deleteReminder" />
+
+        <Button
+            android:id="@+id/deleteReminder"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/delete"
+            android:textColor="@color/colorAccent"
+            app:strokeColor="@color/colorAccent"
+            app:layout_constraintEnd_toStartOf="@id/modifyReminder"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/alarmIcon" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

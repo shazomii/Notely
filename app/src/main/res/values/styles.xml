@@ -11,13 +11,6 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
 
-    <style name="BottomSheetDialogItems" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:drawablePadding">12dp</item>
-        <item name="android:padding">12dp</item>
-    </style>
-
     <style name="AddFab" parent="@style/Widget.MaterialComponents.FloatingActionButton">
         <item name="android:layout_margin">@dimen/fab_margin</item>
         <item name="srcCompat">@drawable/ic_baseline_add_circle_24</item>

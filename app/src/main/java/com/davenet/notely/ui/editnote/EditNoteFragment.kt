@@ -27,7 +27,10 @@ import com.davenet.notely.util.currentDate
 import com.davenet.notely.util.hideKeyboard
 import com.davenet.notely.viewmodels.EditNoteViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 
@@ -108,7 +111,10 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
 
         binding.reminderCard.setOnClickListener {
             childFragmentManager.let {
-                OptionsListDialogFragment.newInstance(Bundle()).apply {
+                val bundle = Bundle().also {
+                    it.putLong("reminder", viewModel.noteBeingModified.value?.reminder!!)
+                }
+                OptionsListDialogFragment.newInstance(bundle).apply {
                     show(it, tag)
                 }
             }

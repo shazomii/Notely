@@ -6,6 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.davenet.notely.R
 import com.davenet.notely.databinding.FragmentOptionsListDialogListDialogBinding
+import com.davenet.notely.util.formatDateOnly
+import com.davenet.notely.util.formatTime
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 interface BottomSheetClickListener {
@@ -22,6 +26,10 @@ class OptionsListDialogFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentOptionsListDialogListDialogBinding.inflate(inflater, container, false)
+        dialog?.setOnShowListener{
+            val d = it as BottomSheetDialog
+            d.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
 
         return binding.root
     }
@@ -31,13 +39,20 @@ class OptionsListDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupViews() {
-        binding.modifyReminder.setOnClickListener {
-            dismissAllowingStateLoss()
-            mListener?.onItemClick(getString(R.string.modify))
-        }
-        binding.deleteReminder.setOnClickListener {
-            dismissAllowingStateLoss()
-            mListener?.onItemClick(getString(R.string.delete))
+        val args = arguments?.getLong("reminder")!!
+        binding.apply {
+            dateBottomSheet.text = formatDateOnly(args)
+            timeBottomSheet.text = formatTime(args)
+
+            modifyReminder.setOnClickListener {
+                dismissAllowingStateLoss()
+                mListener?.onItemClick(getString(R.string.modify))
+            }
+
+            deleteReminder.setOnClickListener {
+                dismissAllowingStateLoss()
+                mListener?.onItemClick(getString(R.string.delete))
+            }
         }
     }
 
