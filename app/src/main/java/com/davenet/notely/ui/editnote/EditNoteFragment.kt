@@ -110,12 +110,16 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
         uiScope = CoroutineScope(Dispatchers.Default)
 
         binding.reminderCard.setOnClickListener {
-            childFragmentManager.let {
-                val bundle = Bundle().also {
-                    it.putLong("reminder", viewModel.noteBeingModified.value?.reminder!!)
-                }
-                OptionsListDialogFragment.newInstance(bundle).apply {
-                    show(it, tag)
+            if (viewModel.reminderState.get() == ReminderState.NO_REMINDER) {
+                pickDate()
+            } else {
+                childFragmentManager.let {
+                    val bundle = Bundle().also {
+                        it.putLong("reminder", viewModel.noteBeingModified.value?.reminder!!)
+                    }
+                    OptionsListDialogFragment.newInstance(bundle).apply {
+                        show(it, tag)
+                    }
                 }
             }
         }
@@ -135,11 +139,6 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
             }
             R.id.action_share -> {
                 shareNote()
-                true
-            }
-            R.id.action_remind -> {
-                hideKeyboard(view, requireContext())
-                pickDate()
                 true
             }
             R.id.action_color -> {
@@ -181,8 +180,6 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        val isVisible = viewModel.reminderState.get()?.equals(ReminderState.NO_REMINDER)
-        menu.findItem(R.id.action_remind).isVisible = isVisible!!
         menu.findItem(R.id.action_delete).isVisible = viewModel.mIsEdit.value!!
     }
 
@@ -242,7 +239,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
     private fun shareNote() {
         val sendIntent = Intent().apply {
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, viewModel.noteBeingModified.value?.text)
+            putExtra(Intent.EXTRA_TEXT, "${viewModel.noteBeingModified.value?.title}\n\n${viewModel.noteBeingModified.value?.text}")
             type = "text/plain"
         }
         val shareIntent = Intent.createChooser(sendIntent, null)

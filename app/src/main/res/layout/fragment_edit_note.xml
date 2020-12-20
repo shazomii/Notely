@@ -47,7 +47,8 @@
             android:inputType="textMultiLine"
             android:maxLength="50"
             android:text="@={editviewmodel.noteBeingModified.title}"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textStyle="bold"
+            android:textAppearance="?attr/textAppearanceHeadline6"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -64,7 +65,7 @@
             android:hint="@string/note_text"
             android:inputType="textMultiLine"
             android:text="@={editviewmodel.noteBeingModified.text}"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:textAppearance="?attr/textAppearanceBody1"
             app:layout_constraintBottom_toTopOf="@id/reminderCard"
             app:layout_constraintEnd_toEndOf="@+id/textNoteTitle"
             app:layout_constraintHorizontal_bias="1.0"
@@ -79,8 +80,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textNoteText"
-            app:visible="@{reminderState == reminderState.HAS_REMINDER}">
+            app:layout_constraintTop_toBottomOf="@id/textNoteText">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -92,7 +92,7 @@
 
                 <TextView
                     android:id="@+id/textNoteReminder"
-                    style="@style/TextAppearance.MaterialComponents.Body2"
+                    style="?attr/textAppearanceBody2"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:drawablePadding="8dp"
@@ -102,7 +102,21 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:visible="@{reminderState == reminderState.HAS_REMINDER}"
                     app:strikeThrough="@{reminderCompletion == reminderCompletion.COMPLETED}" />
+                <TextView
+                    android:id="@+id/textNoteNoReminder"
+                    style="?attr/textAppearanceBody2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:text="@string/set_reminder"
+                    app:drawableStartCompat="@drawable/ic_baseline_alarm_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:visible="@{reminderState == reminderState.NO_REMINDER}" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
