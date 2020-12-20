@@ -1,9 +1,10 @@
 package com.davenet.notely.ui.notelist
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
+import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -15,8 +16,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.RecyclerView
 import com.davenet.notely.R
 import com.davenet.notely.adapters.NotesAdapter
 import com.davenet.notely.databinding.FragmentNoteListBinding
@@ -25,12 +24,9 @@ import com.davenet.notely.util.UIState
 import com.davenet.notely.util.calculateNoOfColumns
 import com.davenet.notely.viewmodels.NoteListViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.jetbrains.anko.design.longSnackbar
+import java.util.*
 
 @AndroidEntryPoint
 class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
@@ -42,6 +38,7 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var adapter: NotesAdapter
     private var _layout: ConstraintLayout? = null
     private val layout get() = _layout!!
+    private lateinit var bundle: Bundle
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,7 +49,25 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
             .setDrawerLockMode(LOCK_MODE_UNLOCKED)
         _binding = FragmentNoteListBinding.inflate(inflater, container, false)
 
-        adapter = NotesAdapter()
+        adapter = NotesAdapter { list, action ->
+            when (action) {
+                ACTION_FAB_HIDE -> {
+                    binding.fab.hide()
+                }
+                ACTION_FAB_SHOW -> {
+                    binding.fab.show()
+                }
+                ACTION_SHARE -> {
+                    shareNote(list[0])
+                }
+                ACTION_DELETE -> {
+                    bundle = Bundle().also {
+                        it.putParcelableArrayList("noted", list as ArrayList<out Parcelable>)
+                    }
+                    openAlertDialog(bundle)
+                }
+            }
+        }
 
         observeViewModel()
 
@@ -101,103 +116,27 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
         uiScope = CoroutineScope(Dispatchers.Default)
 
         _layout = binding.noteListLayout
-        ItemTouchHelper(object :
-            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                return false
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position = viewHolder.adapterPosition
-                val noteToErase = noteListViewModel.sortedNotes.value?.get(position)
-                deleteNote(requireContext(), noteToErase!!)
-                layout.longSnackbar(
-                    getString(R.string.note_deleted),
-                    getString(R.string.undo)
-                ) {
-                    restoreNote(requireContext(), noteToErase)
-                }
-            }
-
-            override fun onChildDraw(
-                c: Canvas,
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                dX: Float,
-                dY: Float,
-                actionState: Int,
-                isCurrentlyActive: Boolean
-            ) {
-
-                RecyclerViewSwipeDecorator.Builder(
-                    c,
-                    recyclerView,
-                    viewHolder,
-                    dX,
-                    dY,
-                    actionState,
-                    isCurrentlyActive
-                )
-                    .addActionIcon(R.drawable.ic_baseline_delete_24)
-                    .setActionIconTint(Color.WHITE)
-                    .addBackgroundColor(-2277816)
-                    .create()
-                    .decorate()
-
-                super.onChildDraw(
-                    c,
-                    recyclerView,
-                    viewHolder,
-                    dX,
-                    dY,
-                    actionState,
-                    isCurrentlyActive
-                )
-            }
-        }).attachToRecyclerView(binding.noteList)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.menu_list, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_clear -> {
-                openAlertDialog()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
-        val isVisible = noteListViewModel.uiState.get()?.equals(UIState.HAS_DATA)
-        menu.findItem(R.id.action_clear).isVisible = isVisible!!
-    }
-
-    private fun openAlertDialog() {
+    private fun openAlertDialog(notesToDelete: Bundle) {
+        val list = notesToDelete.getParcelableArrayList<NoteEntry>("noted")
         AlertDialog.Builder(requireContext())
-            .setTitle(getString(R.string.delete_all_notes))
+            .setPositiveButton(getString(R.string.delete), positiveButtonListener(list!!))
+            .setTitle("Delete ${list.size} notes")
             .setMessage(getString(R.string.confirm_delete_message))
             .setNegativeButton(getString(R.string.cancel), null)
-            .setPositiveButton(getString(R.string.delete)) { _, _ ->
-                deleteAllNotes(requireContext(), noteListViewModel.sortedNotes.value!!)
-                undoDeleteNotes(requireContext(), noteListViewModel.sortedNotes.value!!)
-            }
             .show()
     }
 
+    private fun positiveButtonListener(list: List<NoteEntry>) =  DialogInterface.OnClickListener { _, _ ->
+        deleteAllNotes(requireContext(), list)
+    }
+
     private fun undoDeleteNotes(context: Context, noteList: List<NoteEntry>) {
-        layout.longSnackbar(getString(R.string.notes_deleted), getString(R.string.undo)) {
-            insertAllNotes(context, noteList)
-        }
+            layout.longSnackbar(getString(R.string.notes_deleted), getString(R.string.undo)) {
+                insertAllNotes(context, noteList)
+            }
+
     }
 
     private fun insertAllNotes(context: Context, noteList: List<NoteEntry>) {
@@ -208,28 +147,24 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
     }
 
-    private fun deleteAllNotes(context: Context, noteList: List<NoteEntry>) {
+    private fun deleteAllNotes(context: Context, list: List<NoteEntry>) {
         uiScope.launch {
             withContext(Dispatchers.Main) {
-                noteListViewModel.deleteAllNotes(context, noteList)
+                noteListViewModel.deleteAllNotes(context, list)
+                adapter.actionMode?.finish()
+//                undoDeleteNotes(context, list)
             }
         }
     }
 
-    private fun deleteNote(context: Context, note: NoteEntry) {
-        uiScope.launch {
-            withContext(Dispatchers.Main) {
-                noteListViewModel.deleteNote(context, note)
-            }
+    private fun shareNote(note: NoteEntry) {
+        val sendIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, "${note.title}\n\n${note.text}")
+            type = "text/plain"
         }
-    }
-
-    private fun restoreNote(context: Context, note: NoteEntry) {
-        uiScope.launch {
-            withContext(Dispatchers.Main) {
-                noteListViewModel.restoreNote(context, note)
-            }
-        }
+        val shareIntent = Intent.createChooser(sendIntent, "Share Via")
+        startActivity(shareIntent)
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
@@ -255,5 +190,12 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        const val ACTION_DELETE = "delete"
+        const val ACTION_SHARE = "share"
+        const val ACTION_FAB_SHOW = "fabShow"
+        const val ACTION_FAB_HIDE = "fabHide"
     }
 }

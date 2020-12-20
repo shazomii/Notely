@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_bar_add_all"
+        android:icon="@drawable/ic_baseline_select_all_24"
+        android:title="@string/select_all"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_bar_remove_all"
+        android:icon="@drawable/ic_outline_check_box_24"
+        android:title="@string/deselect_all"
+        android:orderInCategory="200"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_bar_share"
+        android:icon="@drawable/ic_baseline_share_24"
+        android:orderInCategory="300"
+        android:title="@string/share"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_bar_clear"
+        android:icon="@drawable/ic_baseline_delete_24"
+        android:orderInCategory="400"
+        android:title="@string/clear"
+        app:showAsAction="ifRoom" />
+</menu>

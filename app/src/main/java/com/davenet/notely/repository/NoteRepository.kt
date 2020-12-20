@@ -35,9 +35,9 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
             return NoteEntry(null, "", "", null, null, false, color)
         }
 
-    suspend fun deleteAllNotes() {
+    suspend fun deleteNotes(idList: List<Int>) {
         withContext(Dispatchers.IO) {
-            noteDao.deleteAllNotes()
+            noteDao.deleteSomeNotes(idList)
         }
     }
 

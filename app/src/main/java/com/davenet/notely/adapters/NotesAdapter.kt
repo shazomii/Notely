@@ -1,67 +1,167 @@
 package com.davenet.notely.adapters
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.view.isVisible
+import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
+import com.davenet.notely.R
 import com.davenet.notely.databinding.NoteItemBinding
 import com.davenet.notely.domain.NoteEntry
+import com.davenet.notely.helper.DataBoundListAdapter
+import com.davenet.notely.ui.notelist.NoteListFragment.Companion.ACTION_DELETE
+import com.davenet.notely.ui.notelist.NoteListFragment.Companion.ACTION_FAB_HIDE
+import com.davenet.notely.ui.notelist.NoteListFragment.Companion.ACTION_FAB_SHOW
+import com.davenet.notely.ui.notelist.NoteListFragment.Companion.ACTION_SHARE
 import com.davenet.notely.ui.notelist.NoteListFragmentDirections
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class NotesAdapter : ListAdapter<NoteEntry, RecyclerView.ViewHolder>(NoteDiffCallback()) {
+class NotesAdapter(private val callback: ((List<NoteEntry>, action: String) -> Unit)?) :
+    DataBoundListAdapter<NoteEntry, NoteItemBinding>(NoteDiffCallback()) {
     private val adapterScope = CoroutineScope(Dispatchers.Default)
+    private val selectedItems = ArrayList<NoteEntry>()
+    var actionMode: ActionMode? = null
+    private var multiSelect = false
+    private var allNotes = ArrayList<NoteEntry?>()
+    private var cardList = ArrayList<AppCompatImageView>()
+    private var showAddAllIcon = false
 
-    fun submitToList(list: List<NoteEntry>?) {
+    fun submitToList(list: List<NoteEntry>) {
         adapterScope.launch {
             withContext(Dispatchers.Main) {
-                val items = list?.map { it }
-                submitList(items)
+                allNotes.clear()
+                allNotes.addAll(list)
+                submitList(list)
             }
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return from(parent)
+    override fun createBinding(parent: ViewGroup): NoteItemBinding {
+        return DataBindingUtil.inflate(
+            LayoutInflater.from(parent.context),
+            R.layout.note_item, parent, false
+        )
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val noteItem = getItem(position)
-        (holder as ViewHolder).bind(noteItem)
+    override fun bind(binding: NoteItemBinding, item: NoteEntry, position: Int) {
+        binding.apply {
+            note = item
+            if (cardList.size > 0) cardList.clear()
+            repeat(allNotes.size) {
+                cardList.add(binding.checkedImage)
+            }
+            binding.checkedImage.isVisible = selectedItems.contains(item)
+            root.setOnClickListener {
+                binding.note?.let { note ->
+                    selectItem(note, binding.checkedImage, it)
+                }
+            }
+            root.setOnLongClickListener {
+                actionMode = it.startActionMode(ActionModeCallback())
+                binding.note?.let { note ->
+                    callback?.invoke(
+                        listOf(),
+                        ACTION_FAB_HIDE
+                    )
+                    selectItem(note, binding.checkedImage, it)
+                }
+                return@setOnLongClickListener true
+            }
+        }
     }
 
-    class ViewHolder(private val binding: NoteItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: NoteEntry) {
-            binding.apply {
-                note = item
-                setClickListener {
-                    binding.note?.let { note ->
-                        navigateToNote(note, it)
+    private fun selectItem(note: NoteEntry?, itemCard: AppCompatImageView?, view: View?) {
+        if (multiSelect) {
+            if (selectedItems.contains(note)) {
+                selectedItems.remove(note)
+                itemCard?.isVisible = false
+                if (selectedItems.size == 0) {
+                    callback?.invoke(listOf(), ACTION_FAB_SHOW)
+                    itemCard?.isVisible = false
+                    actionMode?.finish()
+                }
+            } else {
+                selectedItems.add(note!!)
+                itemCard?.isVisible = true
+            }
+            if (selectedItems.size > 0) {
+                actionMode?.title = selectedItems.size.toString()
+            } else {
+                actionMode?.title = ""
+            }
+            showAddAllIcon = allNotes.size != selectedItems.size
+            actionMode?.invalidate()
+        } else {
+            navigateToNote(note?.id, view!!)
+        }
+    }
+
+
+    private fun navigateToNote(id: Int?, view: View) {
+        val direction =
+            NoteListFragmentDirections.actionNoteListFragmentToEditNoteFragment(id!!)
+        view.findNavController().navigate(direction)
+    }
+
+    inner class ActionModeCallback : ActionMode.Callback {
+        override fun onCreateActionMode(p0: ActionMode?, p1: Menu?): Boolean {
+            multiSelect = true
+            p0?.menuInflater?.inflate(R.menu.menu_list_action_bar, p1)
+            return true
+        }
+
+        override fun onPrepareActionMode(p0: ActionMode?, p1: Menu?): Boolean {
+            p1?.findItem(R.id.action_bar_add_all)?.isVisible = showAddAllIcon
+            p1?.findItem(R.id.action_bar_remove_all)?.isVisible = !showAddAllIcon
+            p1?.findItem(R.id.action_bar_share)?.isVisible = selectedItems.size == 1
+            return true
+        }
+
+        override fun onActionItemClicked(p0: ActionMode?, p1: MenuItem?): Boolean {
+            when (p1?.itemId) {
+                R.id.action_bar_share -> {
+                    callback?.invoke(selectedItems, ACTION_SHARE)
+                    p0?.finish()
+                }
+                R.id.action_bar_clear -> {
+                    callback?.invoke(selectedItems, ACTION_DELETE)
+//                    p0?.finish()
+                }
+                R.id.action_bar_remove_all -> {
+                    p0?.finish()
+                }
+                R.id.action_bar_add_all -> {
+                    showAddAllIcon = false
+                    p0?.invalidate()
+                    if (allNotes.isNotEmpty()) {
+                        selectedItems.clear()
+                        allNotes.zip(cardList) { note, itemCard ->
+                            selectItem(note, itemCard, null)
+                        }
+                        notifyDataSetChanged()
                     }
                 }
             }
+            return true
         }
 
-        private fun navigateToNote(note: NoteEntry, view: View) {
-            val direction =
-                NoteListFragmentDirections.actionNoteListFragmentToEditNoteFragment(note.id!!)
-            view.findNavController().navigate(direction)
+        override fun onDestroyActionMode(p0: ActionMode?) {
+            callback?.invoke(
+                listOf(),
+                ACTION_FAB_SHOW
+            )
+            actionMode = null
+            multiSelect = false
+            selectedItems.clear()
+            showAddAllIcon = false
+            cardList.clear()
+            notifyDataSetChanged()
         }
-    }
 
-    companion object {
-        fun from(parent: ViewGroup): ViewHolder {
-            val layoutInflater = LayoutInflater.from(parent.context)
-            val binding = NoteItemBinding.inflate(layoutInflater, parent, false)
-            return ViewHolder(binding)
-        }
     }
 }
 
