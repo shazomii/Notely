@@ -9,96 +9,107 @@
             name="note"
             type="com.davenet.notely.domain.NoteEntry" />
 
-        <variable
-            name="clickListener"
-            type="android.view.View.OnClickListener" />
-
         <import type="com.davenet.notely.util.UtilKt" />
     </data>
-
-    <com.google.android.material.card.MaterialCardView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:onClick="@{clickListener}"
-        app:cardCornerRadius="4dp"
-        app:cardElevation="4dp"
-        app:cardUseCompatPadding="false">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        android:layout_height="wrap_content">
+        <com.davenet.notely.views.MaskedCardView
+            android:id="@+id/item_card"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:cardPreventCornerOverlap="false"
+            android:layout_margin="8dp"
+            app:layout_constraintDimensionRatio="H,1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Notely.Card">
 
             <View
                 android:id="@+id/noteColor"
                 android:layout_width="match_parent"
                 android:layout_height="16dp"
                 android:background="@{note.color}"
+                app:layout_constraintCircleRadius="@dimen/card_corner_radius"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/textTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="@{note.title}"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/noteColor"
-                tools:text="Title" />
+                android:padding="8dp"
+                android:background="?attr/selectableItemBackground">
 
-            <TextView
-                android:id="@+id/textSummary"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:ellipsize="end"
-                android:maxLines="3"
-                android:minLines="3"
-                android:text="@{note.text}"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textTitle"
-                tools:text="Summary" />
+                <TextView
+                    android:id="@+id/textTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@{note.title}"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Title" />
 
-            <TextView
-                android:id="@+id/dateModified"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:text="@{UtilKt.formatDate(note.date)}"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/reminderIconNote"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textSummary"
-                tools:text="23 hours ago" />
+                <TextView
+                    android:id="@+id/textSummary"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="8dp"
+                    android:ellipsize="end"
+                    android:maxLines="5"
+                    android:text="@{note.text}"
+                    android:textAppearance="?attr/textAppearanceBody1"
+                    app:layout_constraintBottom_toTopOf="@+id/dateModified"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textTitle"
+                    tools:text="Summary" />
 
-            <ImageView
-                android:id="@+id/reminderIconNote"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:contentDescription="@string/reminder_icon"
-                android:src="@drawable/ic_baseline_alarm_16"
-                app:layout_constraintBottom_toBottomOf="@id/dateModified"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/dateModified"
-                app:visible="@{note.reminder > UtilKt.currentDate().timeInMillis}" />
+                <TextView
+                    android:id="@+id/dateModified"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="@{UtilKt.formatDate(note.date)}"
+                    android:textAppearance="?attr/textAppearanceSubtitle2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/reminderIconNote"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:text="23 hours ago" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
+                <ImageView
+                    android:id="@+id/reminderIconNote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/reminder_icon"
+                    android:src="@drawable/ic_baseline_alarm_16"
+                    app:layout_constraintBottom_toBottomOf="@id/dateModified"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/dateModified"
+                    app:visible="@{note.reminder > UtilKt.currentDate().timeInMillis}" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/checkedImage"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:padding="50sp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_baseline_check_circle_24"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.davenet.notely.views.MaskedCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

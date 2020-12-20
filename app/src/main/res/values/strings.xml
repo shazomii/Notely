@@ -11,7 +11,7 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="app_logo">App Logo</string>
     <string name="share">Share</string>
-    <string name="set_reminder">Set reminder</string>
+    <string name="set_reminder">Add a reminder to this note</string>
     <string name="discard_changes">Any changes you have made will be discarded.</string>
     <string name="changes_saved">Changes saved</string>
     <string name="modify">Modify</string>
@@ -36,4 +36,6 @@
     <string name="discard">Discard changes</string>
     <string name="cancel">Cancel</string>
     <string name="filter_icon">Filter Icon</string>
+    <string name="select_all">Select all</string>
+    <string name="deselect_all">Deselect all</string>
 </resources>
