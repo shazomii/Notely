@@ -25,17 +25,22 @@
     <string name="note_text">Note text (required)</string>
     <string name="reminder_icon">Reminder icon</string>
     <string name="delete_reminder">Delete reminder</string>
-    <string name="confirm_delete_message">You are about to delete all notes.</string>
+    <string name="confirm_delete_message">This is permanent and can\'t be undone.</string>
     <string name="save">Save</string>
     <string name="discard_note">Discard</string>
     <string name="not_be_blank">Title and content cannot be blank</string>
     <string name="add_new_note">Add new note</string>
     <string name="clear">Clear</string>
     <string name="ok">OK</string>
-    <string name="delete_all_notes">Delete all notes</string>
+    <string name="delete_note">Delete note?</string>
     <string name="discard">Discard changes</string>
     <string name="cancel">Cancel</string>
     <string name="filter_icon">Filter Icon</string>
     <string name="select_all">Select all</string>
     <string name="deselect_all">Deselect all</string>
+    <!-- String plurals and their related prefix / suffix strings -->
+    <plurals name="delete_dialog_title">
+        <item quantity="one" translation_description="Text for delete dialog title indicating that a single note is about to be deleted">Delete note?</item>
+        <item quantity="other" translation_description="Text for delete dialog title indicating that more than one note is about to be deleted">Delete %d notes?</item>
+    </plurals>
 </resources>

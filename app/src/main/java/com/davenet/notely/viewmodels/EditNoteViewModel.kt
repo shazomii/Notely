@@ -62,7 +62,7 @@ class EditNoteViewModel @AssistedInject constructor(private val noteRepository: 
         get() = if (_mIsEdit.value!!) {
             MutableLiveData(_noteBeingModified.value != selectedNote)
         } else {
-            MutableLiveData(_noteBeingModified.value != noteRepository.emptyNote)
+            MutableLiveData(_noteBeingModified.value != noteRepository.emptyNote.copy(color = _noteBeingModified.value?.color!!))
         }
 
     val isChanged: LiveData<Boolean> get() = _isChanged

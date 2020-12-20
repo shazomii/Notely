@@ -159,8 +159,8 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
 
     private fun openDeleteDialog() {
         AlertDialog.Builder(requireContext())
-            .setTitle("Delete note")
-            .setMessage("This action cannot be undone. Sure to delete?")
+            .setTitle(getString(R.string.delete_note))
+            .setMessage(getString(R.string.confirm_delete_message))
             .setPositiveButton("Delete") { _, _ ->
                 val note = viewModel.noteBeingModified.value!!
                 deleteNote(requireContext(), note)
