@@ -4,19 +4,20 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.davenet.notely.database.DatabaseNote
+import com.davenet.notely.util.colors
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @Entity
 data class NoteEntry(
     @PrimaryKey
-    var id: Int?,
-    var title: String,
-    var text: String,
-    var date: Long?,
-    var reminder: Long?,
-    var started: Boolean,
-    var color: Int
+    var id: Int? = null,
+    var title: String = "",
+    var text: String = "",
+    var date: Long? = null,
+    var reminder: Long? = null,
+    var started: Boolean = false,
+    var color: Int = colors.random()
 ) : Parcelable {
     fun copy(): DatabaseNote {
         return DatabaseNote(id, title, text, date, reminder, started, color)

@@ -1,10 +1,8 @@
 package com.davenet.notely.ui.notelist
 
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -61,10 +59,7 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     shareNote(list[0])
                 }
                 ACTION_DELETE -> {
-                    bundle = Bundle().also {
-                        it.putParcelableArrayList("noted", list as ArrayList<out Parcelable>)
-                    }
-                    openAlertDialog(bundle)
+                    openAlertDialog(list)
                 }
             }
         }
@@ -118,18 +113,15 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
         _layout = binding.noteListLayout
     }
 
-    private fun openAlertDialog(notesToDelete: Bundle) {
-        val list = notesToDelete.getParcelableArrayList<NoteEntry>("noted")
+    private fun openAlertDialog(notesToDelete: List<NoteEntry>) {
         AlertDialog.Builder(requireContext())
-            .setPositiveButton(getString(R.string.delete), positiveButtonListener(list!!))
-            .setTitle("Delete ${list.size} notes")
+            .setTitle(resources.getQuantityString(R.plurals.delete_dialog_title, notesToDelete.size, notesToDelete.size))
             .setMessage(getString(R.string.confirm_delete_message))
             .setNegativeButton(getString(R.string.cancel), null)
+            .setPositiveButton(getString(R.string.delete)) {_, _ ->
+                deleteAllNotes(requireContext(), notesToDelete)
+            }
             .show()
-    }
-
-    private fun positiveButtonListener(list: List<NoteEntry>) =  DialogInterface.OnClickListener { _, _ ->
-        deleteAllNotes(requireContext(), list)
     }
 
     private fun undoDeleteNotes(context: Context, noteList: List<NoteEntry>) {

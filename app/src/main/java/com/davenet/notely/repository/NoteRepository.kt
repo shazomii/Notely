@@ -22,8 +22,6 @@ import javax.inject.Singleton
 class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
     private val utility by lazy { Utility() }
 
-    val color = utility.getColor()
-
     val notes: LiveData<List<NoteEntry>> by lazy {
         Transformations.map(noteDao.getAllNotes()) {
             it.asDomainModel()
@@ -32,7 +30,7 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
 
     val emptyNote: NoteEntry
         get() {
-            return NoteEntry(null, "", "", null, null, false, color)
+            return NoteEntry()
         }
 
     suspend fun deleteNotes(idList: List<Int>) {

@@ -30,16 +30,6 @@ class NotesAdapter(private val callback: ((List<NoteEntry>, action: String) -> U
     private var cardList = ArrayList<AppCompatImageView>()
     private var showAddAllIcon = false
 
-    fun submitToList(list: List<NoteEntry>) {
-        adapterScope.launch {
-            withContext(Dispatchers.Main) {
-                allNotes.clear()
-                allNotes.addAll(list)
-                submitList(list)
-            }
-        }
-    }
-
     override fun createBinding(parent: ViewGroup): NoteItemBinding {
         return DataBindingUtil.inflate(
             LayoutInflater.from(parent.context),
@@ -90,8 +80,6 @@ class NotesAdapter(private val callback: ((List<NoteEntry>, action: String) -> U
             }
             if (selectedItems.size > 0) {
                 actionMode?.title = selectedItems.size.toString()
-            } else {
-                actionMode?.title = ""
             }
             showAddAllIcon = allNotes.size != selectedItems.size
             actionMode?.invalidate()
@@ -100,43 +88,51 @@ class NotesAdapter(private val callback: ((List<NoteEntry>, action: String) -> U
         }
     }
 
-
     private fun navigateToNote(id: Int?, view: View) {
         val direction =
             NoteListFragmentDirections.actionNoteListFragmentToEditNoteFragment(id!!)
         view.findNavController().navigate(direction)
     }
 
+    fun submitToList(list: List<NoteEntry>) {
+        adapterScope.launch {
+            withContext(Dispatchers.Main) {
+                allNotes.clear()
+                allNotes.addAll(list)
+                submitList(list)
+            }
+        }
+    }
+
     inner class ActionModeCallback : ActionMode.Callback {
-        override fun onCreateActionMode(p0: ActionMode?, p1: Menu?): Boolean {
+        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
             multiSelect = true
-            p0?.menuInflater?.inflate(R.menu.menu_list_action_bar, p1)
+            mode?.menuInflater?.inflate(R.menu.menu_list_action_bar, menu)
             return true
         }
 
-        override fun onPrepareActionMode(p0: ActionMode?, p1: Menu?): Boolean {
-            p1?.findItem(R.id.action_bar_add_all)?.isVisible = showAddAllIcon
-            p1?.findItem(R.id.action_bar_remove_all)?.isVisible = !showAddAllIcon
-            p1?.findItem(R.id.action_bar_share)?.isVisible = selectedItems.size == 1
+        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+            menu?.findItem(R.id.action_bar_add_all)?.isVisible = showAddAllIcon
+            menu?.findItem(R.id.action_bar_remove_all)?.isVisible = !showAddAllIcon
+            menu?.findItem(R.id.action_bar_share)?.isVisible = selectedItems.size == 1
             return true
         }
 
-        override fun onActionItemClicked(p0: ActionMode?, p1: MenuItem?): Boolean {
-            when (p1?.itemId) {
+        override fun onActionItemClicked(mode: ActionMode?, menuItem: MenuItem?): Boolean {
+            when (menuItem?.itemId) {
                 R.id.action_bar_share -> {
                     callback?.invoke(selectedItems, ACTION_SHARE)
-                    p0?.finish()
+                    mode?.finish()
                 }
                 R.id.action_bar_clear -> {
                     callback?.invoke(selectedItems, ACTION_DELETE)
-//                    p0?.finish()
                 }
                 R.id.action_bar_remove_all -> {
-                    p0?.finish()
+                    mode?.finish()
                 }
                 R.id.action_bar_add_all -> {
                     showAddAllIcon = false
-                    p0?.invalidate()
+                    mode?.invalidate()
                     if (allNotes.isNotEmpty()) {
                         selectedItems.clear()
                         allNotes.zip(cardList) { note, itemCard ->
@@ -149,7 +145,7 @@ class NotesAdapter(private val callback: ((List<NoteEntry>, action: String) -> U
             return true
         }
 
-        override fun onDestroyActionMode(p0: ActionMode?) {
+        override fun onDestroyActionMode(mode: ActionMode?) {
             callback?.invoke(
                 listOf(),
                 ACTION_FAB_SHOW
