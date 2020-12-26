@@ -166,7 +166,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
                 deleteNote(requireContext(), note)
                 findNavController().popBackStack()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel), null)
             .show()
     }
 
@@ -208,6 +208,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
 
     private fun onBackClicked() {
         if (viewModel.isChanged.value!!) {
+            hideKeyboard(view, requireContext())
             openAlertDialog()
         } else {
             findNavController().popBackStack()
@@ -218,18 +219,8 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
         AlertDialog.Builder(requireContext())
             .setTitle(getString(R.string.discard))
             .setMessage(getString(R.string.discard_changes))
-            .setPositiveButton(getString(R.string.save)) { _, _ ->
-                val note = viewModel.noteBeingModified.value!!
-                if (note.title.isNotEmpty() and note.text.isNotEmpty()) {
-                    saveNote()
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.not_be_blank),
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            }
+            .setCancelable(false)
+            .setPositiveButton("Continue editing", null)
             .setNegativeButton(getString(R.string.discard_note)) { _, _ ->
                 findNavController().popBackStack()
             }
