@@ -11,7 +11,6 @@ import androidx.work.WorkManager
 import com.davenet.notely.R
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.util.Constants
-import com.davenet.notely.util.colors
 import com.davenet.notely.util.currentDate
 import petrov.kristiyan.colorpicker.ColorPicker
 import java.util.concurrent.TimeUnit
@@ -68,6 +67,4 @@ class Utility {
         val instanceWorkManager = WorkManager.getInstance(context)
         instanceWorkManager.cancelUniqueWork(workName)
     }
-
-    fun getColor() : Int = colors.random()
 }

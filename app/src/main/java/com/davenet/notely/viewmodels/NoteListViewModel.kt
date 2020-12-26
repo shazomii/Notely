@@ -2,7 +2,6 @@ package com.davenet.notely.viewmodels
 
 import android.content.Context
 import android.text.format.DateUtils
-import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
@@ -14,6 +13,7 @@ import com.davenet.notely.util.currentDate
 import kotlinx.coroutines.launch
 
 class NoteListViewModel @ViewModelInject internal constructor(
+    private val context: Context,
     private val noteListRepository: NoteRepository,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -39,25 +39,23 @@ class NoteListViewModel @ViewModelInject internal constructor(
         }
     }
 
-    fun deleteAllNotes(context: Context, noteList: List<NoteEntry>) {
+    val notesToDelete: LiveData<List<NoteEntry>>
+        get() = getNotesToDelete()
+
+    fun deleteAllNotes(noteList: List<NoteEntry>) {
         val idList = ArrayList<Int>()
-        Log.d("idlist", noteList.toString())
         for (note in noteList) {
             if (note.started && note.reminder!! > currentDate().timeInMillis) {
                 noteListRepository.cancelAlarm(context, note)
             }
             idList.add(note.id!!)
-            Log.d("idlist", note.toString())
-            Log.d("idlist", idList.toString())
         }
         viewModelScope.launch {
-
-
             noteListRepository.deleteNotes(idList)
         }
     }
 
-    fun deleteNote(context: Context, note: NoteEntry) {
+    fun deleteNote(note: NoteEntry) {
         if (note.started && note.reminder!! > currentDate().timeInMillis) {
             noteListRepository.cancelAlarm(context, note)
         }
@@ -66,7 +64,7 @@ class NoteListViewModel @ViewModelInject internal constructor(
         }
     }
 
-    fun restoreNote(context: Context, note: NoteEntry) {
+    fun insertNote(note: NoteEntry) {
         if (note.started && note.reminder!! > currentDate().timeInMillis) {
             noteListRepository.createSchedule(context, note)
         }
@@ -75,14 +73,14 @@ class NoteListViewModel @ViewModelInject internal constructor(
         }
     }
 
-    fun insertAllNotes(context: Context, noteList: List<NoteEntry>) {
+    fun insertNotes(noteList: List<NoteEntry>) {
         for (note in noteList) {
             if (note.started && note.reminder!! > currentDate().timeInMillis) {
                 noteListRepository.createSchedule(context, note)
             }
         }
         viewModelScope.launch {
-            noteListRepository.insertAllNotes(noteList)
+            noteListRepository.insertNotes(noteList)
         }
     }
 
@@ -91,11 +89,15 @@ class NoteListViewModel @ViewModelInject internal constructor(
     }
 
     private fun getSavedFilter(): MutableLiveData<Int> {
-        Log.d(
-            "filter",
-            savedStateHandle.getLiveData(FILTER_SAVED_STATE_KEY, NO_FILTER).value.toString()
-        )
         return savedStateHandle.getLiveData(FILTER_SAVED_STATE_KEY, NO_FILTER)
+    }
+
+    fun setNotesToDelete(noteList: List<NoteEntry>) {
+        savedStateHandle.set(NOTES_TO_DELETE, noteList)
+    }
+
+    private fun getNotesToDelete(): MutableLiveData<List<NoteEntry>> {
+        return savedStateHandle.getLiveData(NOTES_TO_DELETE)
     }
 
     companion object {
@@ -104,5 +106,6 @@ class NoteListViewModel @ViewModelInject internal constructor(
         private const val COMPLETED = 3
         private const val NO_FILTER = 4
         private const val FILTER_SAVED_STATE_KEY = "FILTER_SAVED_STATE_KEY"
+        private const val NOTES_TO_DELETE = "NOTES_TO_DELETE"
     }
 }

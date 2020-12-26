@@ -11,7 +11,6 @@ import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.davenet.notely.R
-import dagger.hilt.android.AndroidEntryPoint
 
 class SettingsFragment : PreferenceFragmentCompat(),
     SharedPreferences.OnSharedPreferenceChangeListener {

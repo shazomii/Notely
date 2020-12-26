@@ -40,7 +40,6 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="8dp"
                 android:padding="8dp"
                 android:background="?attr/selectableItemBackground">
 
@@ -48,6 +47,7 @@
                     android:id="@+id/textTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:text="@{note.title}"

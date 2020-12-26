@@ -1,8 +1,8 @@
 package com.davenet.notely.ui.notelist
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -36,7 +36,6 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var adapter: NotesAdapter
     private var _layout: ConstraintLayout? = null
     private val layout get() = _layout!!
-    private lateinit var bundle: Bundle
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,7 +58,8 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     shareNote(list[0])
                 }
                 ACTION_DELETE -> {
-                    openAlertDialog(list)
+                    noteListViewModel.setNotesToDelete(list)
+                    openAlertDialog(noteListViewModel.notesToDelete.value!!)
                 }
             }
         }
@@ -119,33 +119,43 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
             .setMessage(getString(R.string.confirm_delete_message))
             .setNegativeButton(getString(R.string.cancel), null)
             .setPositiveButton(getString(R.string.delete)) {_, _ ->
-                deleteAllNotes(requireContext(), notesToDelete)
+                deleteNotes(notesToDelete)
             }
             .show()
     }
 
-    private fun undoDeleteNotes(context: Context, noteList: List<NoteEntry>) {
+    private fun undoDeleteNotes(noteList: List<NoteEntry>) {
             layout.longSnackbar(getString(R.string.notes_deleted), getString(R.string.undo)) {
-                insertAllNotes(context, noteList)
+                insertNotes(noteList)
             }
-
     }
 
-    private fun insertAllNotes(context: Context, noteList: List<NoteEntry>) {
+    private fun insertNotes(noteList: List<NoteEntry>) {
+        Log.d("notelist", noteList.toString())
         uiScope.launch {
             withContext(Dispatchers.Main) {
-                noteListViewModel.insertAllNotes(context, noteList)
+                if (noteList.size == 1) {
+                    noteListViewModel.insertNote(noteList[0])
+                } else {
+                    noteListViewModel.insertNotes(noteList)
+                }
             }
         }
     }
 
-    private fun deleteAllNotes(context: Context, list: List<NoteEntry>) {
+    private fun deleteNotes(list: List<NoteEntry>) {
+//        undoDeleteNotes(noteListViewModel.notesToDelete.value!!)
         uiScope.launch {
+
             withContext(Dispatchers.Main) {
-                noteListViewModel.deleteAllNotes(context, list)
+                if (list.size == 1) {
+                    noteListViewModel.deleteNote(list[0])
+                } else {
+                    noteListViewModel.deleteAllNotes(list)
+                }
                 adapter.actionMode?.finish()
-//                undoDeleteNotes(context, list)
             }
+
         }
     }
 

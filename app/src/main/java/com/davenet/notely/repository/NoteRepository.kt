@@ -39,7 +39,7 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
         }
     }
 
-    suspend fun insertAllNotes(noteList: List<NoteEntry>) {
+    suspend fun insertNotes(noteList: List<NoteEntry>) {
         withContext(Dispatchers.IO) {
             noteDao.insertNotesList(noteList.asDataBaseModel())
         }
