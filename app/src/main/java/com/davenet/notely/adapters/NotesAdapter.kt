@@ -124,7 +124,7 @@ class NotesAdapter(private val callback: ((List<NoteEntry>, action: String) -> U
                     callback?.invoke(selectedItems, ACTION_SHARE)
                     mode?.finish()
                 }
-                R.id.action_bar_clear -> {
+                R.id.action_bar_delete -> {
                     callback?.invoke(selectedItems, ACTION_DELETE)
                 }
                 R.id.action_bar_remove_all -> {

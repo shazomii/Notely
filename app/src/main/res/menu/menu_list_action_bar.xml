@@ -21,9 +21,9 @@
         android:title="@string/share"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_bar_clear"
+        android:id="@+id/action_bar_delete"
         android:icon="@drawable/ic_baseline_delete_24"
         android:orderInCategory="400"
-        android:title="@string/clear"
+        android:title="@string/delete"
         app:showAsAction="ifRoom" />
 </menu>

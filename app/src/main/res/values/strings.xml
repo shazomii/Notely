@@ -30,7 +30,6 @@
     <string name="discard_note">Discard</string>
     <string name="not_be_blank">Title and content cannot be blank</string>
     <string name="add_new_note">Add new note</string>
-    <string name="clear">Clear</string>
     <string name="ok">OK</string>
     <string name="delete_note">Delete note?</string>
     <string name="discard">Discard changes</string>
