@@ -7,13 +7,15 @@ import android.os.Build
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.hilt.Assisted
+import androidx.hilt.work.WorkerInject
 import androidx.navigation.NavDeepLinkBuilder
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.davenet.notely.R
 import com.davenet.notely.util.Constants
 
-class NotifyWork(context: Context, params: WorkerParameters) : Worker(context, params) {
+class NotifyWork @WorkerInject constructor(@Assisted context: Context, @Assisted params: WorkerParameters) : Worker(context, params) {
     override fun doWork(): Result {
         val id = inputData.getInt(Constants.NOTE_ID, 0)
         val title = inputData.getString(Constants.NOTE_TITLE)
