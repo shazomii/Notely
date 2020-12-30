@@ -1,9 +1,15 @@
 package com.davenet.notely.util
 
+import android.app.Activity
 import android.content.Context
 import android.text.format.DateUtils
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
+import com.davenet.notely.R
+import com.davenet.notely.domain.NoteEntry
+import petrov.kristiyan.colorpicker.ColorPicker
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -17,6 +23,27 @@ fun hideKeyboard(view: View?, context: Context) {
     val imm =
         context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.hideSoftInputFromWindow(view?.windowToken, 0)
+}
+
+fun selectColor(activity: Activity, note: NoteEntry) {
+    val colorPicker = ColorPicker(activity)
+    colorPicker.run {
+        setRoundColorButton(true)
+            .setTitle(activity.getString(R.string.note_color))
+            .show()
+        setOnChooseColorListener(object : ColorPicker.OnChooseColorListener {
+            override fun onChooseColor(position: Int, color: Int) {
+                note.color = color
+                activity.findViewById<ConstraintLayout>(R.id.editNoteLayout)
+                    .setBackgroundColor(color)
+                activity.findViewById<CardView>(R.id.reminderCard).setCardBackgroundColor(color)
+            }
+
+            override fun onCancel() {
+                return
+            }
+        })
+    }
 }
 
 fun currentDate(): Calendar {

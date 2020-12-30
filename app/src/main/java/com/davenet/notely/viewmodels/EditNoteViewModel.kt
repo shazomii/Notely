@@ -10,13 +10,19 @@ import com.davenet.notely.repository.NoteRepository
 import com.davenet.notely.util.ReminderCompletion
 import com.davenet.notely.util.ReminderState
 import com.davenet.notely.util.currentDate
+import com.davenet.notely.util.selectColor
+import com.davenet.notely.work.cancelAlarm
+import com.davenet.notely.work.createSchedule
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-class EditNoteViewModel @AssistedInject constructor(private val noteRepository: NoteRepository, @Assisted private val selectedNoteId: Int?) :
+class EditNoteViewModel @AssistedInject constructor(
+    private val noteRepository: NoteRepository,
+    @Assisted private val selectedNoteId: Int?
+) :
     ViewModel() {
     private lateinit var selectedNote: NoteEntry
     private lateinit var scheduledNote: NoteEntry
@@ -72,17 +78,17 @@ class EditNoteViewModel @AssistedInject constructor(private val noteRepository: 
     }
 
     fun pickColor(activity: Activity, note: NoteEntry) {
-        noteRepository.pickColor(activity, note)
+        selectColor(activity, note)
     }
 
     fun scheduleReminder(context: Context, note: NoteEntry) {
         if (_noteBeingModified.value!!.reminder != null && _noteBeingModified.value!!.reminder!! > currentDate().timeInMillis) {
             if (_mIsEdit.value!!) {
-                noteRepository.createSchedule(context, note)
+                createSchedule(context, note)
                 updateNote(note)
             } else {
                 getUpdatedNote()
-                noteRepository.createSchedule(context, scheduledNote)
+                createSchedule(context, scheduledNote)
                 updateNote(scheduledNote)
             }
             reminderCompletion.set(ReminderCompletion.ONGOING)
@@ -100,7 +106,7 @@ class EditNoteViewModel @AssistedInject constructor(private val noteRepository: 
 
     fun cancelReminder(context: Context, note: NoteEntry) {
         _noteBeingModified.value = _noteBeingModified.value!!.copy(reminder = null, started = false)
-        noteRepository.cancelAlarm(context, note)
+        cancelAlarm(context, note)
     }
 
     fun saveNote() {

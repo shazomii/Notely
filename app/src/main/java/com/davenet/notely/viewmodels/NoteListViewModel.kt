@@ -10,6 +10,8 @@ import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.repository.NoteRepository
 import com.davenet.notely.util.UIState
 import com.davenet.notely.util.currentDate
+import com.davenet.notely.work.cancelAlarm
+import com.davenet.notely.work.createSchedule
 import kotlinx.coroutines.launch
 
 class NoteListViewModel @ViewModelInject internal constructor(
@@ -46,7 +48,7 @@ class NoteListViewModel @ViewModelInject internal constructor(
         val idList = ArrayList<Int>()
         for (note in noteList) {
             if (note.started && note.reminder!! > currentDate().timeInMillis) {
-                noteListRepository.cancelAlarm(context, note)
+                cancelAlarm(context, note)
             }
             idList.add(note.id!!)
         }
@@ -57,7 +59,7 @@ class NoteListViewModel @ViewModelInject internal constructor(
 
     fun deleteNote(note: NoteEntry) {
         if (note.started && note.reminder!! > currentDate().timeInMillis) {
-            noteListRepository.cancelAlarm(context, note)
+            cancelAlarm(context, note)
         }
         viewModelScope.launch {
             noteListRepository.deleteNote(note.id!!)
@@ -66,7 +68,7 @@ class NoteListViewModel @ViewModelInject internal constructor(
 
     fun insertNote(note: NoteEntry) {
         if (note.started && note.reminder!! > currentDate().timeInMillis) {
-            noteListRepository.createSchedule(context, note)
+            createSchedule(context, note)
         }
         viewModelScope.launch {
             noteListRepository.insertNote(note)
@@ -76,7 +78,7 @@ class NoteListViewModel @ViewModelInject internal constructor(
     fun insertNotes(noteList: List<NoteEntry>) {
         for (note in noteList) {
             if (note.started && note.reminder!! > currentDate().timeInMillis) {
-                noteListRepository.createSchedule(context, note)
+                createSchedule(context, note)
             }
         }
         viewModelScope.launch {
