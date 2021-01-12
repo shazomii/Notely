@@ -6,14 +6,15 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.davenet.notely.domain.NoteEntry
-import com.davenet.notely.util.Constants
+import com.davenet.notely.util.NOTE_ID
+import com.davenet.notely.util.NOTE_TITLE
 import com.davenet.notely.util.currentDate
 import java.util.concurrent.TimeUnit
 
 fun createSchedule(context: Context, note: NoteEntry) {
     val data = Data.Builder()
-        .putInt(Constants.NOTE_ID, note.id!!)
-        .putString(Constants.NOTE_TITLE, note.title)
+        .putInt(NOTE_ID, note.id!!)
+        .putString(NOTE_TITLE, note.title)
         .build()
 
     val delay = note.reminder!! - currentDate().timeInMillis
@@ -30,7 +31,7 @@ private fun scheduleReminder(delay: Long, data: Data, context: Context) {
         .addTag("${context.packageName}.work.NotifyWork")
         .build()
 
-    val workName = "Work ${data.getInt(Constants.NOTE_ID, 0)}"
+    val workName = "Work ${data.getInt(NOTE_ID, 0)}"
 
     val instanceWorkManager = WorkManager.getInstance(context)
     instanceWorkManager.enqueueUniqueWork(workName, ExistingWorkPolicy.REPLACE, reminderWork)

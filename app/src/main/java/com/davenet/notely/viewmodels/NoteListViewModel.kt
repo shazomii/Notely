@@ -8,12 +8,16 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.repository.NoteRepository
+import com.davenet.notely.ui.notelist.NoteListFragment
 import com.davenet.notely.util.UIState
 import com.davenet.notely.util.currentDate
 import com.davenet.notely.work.cancelAlarm
 import com.davenet.notely.work.createSchedule
 import kotlinx.coroutines.launch
 
+/**
+ * The ViewModel for [NoteListFragment]
+ */
 class NoteListViewModel @ViewModelInject internal constructor(
     private val context: Context,
     private val noteListRepository: NoteRepository,

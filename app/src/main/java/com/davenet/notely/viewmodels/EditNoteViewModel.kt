@@ -7,6 +7,7 @@ import androidx.lifecycle.*
 import com.davenet.notely.database.asDomainModelEntry
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.repository.NoteRepository
+import com.davenet.notely.ui.editnote.EditNoteFragment
 import com.davenet.notely.util.ReminderCompletion
 import com.davenet.notely.util.ReminderState
 import com.davenet.notely.util.currentDate
@@ -19,6 +20,9 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
+/**
+ * The ViewModel for [EditNoteFragment]
+ */
 class EditNoteViewModel @AssistedInject constructor(
     private val noteRepository: NoteRepository,
     @Assisted private val selectedNoteId: Int?
@@ -124,6 +128,11 @@ class EditNoteViewModel @AssistedInject constructor(
         }
     }
 
+    /**
+     * Update contents of a Note in the database
+     *
+     * @param note [NoteEntry]
+     */
     private fun updateNote(note: NoteEntry) {
         val updatedNote = note.copy(date = currentDate().timeInMillis)
         viewModelScope.launch {

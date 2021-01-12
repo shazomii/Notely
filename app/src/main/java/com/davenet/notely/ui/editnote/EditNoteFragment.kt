@@ -34,9 +34,12 @@ import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 
+/**
+ * A Fragment representing a single Note detail screen.
+ */
 @AndroidEntryPoint
 class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.OnDateSetListener,
-    TimePickerDialog.OnTimeSetListener {
+        TimePickerDialog.OnTimeSetListener {
     private var _binding: FragmentEditNoteBinding? = null
     private val binding get() = _binding!!
     private lateinit var pickedDateTime: Calendar
@@ -49,18 +52,18 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
 
     private val viewModel: EditNoteViewModel by viewModels {
         EditNoteViewModel.provideFactory(
-            viewModelFactory,
-            args.noteId
+                viewModelFactory,
+                args.noteId
         )
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         setHasOptionsMenu(true)
         _binding = FragmentEditNoteBinding.inflate(
-            inflater, container, false
+                inflater, container, false
         )
         requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
@@ -159,15 +162,15 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
 
     private fun openDeleteDialog() {
         AlertDialog.Builder(requireContext())
-            .setTitle(getString(R.string.delete_note))
-            .setMessage(getString(R.string.confirm_delete_message))
-            .setPositiveButton("Delete") { _, _ ->
-                val note = viewModel.noteBeingModified.value!!
-                deleteNote(requireContext(), note)
-                findNavController().popBackStack()
-            }
-            .setNegativeButton(getString(R.string.cancel), null)
-            .show()
+                .setTitle(getString(R.string.delete_note))
+                .setMessage(getString(R.string.confirm_delete_message))
+                .setPositiveButton("Delete") { _, _ ->
+                    val note = viewModel.noteBeingModified.value!!
+                    deleteNote(requireContext(), note)
+                    findNavController().popBackStack()
+                }
+                .setNegativeButton(getString(R.string.cancel), null)
+                .show()
     }
 
     private fun deleteNote(context: Context, note: NoteEntry) {
@@ -217,14 +220,14 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
 
     private fun openAlertDialog() {
         AlertDialog.Builder(requireContext())
-            .setTitle(getString(R.string.discard))
-            .setMessage(getString(R.string.discard_changes))
-            .setCancelable(false)
-            .setPositiveButton("Continue editing", null)
-            .setNegativeButton(getString(R.string.discard_note)) { _, _ ->
-                findNavController().popBackStack()
-            }
-            .show()
+                .setTitle(getString(R.string.discard))
+                .setMessage(getString(R.string.discard_changes))
+                .setCancelable(false)
+                .setPositiveButton("Continue editing", null)
+                .setNegativeButton(getString(R.string.discard_note)) { _, _ ->
+                    findNavController().popBackStack()
+                }
+                .show()
     }
 
     private fun shareNote() {
@@ -245,9 +248,9 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
         when {
             viewModel.noteBeingModified.value!!.title.isBlank() or viewModel.noteBeingModified.value!!.text.isBlank() -> {
                 Toast.makeText(
-                    requireContext(),
-                    getString(R.string.not_be_blank),
-                    Toast.LENGTH_LONG
+                        requireContext(),
+                        getString(R.string.not_be_blank),
+                        Toast.LENGTH_LONG
                 ).show()
             }
             viewModel.isChanged.value!! -> {
@@ -277,7 +280,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
         val startMonth = currentDateTime.get(Calendar.MONTH)
         val startDay = currentDateTime.get(Calendar.DAY_OF_MONTH)
         val datePickerDialog =
-            DatePickerDialog(requireContext(), this, startYear, startMonth, startDay)
+                DatePickerDialog(requireContext(), this, startYear, startMonth, startDay)
         datePickerDialog.show()
     }
 
@@ -288,7 +291,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
         val hourOfDay = currentDateTime.get(Calendar.HOUR_OF_DAY)
         val minuteOfDay = currentDateTime.get(Calendar.MINUTE)
         val timePickerDialog =
-            TimePickerDialog(requireContext(), this, hourOfDay, minuteOfDay, false)
+                TimePickerDialog(requireContext(), this, hourOfDay, minuteOfDay, false)
         timePickerDialog.show()
     }
 

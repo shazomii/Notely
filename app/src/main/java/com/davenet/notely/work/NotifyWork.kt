@@ -13,12 +13,17 @@ import androidx.navigation.NavDeepLinkBuilder
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.davenet.notely.R
-import com.davenet.notely.util.Constants
+import com.davenet.notely.util.CHANNEL_ID
+import com.davenet.notely.util.NOTE_ID
+import com.davenet.notely.util.NOTE_TITLE
 
-class NotifyWork @WorkerInject constructor(@Assisted context: Context, @Assisted params: WorkerParameters) : Worker(context, params) {
+class NotifyWork @WorkerInject constructor(
+    @Assisted context: Context,
+    @Assisted params: WorkerParameters
+) : Worker(context, params) {
     override fun doWork(): Result {
-        val id = inputData.getInt(Constants.NOTE_ID, 0)
-        val title = inputData.getString(Constants.NOTE_TITLE)
+        val id = inputData.getInt(NOTE_ID, 0)
+        val title = inputData.getString(NOTE_TITLE)
 
         sendNotification(id, title)
 
@@ -27,7 +32,7 @@ class NotifyWork @WorkerInject constructor(@Assisted context: Context, @Assisted
 
     private fun sendNotification(id: Int, title: String?) {
         val bundle = Bundle()
-        bundle.putInt(Constants.NOTE_ID, id)
+        bundle.putInt(NOTE_ID, id)
 
         val deepLink = NavDeepLinkBuilder(applicationContext)
             .setGraph(R.navigation.nav_graph)
@@ -40,7 +45,7 @@ class NotifyWork @WorkerInject constructor(@Assisted context: Context, @Assisted
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationManager.createNotificationChannel(
                 NotificationChannel(
-                    Constants.CHANNEL_ID, "Notely Reminder", NotificationManager.IMPORTANCE_HIGH
+                    CHANNEL_ID, "Notely Reminder", NotificationManager.IMPORTANCE_HIGH
                 )
             )
         }
@@ -48,7 +53,7 @@ class NotifyWork @WorkerInject constructor(@Assisted context: Context, @Assisted
             applicationContext.applicationInfo.loadIcon(applicationContext.packageManager)
         val bitmap = drawable.toBitmap()
 
-        val builder = NotificationCompat.Builder(applicationContext, Constants.CHANNEL_ID)
+        val builder = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
             .setSmallIcon(R.mipmap.ic_launcher_foreground)
             .setContentIntent(deepLink)
             .setAutoCancel(true)

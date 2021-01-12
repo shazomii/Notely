@@ -8,35 +8,72 @@ import androidx.room.Update
 
 /**
  * NoteDao Interface with helper methods
- * getNote() method fetches a note from the database
- * insert() method inserts a note into the database
+ *
  */
 @Dao
 interface NoteDao {
+    /**
+     * Retrieve a list of all notes in the database as LiveData
+     *
+     * @return [LiveData]<[List]<[DatabaseNote]>>
+     */
     @Query("select * from database_note order by date desc")
     fun getAllNotes(): LiveData<List<DatabaseNote>>
 
+    /**
+     * Retrieve the latest inserted note from the database
+     *
+     * @return [DatabaseNote]
+     */
     @Query("select * from database_note ORDER BY date DESC LIMIT 1")
     fun getNote(): DatabaseNote
 
-    @Query("delete from database_note where id = :key")
-    fun deleteNote(key: Int?)
+    /**
+     * Delete the Note with the given id from the database
+     *
+     * @param noteId [Int]
+     */
+    @Query("delete from database_note where id = :noteId")
+    fun deleteNote(noteId: Int)
 
-    @Query("delete from database_note where id in (:key)")
-    fun deleteSomeNotes(key: List<Int>)
+    /**
+     * Delete the notes with the included ids from the database
+     *
+     * @param idList [List]<[Int]>
+     */
+    @Query("delete from database_note where id in (:idList)")
+    fun deleteSomeNotes(idList: List<Int>)
 
-    @Query("delete from database_note")
-    fun deleteAllNotes()
-
+    /**
+     * Insert a single Note into the database
+     *
+     * @param note [DatabaseNote]
+     */
     @Insert
     fun insert(note: DatabaseNote?)
 
+    /**
+     * Insert a list of Notes into the database
+     *
+     * @param notes [List]<[DatabaseNote]>
+     */
     @Insert
     fun insertNotesList(notes: List<DatabaseNote>)
 
+    /**
+     * Update contents of a Note in the database
+     *
+     * @param note [DatabaseNote]
+     */
     @Update
     fun update(note: DatabaseNote)
 
-    @Query("select * from database_note where id = :key")
-    fun get(key: Int): DatabaseNote
+    /**
+     * Retrieve a single note with the specified id from the database
+     *
+     * @param noteId [Int]
+     * @return [DatabaseNote]
+     */
+    @Query("select * from database_note where id = :noteId")
+    fun get(noteId: Int): DatabaseNote
 }

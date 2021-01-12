@@ -26,6 +26,9 @@ import kotlinx.coroutines.*
 import org.jetbrains.anko.design.longSnackbar
 import java.util.*
 
+/**
+ * A Fragment representing the list of user-created Notes.
+ */
 @AndroidEntryPoint
 class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
@@ -115,19 +118,25 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private fun openAlertDialog(notesToDelete: List<NoteEntry>) {
         AlertDialog.Builder(requireContext())
-            .setTitle(resources.getQuantityString(R.plurals.delete_dialog_title, notesToDelete.size, notesToDelete.size))
+            .setTitle(
+                resources.getQuantityString(
+                    R.plurals.delete_dialog_title,
+                    notesToDelete.size,
+                    notesToDelete.size
+                )
+            )
             .setMessage(getString(R.string.confirm_delete_message))
             .setNegativeButton(getString(R.string.cancel), null)
-            .setPositiveButton(getString(R.string.delete)) {_, _ ->
+            .setPositiveButton(getString(R.string.delete)) { _, _ ->
                 deleteNotes(notesToDelete)
             }
             .show()
     }
 
     private fun undoDeleteNotes(noteList: List<NoteEntry>) {
-            layout.longSnackbar(getString(R.string.notes_deleted), getString(R.string.undo)) {
-                insertNotes(noteList)
-            }
+        layout.longSnackbar(getString(R.string.notes_deleted), getString(R.string.undo)) {
+            insertNotes(noteList)
+        }
     }
 
     private fun insertNotes(noteList: List<NoteEntry>) {
