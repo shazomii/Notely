@@ -80,7 +80,7 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun observeViewModel() {
-        noteListViewModel.sortedNotes.observe(viewLifecycleOwner) { noteList ->
+        noteListViewModel.filteredNotes.observe(viewLifecycleOwner) { noteList ->
             noteList?.let {
                 if (noteList.isNotEmpty()) {
                     noteListViewModel.uiState.set(UIState.HAS_DATA)
@@ -153,18 +153,15 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun deleteNotes(list: List<NoteEntry>) {
-//        undoDeleteNotes(noteListViewModel.notesToDelete.value!!)
         uiScope.launch {
-
             withContext(Dispatchers.Main) {
                 if (list.size == 1) {
                     noteListViewModel.deleteNote(list[0])
                 } else {
-                    noteListViewModel.deleteAllNotes(list)
+                    noteListViewModel.deleteNotes(list)
                 }
                 adapter.actionMode?.finish()
             }
-
         }
     }
 

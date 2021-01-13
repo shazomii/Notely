@@ -1,6 +1,5 @@
 package com.davenet.notely.ui.editnote
 
-import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
@@ -145,7 +144,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
                 true
             }
             R.id.action_color -> {
-                pickColor(requireActivity(), viewModel.noteBeingModified.value!!)
+                viewModel.pickColor(requireActivity(), viewModel.noteBeingModified.value!!)
                 true
             }
             R.id.action_delete -> {
@@ -157,27 +156,6 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
                 true
             }
             else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    private fun openDeleteDialog() {
-        AlertDialog.Builder(requireContext())
-                .setTitle(getString(R.string.delete_note))
-                .setMessage(getString(R.string.confirm_delete_message))
-                .setPositiveButton("Delete") { _, _ ->
-                    val note = viewModel.noteBeingModified.value!!
-                    deleteNote(requireContext(), note)
-                    findNavController().popBackStack()
-                }
-                .setNegativeButton(getString(R.string.cancel), null)
-                .show()
-    }
-
-    private fun deleteNote(context: Context, note: NoteEntry) {
-        uiScope.launch {
-            withContext(Dispatchers.Main) {
-                viewModel.deleteNote(context, note)
-            }
         }
     }
 
@@ -204,9 +182,38 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
                 pickDate()
             }
             getString(R.string.delete) -> {
-                cancelReminder()
+                viewModel.cancelReminder(requireContext(), viewModel.noteBeingModified.value!!)
             }
         }
+    }
+
+    override fun onDateSet(p0: DatePicker?, p1: Int, p2: Int, p3: Int) {
+        pickedDateTime = currentDate()
+        pickedDateTime.set(p1, p2, p3)
+        currentDateTime = currentDate()
+        val hourOfDay = currentDateTime.get(Calendar.HOUR_OF_DAY)
+        val minuteOfDay = currentDateTime.get(Calendar.MINUTE)
+        val timePickerDialog =
+            TimePickerDialog(requireContext(), this, hourOfDay, minuteOfDay, false)
+        timePickerDialog.show()
+    }
+
+    override fun onTimeSet(p0: TimePicker?, p1: Int, p2: Int) {
+        pickedDateTime.set(Calendar.HOUR_OF_DAY, p1)
+        pickedDateTime.set(Calendar.MINUTE, p2)
+        if (pickedDateTime.timeInMillis <= currentDate().timeInMillis) {
+            pickedDateTime.run {
+                set(Calendar.DAY_OF_MONTH, currentDateTime.get(Calendar.DAY_OF_MONTH) + 1)
+                set(Calendar.YEAR, currentDateTime.get(Calendar.YEAR))
+                set(Calendar.MONTH, currentDateTime.get(Calendar.MONTH))
+            }
+        }
+        viewModel.setDateTime(pickedDateTime.timeInMillis)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun onBackClicked() {
@@ -215,6 +222,27 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
             openAlertDialog()
         } else {
             findNavController().popBackStack()
+        }
+    }
+
+    private fun openDeleteDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.delete_note))
+            .setMessage(getString(R.string.confirm_delete_message))
+            .setPositiveButton("Delete") { _, _ ->
+                val note = viewModel.noteBeingModified.value!!
+                deleteNote(requireContext(), note)
+                findNavController().popBackStack()
+            }
+            .setNegativeButton(getString(R.string.cancel), null)
+            .show()
+    }
+
+    private fun deleteNote(context: Context, note: NoteEntry) {
+        uiScope.launch {
+            withContext(Dispatchers.Main) {
+                viewModel.deleteNote(context, note)
+            }
         }
     }
 
@@ -240,10 +268,6 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
         startActivity(shareIntent)
     }
 
-    private fun pickColor(activity: Activity, note: NoteEntry) {
-        viewModel.pickColor(activity, note)
-    }
-
     private fun saveNote() {
         when {
             viewModel.noteBeingModified.value!!.title.isBlank() or viewModel.noteBeingModified.value!!.text.isBlank() -> {
@@ -255,7 +279,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
             }
             viewModel.isChanged.value!! -> {
                 viewModel.saveNote()
-                scheduleReminder()
+                viewModel.scheduleReminder(requireContext(), viewModel.noteBeingModified.value!!)
                 Toast.makeText(context, getString(R.string.changes_saved), Toast.LENGTH_LONG).show()
                 findNavController().popBackStack()
             }
@@ -266,14 +290,6 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
         }
     }
 
-    private fun cancelReminder() {
-        viewModel.cancelReminder(requireContext(), viewModel.noteBeingModified.value!!)
-    }
-
-    private fun scheduleReminder() {
-        viewModel.scheduleReminder(requireContext(), viewModel.noteBeingModified.value!!)
-    }
-
     private fun pickDate() {
         currentDateTime = currentDate()
         val startYear = currentDateTime.get(Calendar.YEAR)
@@ -282,34 +298,5 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
         val datePickerDialog =
                 DatePickerDialog(requireContext(), this, startYear, startMonth, startDay)
         datePickerDialog.show()
-    }
-
-    override fun onDateSet(p0: DatePicker?, p1: Int, p2: Int, p3: Int) {
-        pickedDateTime = currentDate()
-        pickedDateTime.set(p1, p2, p3)
-        currentDateTime = currentDate()
-        val hourOfDay = currentDateTime.get(Calendar.HOUR_OF_DAY)
-        val minuteOfDay = currentDateTime.get(Calendar.MINUTE)
-        val timePickerDialog =
-                TimePickerDialog(requireContext(), this, hourOfDay, minuteOfDay, false)
-        timePickerDialog.show()
-    }
-
-    override fun onTimeSet(p0: TimePicker?, p1: Int, p2: Int) {
-        pickedDateTime.set(Calendar.HOUR_OF_DAY, p1)
-        pickedDateTime.set(Calendar.MINUTE, p2)
-        if (pickedDateTime.timeInMillis <= currentDate().timeInMillis) {
-            pickedDateTime.run {
-                set(Calendar.DAY_OF_MONTH, currentDateTime.get(Calendar.DAY_OF_MONTH) + 1)
-                set(Calendar.YEAR, currentDateTime.get(Calendar.YEAR))
-                set(Calendar.MONTH, currentDateTime.get(Calendar.MONTH))
-            }
-        }
-        viewModel.setDateTime(pickedDateTime.timeInMillis)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

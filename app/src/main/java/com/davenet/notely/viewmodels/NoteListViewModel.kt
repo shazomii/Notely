@@ -27,7 +27,7 @@ class NoteListViewModel @ViewModelInject internal constructor(
 
     private var notes = noteListRepository.notes
 
-    val sortedNotes: LiveData<List<NoteEntry>> = getSavedFilter().switchMap { filter ->
+    val filteredNotes: LiveData<List<NoteEntry>> = getSavedFilter().switchMap { filter ->
         when (filter) {
             TODAY -> Transformations.map(notes) { noteList ->
                 noteList.map { it }
@@ -48,7 +48,13 @@ class NoteListViewModel @ViewModelInject internal constructor(
     val notesToDelete: LiveData<List<NoteEntry>>
         get() = getNotesToDelete()
 
-    fun deleteAllNotes(noteList: List<NoteEntry>) {
+    /**
+     * Delete the notes with the included ids from the database. Also, cancel
+     * any active reminders associated with the notes.
+     *
+     * @param noteList [List]<[NoteEntry]>
+     */
+    fun deleteNotes(noteList: List<NoteEntry>) {
         val idList = ArrayList<Int>()
         for (note in noteList) {
             if (note.started && note.reminder!! > currentDate().timeInMillis) {
@@ -61,6 +67,12 @@ class NoteListViewModel @ViewModelInject internal constructor(
         }
     }
 
+    /**
+     * Delete a note from the database and cancel the active reminder associated
+     * with it, if any.
+     *
+     * @param note [NoteEntry]
+     */
     fun deleteNote(note: NoteEntry) {
         if (note.started && note.reminder!! > currentDate().timeInMillis) {
             cancelAlarm(context, note)
@@ -70,6 +82,12 @@ class NoteListViewModel @ViewModelInject internal constructor(
         }
     }
 
+    /**
+     * Insert a note into the database and create a reminder if it has one which
+     * has not elapsed.
+     *
+     * @param note [NoteEntry]
+     */
     fun insertNote(note: NoteEntry) {
         if (note.started && note.reminder!! > currentDate().timeInMillis) {
             createSchedule(context, note)
@@ -79,6 +97,12 @@ class NoteListViewModel @ViewModelInject internal constructor(
         }
     }
 
+    /**
+     * Insert a list of notes into the database and create reminders for those with
+     * valid reminders.
+     *
+     * @param noteList [List]<[NoteEntry]>
+     */
     fun insertNotes(noteList: List<NoteEntry>) {
         for (note in noteList) {
             if (note.started && note.reminder!! > currentDate().timeInMillis) {
