@@ -2,11 +2,11 @@ package com.davenet.notely.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
+import com.davenet.notely.database.DatabaseNote.Companion.toDatabaseEntry
 import com.davenet.notely.database.NoteDao
 import com.davenet.notely.database.asDomainModel
-import com.davenet.notely.database.asDomainModelEntry
+import com.davenet.notely.database.toDatabaseList
 import com.davenet.notely.domain.NoteEntry
-import com.davenet.notely.domain.asDataBaseModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -47,7 +47,7 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
      */
     suspend fun insertNotes(noteList: List<NoteEntry>) {
         withContext(Dispatchers.IO) {
-            noteDao.insertNotesList(noteList.asDataBaseModel())
+            noteDao.insertNotesList(noteList.toDatabaseList())
         }
     }
 
@@ -81,7 +81,7 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
      */
     suspend fun insertNote(note: NoteEntry) {
         withContext(Dispatchers.IO) {
-            noteDao.insert(note.copy())
+            noteDao.insert(toDatabaseEntry(note))
         }
     }
 
@@ -92,7 +92,7 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
      */
     suspend fun updateNote(note: NoteEntry) {
         withContext(Dispatchers.IO) {
-            noteDao.update(note.copy())
+            noteDao.update(toDatabaseEntry(note))
         }
     }
 

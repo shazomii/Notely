@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
-import com.davenet.notely.database.asDomainModelEntry
+import com.davenet.notely.database.DatabaseNote.Companion.toDatabaseEntry
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.repository.NoteRepository
 import com.davenet.notely.ui.editnote.EditNoteFragment
@@ -50,7 +50,7 @@ class EditNoteViewModel @AssistedInject constructor(
             viewModelScope.launch {
                 noteRepository.getNote(selectedNoteId!!).collect { noteEntry ->
                     _noteBeingModified.value = noteEntry
-                    selectedNote = noteEntry!!.copy().asDomainModelEntry()
+                    selectedNote = toDatabaseEntry(noteEntry!!).asDomainModelEntry()
                 }
             }
         }

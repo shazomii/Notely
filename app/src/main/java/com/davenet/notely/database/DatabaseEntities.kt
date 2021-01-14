@@ -15,14 +15,24 @@ import com.davenet.notely.domain.NoteEntry
 @Entity(tableName = "database_note")
 data class DatabaseNote(
     @PrimaryKey(autoGenerate = true)
-    val id: Int? = 0,
+    val id: Int?,
     val title: String,
     val text: String,
     val date: Long?,
     val reminder: Long?,
-    val started: Boolean = false,
-    val color: Int = -1
-)
+    val started: Boolean,
+    val color: Int
+) {
+    companion object {
+        fun toDatabaseEntry(note: NoteEntry): DatabaseNote {
+            return DatabaseNote(note.id, note.title, note.text, note.date, note.reminder, note.started, note.color)
+        }
+    }
+
+    fun asDomainModelEntry(): NoteEntry {
+        return NoteEntry(id, title, text, date, reminder, started, color)
+    }
+}
 
 /**
  * Map DatabaseNotes to domain entities
@@ -33,6 +43,9 @@ fun List<DatabaseNote>.asDomainModel(): List<NoteEntry> {
     }
 }
 
-fun DatabaseNote.asDomainModelEntry(): NoteEntry {
-    return NoteEntry(id, title, text, date, reminder, started, color)
+fun List<NoteEntry>.toDatabaseList(): List<DatabaseNote> {
+    return map {
+        DatabaseNote(it.id, it.title, it.text, it.date, it.reminder, it.started, it.color)
+    }
 }
+
