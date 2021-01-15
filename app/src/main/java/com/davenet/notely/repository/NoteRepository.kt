@@ -32,7 +32,7 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
     /**
      * Delete the Notes with the included ids from the database
      *
-     * @param idList [List]<[Int]>
+     * @param idList list of ids of notes to be deleted
      */
     suspend fun deleteNotes(idList: List<Int>) {
         withContext(Dispatchers.IO) {
@@ -43,7 +43,7 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
     /**
      * Insert a list of Notes into the database
      *
-     * @param noteList [List]<[NoteEntry]>
+     * @param noteList list of notes to be inserted
      */
     suspend fun insertNotes(noteList: List<NoteEntry>) {
         withContext(Dispatchers.IO) {
@@ -54,8 +54,8 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
     /**
      * Retrieve a single note with the specified id from the database
      *
-     * @param noteId [Int]
-     * @return [Flow]<[NoteEntry]?>
+     * @param noteId id of the note to be retrieved
+     * @return a single note via a flow collector
      */
     suspend fun getNote(noteId: Int): Flow<NoteEntry?> {
         return flow {
@@ -66,7 +66,7 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
     /**
      * Retrieve the latest inserted note from the database
      *
-     * @return [Flow]<[NoteEntry?]>
+     * @return the latest inserted note via a flow collector
      */
     suspend fun getLatestNote(): Flow<NoteEntry?> {
         return flow {
@@ -77,7 +77,7 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
     /**
      * Insert a single note into the database
      *
-     * @param note [NoteEntry]
+     * @param note the note to be inserted
      */
     suspend fun insertNote(note: NoteEntry) {
         withContext(Dispatchers.IO) {
@@ -88,7 +88,7 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
     /**
      * Update contents of a Note in the database
      *
-     * @param note [NoteEntry]
+     * @param note the note to be updated
      */
     suspend fun updateNote(note: NoteEntry) {
         withContext(Dispatchers.IO) {
@@ -99,7 +99,7 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
     /**
      * Delete the Note with the specified id from the database
      *
-     * @param id [Int]
+     * @param id id of the note to be deleted
      */
     suspend fun deleteNote(id: Int) {
         withContext(Dispatchers.IO) {

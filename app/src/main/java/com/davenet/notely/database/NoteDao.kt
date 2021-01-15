@@ -1,10 +1,7 @@
 package com.davenet.notely.database
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 
 /**
  * NoteDao Interface with helper methods
@@ -13,9 +10,9 @@ import androidx.room.Update
 @Dao
 interface NoteDao {
     /**
-     * Retrieve a list of all notes in the database as LiveData
+     * Observe list of notes
      *
-     * @return [LiveData]<[List]<[DatabaseNote]>>
+     * @return all notes
      */
     @Query("select * from database_note order by date desc")
     fun getAllNotes(): LiveData<List<DatabaseNote>>
@@ -23,7 +20,7 @@ interface NoteDao {
     /**
      * Retrieve the latest inserted note from the database
      *
-     * @return [DatabaseNote]
+     * @return the latest inserted note
      */
     @Query("select * from database_note ORDER BY date DESC LIMIT 1")
     fun getNote(): DatabaseNote
@@ -31,7 +28,7 @@ interface NoteDao {
     /**
      * Delete the Note with the given id from the database
      *
-     * @param noteId [Int]
+     * @param noteId the id of the note to be deleted
      */
     @Query("delete from database_note where id = :noteId")
     fun deleteNote(noteId: Int)
@@ -39,7 +36,7 @@ interface NoteDao {
     /**
      * Delete the notes with the included ids from the database
      *
-     * @param idList [List]<[Int]>
+     * @param idList list of ids of notes to be deleted
      */
     @Query("delete from database_note where id in (:idList)")
     fun deleteSomeNotes(idList: List<Int>)
@@ -47,23 +44,23 @@ interface NoteDao {
     /**
      * Insert a single Note into the database
      *
-     * @param note [DatabaseNote]
+     * @param note the note to be inserted
      */
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(note: DatabaseNote?)
 
     /**
      * Insert a list of Notes into the database
      *
-     * @param notes [List]<[DatabaseNote]>
+     * @param notes list of notes to be inserted
      */
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertNotesList(notes: List<DatabaseNote>)
 
     /**
      * Update contents of a Note in the database
      *
-     * @param note [DatabaseNote]
+     * @param note note to be updated
      */
     @Update
     fun update(note: DatabaseNote)
@@ -71,8 +68,8 @@ interface NoteDao {
     /**
      * Retrieve a single note with the specified id from the database
      *
-     * @param noteId [Int]
-     * @return [DatabaseNote]
+     * @param noteId id of the note to be retrieved
+     * @return the note with the specified id
      */
     @Query("select * from database_note where id = :noteId")
     fun get(noteId: Int): DatabaseNote
