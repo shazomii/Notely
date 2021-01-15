@@ -37,9 +37,14 @@
     <string name="filter_icon">Filter Icon</string>
     <string name="select_all">Select all</string>
     <string name="deselect_all">Deselect all</string>
+    <string name="undo_delete_snackbar">This action can be undone within 5 seconds</string>
     <!-- String plurals and their related prefix / suffix strings -->
     <plurals name="delete_dialog_title">
         <item quantity="one" translation_description="Text for delete dialog title indicating that a single note is about to be deleted">Delete note?</item>
         <item quantity="other" translation_description="Text for delete dialog title indicating that more than one note is about to be deleted">Delete %d notes?</item>
+    </plurals>
+    <plurals name="undo_delete_snackbar_message">
+        <item quantity="one" translation_description="Text for the undo delete snackbar indicating that a single note has been deleted">1 note deleted</item>
+        <item quantity="other" translation_description="Text for the undo delete snackbar indicating that more than one note has been deleted">%d notes deleted</item>
     </plurals>
 </resources>

@@ -2,7 +2,6 @@ package com.davenet.notely.ui.notelist
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -41,12 +40,12 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private val layout get() = _layout!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         setHasOptionsMenu(true)
         requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
-            .setDrawerLockMode(LOCK_MODE_UNLOCKED)
+                .setDrawerLockMode(LOCK_MODE_UNLOCKED)
         _binding = FragmentNoteListBinding.inflate(inflater, container, false)
 
         adapter = NotesAdapter { list, action ->
@@ -62,7 +61,7 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 }
                 ACTION_DELETE -> {
                     noteListViewModel.setNotesToDelete(list)
-                    openAlertDialog(noteListViewModel.notesToDelete.value!!)
+                    openAlertDialog()
                 }
             }
         }
@@ -74,7 +73,7 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
             uiState = noteListViewModel.uiState
             noteList.adapter = adapter
             noteList.layoutManager =
-                GridLayoutManager(context, calculateNoOfColumns(requireContext(), 180))
+                    GridLayoutManager(context, calculateNoOfColumns(requireContext(), 180))
         }
         return binding.root
     }
@@ -100,9 +99,9 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
 
         ArrayAdapter.createFromResource(
-            activity?.baseContext!!,
-            R.array.filter_array,
-            R.layout.spinner_item,
+                activity?.baseContext!!,
+                R.array.filter_array,
+                R.layout.spinner_item,
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.spinnerNoteFilter.apply {
@@ -116,49 +115,52 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
         _layout = binding.noteListLayout
     }
 
-    private fun openAlertDialog(notesToDelete: List<NoteEntry>) {
+    private fun openAlertDialog() {
         AlertDialog.Builder(requireContext())
-            .setTitle(
-                resources.getQuantityString(
-                    R.plurals.delete_dialog_title,
-                    notesToDelete.size,
-                    notesToDelete.size
+                .setTitle(
+                        resources.getQuantityString(
+                                R.plurals.delete_dialog_title,
+                                noteListViewModel.notesToDelete.value!!.size,
+                                noteListViewModel.notesToDelete.value!!.size
+                        )
                 )
-            )
-            .setMessage(getString(R.string.confirm_delete_message))
-            .setNegativeButton(getString(R.string.cancel), null)
-            .setPositiveButton(getString(R.string.delete)) { _, _ ->
-                deleteNotes(notesToDelete)
-            }
-            .show()
+                .setMessage(getString(R.string.undo_delete_snackbar))
+                .setNegativeButton(getString(R.string.cancel), null)
+                .setPositiveButton(getString(R.string.delete)) { _, _ ->
+                    deleteNotes()
+                    undoDeleteNotes()
+                }
+                .show()
     }
 
-    private fun undoDeleteNotes(noteList: List<NoteEntry>) {
-        layout.longSnackbar(getString(R.string.notes_deleted), getString(R.string.undo)) {
-            insertNotes(noteList)
+    private fun undoDeleteNotes() {
+        layout.longSnackbar(resources.getQuantityString(
+                R.plurals.undo_delete_snackbar_message,
+                noteListViewModel.notesToDelete.value!!.size,
+                noteListViewModel.notesToDelete.value!!.size), getString(R.string.undo)) {
+            insertNotes()
         }
     }
 
-    private fun insertNotes(noteList: List<NoteEntry>) {
-        Log.d("notelist", noteList.toString())
+    private fun insertNotes() {
         uiScope.launch {
             withContext(Dispatchers.Main) {
-                if (noteList.size == 1) {
-                    noteListViewModel.insertNote(noteList[0])
+                if (noteListViewModel.notesToDelete.value!!.size == 1) {
+                    noteListViewModel.insertNote()
                 } else {
-                    noteListViewModel.insertNotes(noteList)
+                    noteListViewModel.insertNotes()
                 }
             }
         }
     }
 
-    private fun deleteNotes(list: List<NoteEntry>) {
+    private fun deleteNotes() {
         uiScope.launch {
             withContext(Dispatchers.Main) {
-                if (list.size == 1) {
-                    noteListViewModel.deleteNote(list[0])
+                if (noteListViewModel.notesToDelete.value!!.size == 1) {
+                    noteListViewModel.deleteNote()
                 } else {
-                    noteListViewModel.deleteNotes(list)
+                    noteListViewModel.deleteNotes()
                 }
                 adapter.actionMode?.finish()
             }

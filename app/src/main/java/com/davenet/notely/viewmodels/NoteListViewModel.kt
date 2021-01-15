@@ -6,6 +6,8 @@ import androidx.databinding.ObservableField
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import com.davenet.notely.database.asDomainModel
+import com.davenet.notely.database.toDatabaseList
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.repository.NoteRepository
 import com.davenet.notely.ui.notelist.NoteListFragment
@@ -51,12 +53,10 @@ class NoteListViewModel @ViewModelInject internal constructor(
     /**
      * Delete the notes with the included ids from the database. Also, cancel
      * any active reminders associated with the notes.
-     *
-     * @param noteList [List]<[NoteEntry]>
      */
-    fun deleteNotes(noteList: List<NoteEntry>) {
+    fun deleteNotes() {
         val idList = ArrayList<Int>()
-        for (note in noteList) {
+        for (note in getNotesToDelete().value!!) {
             if (note.started && note.reminder!! > currentDate().timeInMillis) {
                 cancelAlarm(context, note)
             }
@@ -70,10 +70,9 @@ class NoteListViewModel @ViewModelInject internal constructor(
     /**
      * Delete a note from the database and cancel the active reminder associated
      * with it, if any.
-     *
-     * @param note [NoteEntry]
      */
-    fun deleteNote(note: NoteEntry) {
+    fun deleteNote() {
+        val note = getNotesToDelete().value!![0]
         if (note.started && note.reminder!! > currentDate().timeInMillis) {
             cancelAlarm(context, note)
         }
@@ -85,10 +84,9 @@ class NoteListViewModel @ViewModelInject internal constructor(
     /**
      * Insert a note into the database and create a reminder if it has one which
      * has not elapsed.
-     *
-     * @param note [NoteEntry]
      */
-    fun insertNote(note: NoteEntry) {
+    fun insertNote() {
+        val note = getNotesToDelete().value!![0]
         if (note.started && note.reminder!! > currentDate().timeInMillis) {
             createSchedule(context, note)
         }
@@ -100,17 +98,16 @@ class NoteListViewModel @ViewModelInject internal constructor(
     /**
      * Insert a list of notes into the database and create reminders for those with
      * valid reminders.
-     *
-     * @param noteList [List]<[NoteEntry]>
      */
-    fun insertNotes(noteList: List<NoteEntry>) {
-        for (note in noteList) {
+    fun insertNotes() {
+        val notesToInsert = getNotesToDelete().value!!
+        for (note in notesToInsert) {
             if (note.started && note.reminder!! > currentDate().timeInMillis) {
                 createSchedule(context, note)
             }
         }
         viewModelScope.launch {
-            noteListRepository.insertNotes(noteList)
+            noteListRepository.insertNotes(notesToInsert)
         }
     }
 
@@ -123,7 +120,7 @@ class NoteListViewModel @ViewModelInject internal constructor(
     }
 
     fun setNotesToDelete(noteList: List<NoteEntry>) {
-        savedStateHandle.set(NOTES_TO_DELETE, noteList)
+        savedStateHandle.set(NOTES_TO_DELETE, noteList.toDatabaseList().asDomainModel())
     }
 
     private fun getNotesToDelete(): MutableLiveData<List<NoteEntry>> {
