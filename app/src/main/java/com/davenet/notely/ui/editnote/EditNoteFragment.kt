@@ -2,7 +2,6 @@ package com.davenet.notely.ui.editnote
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -19,7 +18,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.davenet.notely.R
 import com.davenet.notely.databinding.FragmentEditNoteBinding
-import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.util.ReminderCompletion
 import com.davenet.notely.util.ReminderState
 import com.davenet.notely.util.currentDate
@@ -144,7 +142,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
                 true
             }
             R.id.action_color -> {
-                viewModel.pickColor(requireActivity(), viewModel.noteBeingModified.value!!)
+                viewModel.pickColor(requireActivity())
                 true
             }
             R.id.action_delete -> {
@@ -182,7 +180,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
                 pickDate()
             }
             getString(R.string.delete) -> {
-                viewModel.cancelReminder(requireContext(), viewModel.noteBeingModified.value!!)
+                viewModel.cancelReminder()
             }
         }
     }
@@ -194,7 +192,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
         val hourOfDay = currentDateTime.get(Calendar.HOUR_OF_DAY)
         val minuteOfDay = currentDateTime.get(Calendar.MINUTE)
         val timePickerDialog =
-            TimePickerDialog(requireContext(), this, hourOfDay, minuteOfDay, false)
+                TimePickerDialog(requireContext(), this, hourOfDay, minuteOfDay, false)
         timePickerDialog.show()
     }
 
@@ -227,21 +225,20 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
 
     private fun openDeleteDialog() {
         AlertDialog.Builder(requireContext())
-            .setTitle(getString(R.string.delete_note))
-            .setMessage(getString(R.string.confirm_delete_message))
-            .setPositiveButton("Delete") { _, _ ->
-                val note = viewModel.noteBeingModified.value!!
-                deleteNote(requireContext(), note)
-                findNavController().popBackStack()
-            }
-            .setNegativeButton(getString(R.string.cancel), null)
-            .show()
+                .setTitle(getString(R.string.delete_note))
+                .setMessage(getString(R.string.confirm_delete_message))
+                .setPositiveButton("Delete") { _, _ ->
+                    deleteNote()
+                    findNavController().popBackStack()
+                }
+                .setNegativeButton(getString(R.string.cancel), null)
+                .show()
     }
 
-    private fun deleteNote(context: Context, note: NoteEntry) {
+    private fun deleteNote() {
         uiScope.launch {
             withContext(Dispatchers.Main) {
-                viewModel.deleteNote(context, note)
+                viewModel.deleteNote()
             }
         }
     }
@@ -279,7 +276,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
             }
             viewModel.isChanged.value!! -> {
                 viewModel.saveNote()
-                viewModel.scheduleReminder(requireContext(), viewModel.noteBeingModified.value!!)
+                viewModel.scheduleReminder()
                 Toast.makeText(context, getString(R.string.changes_saved), Toast.LENGTH_LONG).show()
                 findNavController().popBackStack()
             }
