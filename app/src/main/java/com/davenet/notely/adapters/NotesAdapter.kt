@@ -1,7 +1,7 @@
 package com.davenet.notely.adapters
 
 import android.view.*
-import androidx.appcompat.widget.AppCompatImageView
+import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
@@ -27,7 +27,7 @@ class NotesAdapter(private val callback: ((List<NoteEntry>, action: String) -> U
     var actionMode: ActionMode? = null
     private var multiSelect = false
     private var allNotes = ArrayList<NoteEntry?>()
-    private var cardList = ArrayList<AppCompatImageView>()
+    private var cardList = ArrayList<ImageView>()
     private var showAddAllIcon = false
 
     override fun createBinding(parent: ViewGroup): NoteItemBinding {
@@ -64,7 +64,7 @@ class NotesAdapter(private val callback: ((List<NoteEntry>, action: String) -> U
         }
     }
 
-    private fun selectItem(note: NoteEntry?, itemCard: AppCompatImageView?, view: View?) {
+    private fun selectItem(note: NoteEntry?, itemCard: ImageView?, view: View?) {
         if (multiSelect) {
             if (selectedItems.contains(note)) {
                 selectedItems.remove(note)

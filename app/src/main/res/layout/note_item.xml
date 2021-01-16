@@ -96,18 +96,21 @@
                     app:layout_constraintTop_toTopOf="@id/dateModified"
                     app:visible="@{note.reminder > UtilKt.currentDate().timeInMillis}" />
 
-                <androidx.appcompat.widget.AppCompatImageView
+                <ImageView
                     android:id="@+id/checkedImage"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:padding="50sp"
-                    android:scaleType="centerCrop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:src="@drawable/ic_baseline_check_circle_24"
                     android:visibility="invisible"
+                    android:minHeight="48dp"
+                    android:minWidth="48dp"
+                    android:contentDescription="@string/selected_note_identifier"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.davenet.notely.views.MaskedCardView>

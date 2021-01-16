@@ -38,6 +38,7 @@
     <string name="select_all">Select all</string>
     <string name="deselect_all">Deselect all</string>
     <string name="undo_delete_snackbar">This action can be undone within 5 seconds</string>
+    <string name="selected_note_identifier">Selected note identifier</string>
     <!-- String plurals and their related prefix / suffix strings -->
     <plurals name="delete_dialog_title">
         <item quantity="one" translation_description="Text for delete dialog title indicating that a single note is about to be deleted">Delete note?</item>
