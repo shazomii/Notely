@@ -36,7 +36,7 @@
 
         <Preference
             app:selectable="false"
-            app:summary="1.0.0"
+            app:summary="1.0.1"
             app:title="Version" />
     </PreferenceCategory>
 
