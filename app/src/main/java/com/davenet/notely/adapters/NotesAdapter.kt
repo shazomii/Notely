@@ -64,19 +64,19 @@ class NotesAdapter(private val callback: ((List<NoteEntry>, action: String) -> U
         }
     }
 
-    private fun selectItem(note: NoteEntry?, itemCard: ImageView?, view: View?) {
+    private fun selectItem(note: NoteEntry?, checkCircle: ImageView?, view: View?) {
         if (multiSelect) {
             if (selectedItems.contains(note)) {
                 selectedItems.remove(note)
-                itemCard?.isVisible = false
+                checkCircle?.isVisible = false
                 if (selectedItems.size == 0) {
                     callback?.invoke(listOf(), ACTION_FAB_SHOW)
-                    itemCard?.isVisible = false
+                    checkCircle?.isVisible = false
                     actionMode?.finish()
                 }
             } else {
                 selectedItems.add(note!!)
-                itemCard?.isVisible = true
+                checkCircle?.isVisible = true
             }
             if (selectedItems.size > 0) {
                 actionMode?.title = selectedItems.size.toString()
@@ -135,8 +135,8 @@ class NotesAdapter(private val callback: ((List<NoteEntry>, action: String) -> U
                     mode?.invalidate()
                     if (allNotes.isNotEmpty()) {
                         selectedItems.clear()
-                        allNotes.zip(cardList) { note, itemCard ->
-                            selectItem(note, itemCard, null)
+                        allNotes.zip(cardList) { note, checkCircle ->
+                            selectItem(note, checkCircle, null)
                         }
                         notifyDataSetChanged()
                     }
