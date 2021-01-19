@@ -6,7 +6,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/bottomSheet"
         android:padding="8dp">
 
         <ImageView
@@ -16,7 +15,7 @@
             android:src="@drawable/ic_baseline_alarm_48"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="Alarm icon"
+            android:contentDescription="@string/alarm_icon"
             android:layout_margin="8dp"
             app:tint="@color/colorPrimary" />
 

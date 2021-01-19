@@ -9,28 +9,23 @@
     <string name="choose_theme">Choose theme</string>
     <string name="default_theme">MODE_NIGHT_FOLLOW_SYSTEM</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="app_logo">App Logo</string>
     <string name="share">Share</string>
     <string name="set_reminder">Add a reminder to this note</string>
     <string name="discard_changes">Any changes you have made will be discarded.</string>
     <string name="changes_saved">Changes saved</string>
     <string name="modify">Modify</string>
     <string name="delete">Delete</string>
-    <string name="notes_deleted">Notes deleted</string>
     <string name="undo">Undo</string>
-    <string name="note_deleted">Note deleted</string>
     <string name="color">Color</string>
     <string name="note_color">Note color</string>
     <string name="note_title">Note title (required)</string>
     <string name="note_text">Note text (required)</string>
     <string name="reminder_icon">Reminder icon</string>
-    <string name="delete_reminder">Delete reminder</string>
     <string name="confirm_delete_message">This is permanent and can\'t be undone.</string>
     <string name="save">Save</string>
     <string name="discard_note">Discard</string>
     <string name="not_be_blank">Title and content cannot be blank</string>
     <string name="add_new_note">Add new note</string>
-    <string name="ok">OK</string>
     <string name="delete_note">Delete note?</string>
     <string name="discard">Discard changes</string>
     <string name="cancel">Cancel</string>
@@ -39,6 +34,7 @@
     <string name="deselect_all">Deselect all</string>
     <string name="undo_delete_snackbar">This action can be undone within 5 seconds</string>
     <string name="selected_note_identifier">Selected note identifier</string>
+    <string name="alarm_icon">Alarm icon</string>
     <!-- String plurals and their related prefix / suffix strings -->
     <plurals name="delete_dialog_title">
         <item quantity="one" translation_description="Text for delete dialog title indicating that a single note is about to be deleted">Delete note?</item>
