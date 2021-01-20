@@ -105,6 +105,7 @@
                     android:visibility="invisible"
                     android:minHeight="24dp"
                     android:minWidth="24dp"
+                    android:padding="4dp"
                     android:contentDescription="@string/selected_note_identifier"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

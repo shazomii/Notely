@@ -4,4 +4,8 @@
     android:shape="oval">
     <solid
         android:color="#3787FF" />
+
+    <stroke
+        android:width="2dp"
+        android:color="@color/colorTick" />
 </shape>
