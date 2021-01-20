@@ -1,4 +1,6 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="card_corner_radius">12dp</dimen>
+    <dimen name="drawable_padding">8dp</dimen>
+    <dimen name="zero_width">0dp</dimen>
 </resources>

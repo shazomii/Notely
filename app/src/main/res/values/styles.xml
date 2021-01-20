@@ -20,4 +20,12 @@
         <item name="srcCompat">@drawable/ic_baseline_add_circle_24</item>
     </style>
 
+    <style name="ReminderText" parent="@style/TextAppearance.MaterialComponents.Body2">
+        <item name="android:layout_width">@dimen/zero_width</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:drawablePadding">@dimen/drawable_padding</item>
+        <item name="android:gravity">center</item>
+        <item name="drawableStartCompat">@drawable/ic_baseline_alarm_24</item>
+    </style>
+
 </resources>

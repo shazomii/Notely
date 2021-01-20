@@ -92,13 +92,8 @@
 
                 <TextView
                     android:id="@+id/textNoteReminder"
-                    style="?attr/textAppearanceBody2"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:drawablePadding="8dp"
-                    android:gravity="center"
+                    style="@style/ReminderText"
                     android:text="@{UtilKt.formatReminderDate(editviewmodel.noteBeingModified.reminder)}"
-                    app:drawableStartCompat="@drawable/ic_baseline_alarm_24"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -106,13 +101,8 @@
                     app:strikeThrough="@{reminderCompletion == reminderCompletion.COMPLETED}" />
                 <TextView
                     android:id="@+id/textNoteNoReminder"
-                    style="?attr/textAppearanceBody2"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:drawablePadding="8dp"
-                    android:gravity="center"
                     android:text="@string/set_reminder"
-                    app:drawableStartCompat="@drawable/ic_baseline_alarm_24"
+                    style="@style/ReminderText"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
