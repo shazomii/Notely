@@ -1,0 +1,21 @@
+<resources>
+    <!-- Theme Preference -->
+    <string-array name="pref_theme">
+        <item>系统默认</item>
+        <item>浅色</item>
+        <item>深色</item>
+    </string-array>
+
+    <string-array name="pref_theme_values">
+        <item>MODE_NIGHT_FOLLOW_SYSTEM</item>
+        <item>MODE_NIGHT_NO</item>
+        <item>MODE_NIGHT_YES</item>
+    </string-array>
+
+    <string-array name="filter_array">
+        <item>全部</item>
+        <item>今日</item>
+        <item>即将到来</item>
+        <item>已完成</item>
+    </string-array>
+</resources>
