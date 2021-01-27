@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">Notely</string>
+    <string name="action_settings">设置</string>
+    <string name="empty_quote">最好的开始方法是停止说话并开始行动。- 华特·迪斯尼</string>
+    <string name="title_activity_settings">设置</string>
+    <string name="theme">主题</string>
+    <string name="key_theme">主题</string>
+    <string name="category_display">展示</string>
+    <string name="choose_theme">选择主题</string>
+    <string name="default_theme">MODE_NIGHT_FOLLOW_SYSTEM</string>
+    <string name="nav_header_desc">导航标题</string>
+    <string name="share">分享</string>
+    <string name="set_reminder">给这则笔记添加一个提醒</string>
+    <string name="discard_changes">你所做的任何更改都将被丢弃。</string>
+    <string name="changes_saved">已保存更改</string>
+    <string name="modify">修改</string>
+    <string name="delete">删除</string>
+    <string name="undo">撤销</string>
+    <string name="color">颜色</string>
+    <string name="note_color">笔记颜色</string>
+    <string name="note_title">笔记标题 （必填）</string>
+    <string name="note_text">笔记正文（必填）</string>
+    <string name="reminder_icon">提醒图标</string>
+    <string name="confirm_delete_message">这是永久性的，无法被撤销。</string>
+    <string name="save">保存</string>
+    <string name="discard_note">丢弃</string>
+    <string name="not_be_blank">标题和内容不能为空</string>
+    <string name="add_new_note">添加新笔记</string>
+    <string name="delete_note">删除笔记</string>
+    <string name="discard">丢弃所做更改</string>
+    <string name="cancel">取消</string>
+    <string name="filter_icon">过滤器图标</string>
+    <string name="select_all">选择所有</string>
+    <string name="deselect_all">取消选择所有</string>
+    <string name="undo_delete_snackbar">可在 5 秒内撤消此操作</string>
+    <string name="selected_note_identifier">选中的笔记标识符</string>
+    <string name="alarm_icon">闹钟图标</string>
+    <!-- String plurals and their related prefix / suffix strings -->
+    <plurals name="delete_dialog_title">
+        <item quantity="one" translation_description="Text for delete dialog title indicating that a single note is about to be deleted">删除这则笔记？</item>
+        <item quantity="other" translation_description="Text for delete dialog title indicating that more than one note is about to be deleted">删除 %d 则笔记？</item>
+    </plurals>
+    <plurals name="undo_delete_snackbar_message">
+        <item quantity="one" translation_description="Text for the undo delete snackbar indicating that a single note has been deleted">已删除一则笔记</item>
+        <item quantity="other" translation_description="Text for the undo delete snackbar indicating that more than one note has been deleted">已删除 %d 则笔记</item>
+    </plurals>
+</resources>
