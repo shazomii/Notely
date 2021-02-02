@@ -18,8 +18,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.davenet.notely.R
 import com.davenet.notely.databinding.FragmentEditNoteBinding
-import com.davenet.notely.util.ReminderCompletion
-import com.davenet.notely.util.ReminderState
+import com.davenet.notely.util.ReminderAvailableState
+import com.davenet.notely.util.ReminderCompletionState
 import com.davenet.notely.util.currentDate
 import com.davenet.notely.util.hideKeyboard
 import com.davenet.notely.viewmodels.EditNoteViewModel
@@ -36,7 +36,7 @@ import javax.inject.Inject
  */
 @AndroidEntryPoint
 class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.OnDateSetListener,
-        TimePickerDialog.OnTimeSetListener {
+    TimePickerDialog.OnTimeSetListener {
     private var _binding: FragmentEditNoteBinding? = null
     private val binding get() = _binding!!
     private lateinit var pickedDateTime: Calendar
@@ -49,20 +49,21 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
 
     private val viewModel: EditNoteViewModel by viewModels {
         EditNoteViewModel.provideFactory(
-                viewModelFactory,
-                args.noteId
+            viewModelFactory,
+            args.noteId
         )
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         setHasOptionsMenu(true)
         _binding = FragmentEditNoteBinding.inflate(
-                inflater, container, false
+            inflater, container, false
         )
-        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
+            .setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
         return binding.root
     }
@@ -73,8 +74,8 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
         binding.apply {
             lifecycleOwner = viewLifecycleOwner
             editviewmodel = viewModel
-            reminderState = viewModel.reminderState
-            reminderCompletion = viewModel.reminderCompletion
+            reminderAvailableState = viewModel.reminderAvailableState
+            reminderCompletionState = viewModel.reminderCompletionState
         }
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -86,23 +87,25 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
     }
 
     private fun observeViewModel() {
-        viewModel.apply {
+        with(viewModel) {
             noteBeingModified.observe(viewLifecycleOwner, { note ->
                 note?.let {
                     if (it.reminder != null) {
-                        viewModel.reminderState.set(ReminderState.HAS_REMINDER)
+                        reminderAvailableState.set(ReminderAvailableState.HAS_REMINDER)
                         if (currentDate().timeInMillis > note.reminder!!) {
-                            viewModel.reminderCompletion.set(ReminderCompletion.COMPLETED)
+                            reminderCompletionState.set(ReminderCompletionState.COMPLETED)
                         } else {
-                            viewModel.reminderCompletion.set(ReminderCompletion.ONGOING)
+                            reminderCompletionState.set(ReminderCompletionState.ONGOING)
                         }
                     } else {
-                        viewModel.reminderState.set(ReminderState.NO_REMINDER)
+                        reminderAvailableState.set(ReminderAvailableState.NO_REMINDER)
                     }
                     activity?.invalidateOptionsMenu()
                 }
             })
+
         }
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -110,7 +113,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
         uiScope = CoroutineScope(Dispatchers.Default)
 
         binding.reminderCard.setOnClickListener {
-            if (viewModel.reminderState.get() == ReminderState.NO_REMINDER) {
+            if (viewModel.reminderAvailableState.get() == ReminderAvailableState.NO_REMINDER) {
                 pickDate()
             } else {
                 childFragmentManager.let {
@@ -192,7 +195,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
         val hourOfDay = currentDateTime.get(Calendar.HOUR_OF_DAY)
         val minuteOfDay = currentDateTime.get(Calendar.MINUTE)
         val timePickerDialog =
-                TimePickerDialog(requireContext(), this, hourOfDay, minuteOfDay, false)
+            TimePickerDialog(requireContext(), this, hourOfDay, minuteOfDay, false)
         timePickerDialog.show()
     }
 
@@ -225,14 +228,14 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
 
     private fun openDeleteDialog() {
         AlertDialog.Builder(requireContext())
-                .setTitle(getString(R.string.delete_note))
-                .setMessage(getString(R.string.confirm_delete_message))
-                .setPositiveButton("Delete") { _, _ ->
-                    deleteNote()
-                    findNavController().popBackStack()
-                }
-                .setNegativeButton(getString(R.string.cancel), null)
-                .show()
+            .setTitle(getString(R.string.delete_note))
+            .setMessage(getString(R.string.confirm_delete_message))
+            .setPositiveButton("Delete") { _, _ ->
+                deleteNote()
+                findNavController().popBackStack()
+            }
+            .setNegativeButton(getString(R.string.cancel), null)
+            .show()
     }
 
     private fun deleteNote() {
@@ -245,20 +248,23 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
 
     private fun openAlertDialog() {
         AlertDialog.Builder(requireContext())
-                .setTitle(getString(R.string.discard))
-                .setMessage(getString(R.string.discard_changes))
-                .setCancelable(false)
-                .setPositiveButton("Continue editing", null)
-                .setNegativeButton(getString(R.string.discard_note)) { _, _ ->
-                    findNavController().popBackStack()
-                }
-                .show()
+            .setTitle(getString(R.string.discard))
+            .setMessage(getString(R.string.discard_changes))
+            .setCancelable(false)
+            .setPositiveButton("Continue editing", null)
+            .setNegativeButton(getString(R.string.discard_note)) { _, _ ->
+                findNavController().popBackStack()
+            }
+            .show()
     }
 
     private fun shareNote() {
         val sendIntent = Intent().apply {
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, "${viewModel.noteBeingModified.value?.title}\n\n${viewModel.noteBeingModified.value?.text}")
+            putExtra(
+                Intent.EXTRA_TEXT,
+                "${viewModel.noteBeingModified.value?.title}\n\n${viewModel.noteBeingModified.value?.text}"
+            )
             type = "text/plain"
         }
         val shareIntent = Intent.createChooser(sendIntent, null)
@@ -266,23 +272,26 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
     }
 
     private fun saveNote() {
-        when {
-            viewModel.noteBeingModified.value!!.title.isBlank() or viewModel.noteBeingModified.value!!.text.isBlank() -> {
-                Toast.makeText(
+        with(viewModel) {
+            when {
+                noteBeingModified.value!!.title.isBlank() or noteBeingModified.value!!.text.isBlank() -> {
+                    Toast.makeText(
                         requireContext(),
                         getString(R.string.not_be_blank),
                         Toast.LENGTH_LONG
-                ).show()
-            }
-            viewModel.isChanged.value!! -> {
-                viewModel.saveNote()
-                viewModel.scheduleReminder()
-                Toast.makeText(context, getString(R.string.changes_saved), Toast.LENGTH_LONG).show()
-                findNavController().popBackStack()
-            }
-            else -> {
-                findNavController().popBackStack()
+                    ).show()
+                }
+                isChanged.value!! -> {
+                    saveNote()
+                    scheduleReminder()
+                    Toast.makeText(context, getString(R.string.changes_saved), Toast.LENGTH_LONG)
+                        .show()
+                    findNavController().popBackStack()
+                }
+                else -> {
+                    findNavController().popBackStack()
 
+                }
             }
         }
     }
@@ -293,7 +302,7 @@ class EditNoteFragment : Fragment(), BottomSheetClickListener, DatePickerDialog.
         val startMonth = currentDateTime.get(Calendar.MONTH)
         val startDay = currentDateTime.get(Calendar.DAY_OF_MONTH)
         val datePickerDialog =
-                DatePickerDialog(requireContext(), this, startYear, startMonth, startDay)
+            DatePickerDialog(requireContext(), this, startYear, startMonth, startDay)
         datePickerDialog.show()
     }
 }
