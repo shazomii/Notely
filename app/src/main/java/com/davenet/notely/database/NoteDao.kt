@@ -31,7 +31,7 @@ interface NoteDao {
      * @param noteId the id of the note to be deleted
      */
     @Query("delete from database_note where id = :noteId")
-    fun deleteNote(noteId: Int)
+    suspend fun deleteNote(noteId: Int)
 
     /**
      * Delete the notes with the included ids from the database
@@ -39,7 +39,7 @@ interface NoteDao {
      * @param idList list of ids of notes to be deleted
      */
     @Query("delete from database_note where id in (:idList)")
-    fun deleteSomeNotes(idList: List<Int>)
+    suspend fun deleteSomeNotes(idList: List<Int>)
 
     /**
      * Insert a single Note into the database
@@ -47,7 +47,7 @@ interface NoteDao {
      * @param note the note to be inserted
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(note: DatabaseNote?)
+    suspend fun insert(note: DatabaseNote?)
 
     /**
      * Insert a list of Notes into the database
@@ -55,7 +55,7 @@ interface NoteDao {
      * @param notes list of notes to be inserted
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertNotesList(notes: List<DatabaseNote>)
+    suspend fun insertNotesList(notes: List<DatabaseNote>)
 
     /**
      * Update contents of a Note in the database
@@ -63,7 +63,7 @@ interface NoteDao {
      * @param note note to be updated
      */
     @Update
-    fun update(note: DatabaseNote)
+    suspend fun update(note: DatabaseNote)
 
     /**
      * Retrieve a single note with the specified id from the database
