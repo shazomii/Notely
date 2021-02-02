@@ -6,12 +6,12 @@ enum class UIState {
     EMPTY
 }
 
-enum class ReminderState {
+enum class ReminderAvailableState {
     HAS_REMINDER,
     NO_REMINDER
 }
 
-enum class ReminderCompletion {
+enum class ReminderCompletionState {
     COMPLETED,
     ONGOING
 }

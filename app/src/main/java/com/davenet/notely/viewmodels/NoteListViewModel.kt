@@ -2,6 +2,8 @@ package com.davenet.notely.viewmodels
 
 import android.content.Context
 import android.text.format.DateUtils
+import androidx.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.databinding.ObservableField
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
@@ -27,7 +29,8 @@ class NoteListViewModel @ViewModelInject internal constructor(
 ) : ViewModel() {
     val uiState = ObservableField(UIState.LOADING)
 
-    private var notes = noteListRepository.notes
+    private val notes = noteListRepository.notes
+
 
     val filteredNotes: LiveData<List<NoteEntry>> = getSavedFilter().switchMap { filter ->
         when (filter) {
@@ -56,12 +59,19 @@ class NoteListViewModel @ViewModelInject internal constructor(
      */
     fun deleteNotes() {
         val idList = ArrayList<Int>()
-        for (note in getNotesToDelete().value!!) {
-            if (note.started && note.reminder!! > currentDate().timeInMillis) {
-                cancelAlarm(context, note)
+        getNotesToDelete().value?.let { noteList ->
+            for (note in noteList) {
+                if (note.started && note.reminder!! > currentDate().timeInMillis) {
+                    cancelAlarm(context, note)
+                }
+                idList.add(note.id!!)
             }
-            idList.add(note.id!!)
+            deleteTheNotes(idList)
         }
+    }
+
+    @VisibleForTesting(otherwise = PRIVATE)
+    fun deleteTheNotes(idList: ArrayList<Int>) {
         viewModelScope.launch {
             noteListRepository.deleteNotes(idList)
         }
@@ -72,12 +82,18 @@ class NoteListViewModel @ViewModelInject internal constructor(
      * with it, if any.
      */
     fun deleteNote() {
-        val note = getNotesToDelete().value!![0]
-        if (note.started && note.reminder!! > currentDate().timeInMillis) {
-            cancelAlarm(context, note)
+        getNotesToDelete().value?.let { noteList ->
+            if (noteList.first().started && noteList.first().reminder!! > currentDate().timeInMillis) {
+                cancelAlarm(context, noteList.first())
+            }
+            deleteTheNote(noteList.first().id!!)
         }
+    }
+
+    @VisibleForTesting(otherwise = PRIVATE)
+    fun deleteTheNote(noteId: Int) {
         viewModelScope.launch {
-            noteListRepository.deleteNote(note.id!!)
+            noteListRepository.deleteNote(noteId)
         }
     }
 
@@ -86,12 +102,18 @@ class NoteListViewModel @ViewModelInject internal constructor(
      * has not elapsed.
      */
     fun insertNote() {
-        val note = getNotesToDelete().value!![0]
-        if (note.started && note.reminder!! > currentDate().timeInMillis) {
-            createSchedule(context, note)
+        getNotesToDelete().value?.let { noteList ->
+            if (noteList.first().started && noteList.first().reminder!! > currentDate().timeInMillis) {
+                createSchedule(context, noteList.first())
+            }
+            insertTheNote(noteList.first())
         }
+    }
+
+    @VisibleForTesting(otherwise = PRIVATE)
+    fun insertTheNote(noteEntry: NoteEntry) {
         viewModelScope.launch {
-            noteListRepository.insertNote(note)
+            noteListRepository.insertNote(noteEntry)
         }
     }
 
@@ -100,14 +122,20 @@ class NoteListViewModel @ViewModelInject internal constructor(
      * valid reminders.
      */
     fun insertNotes() {
-        val notesToInsert = getNotesToDelete().value!!
-        for (note in notesToInsert) {
-            if (note.started && note.reminder!! > currentDate().timeInMillis) {
-                createSchedule(context, note)
+        getNotesToDelete().value?.let { noteList ->
+            for (note in noteList) {
+                if (note.started && note.reminder!! > currentDate().timeInMillis) {
+                    createSchedule(context, note)
+                }
             }
+            insertTheNotes(noteList)
         }
+    }
+
+    @VisibleForTesting(otherwise = PRIVATE)
+    fun insertTheNotes(noteList: List<NoteEntry>) {
         viewModelScope.launch {
-            noteListRepository.insertNotes(notesToInsert)
+            noteListRepository.insertNotes(noteList)
         }
     }
 

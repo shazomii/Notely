@@ -1,5 +1,7 @@
 package com.davenet.notely.repository
 
+import androidx.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import com.davenet.notely.database.DatabaseNote.Companion.toDatabaseEntry
@@ -11,12 +13,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
+class NoteRepository @Inject constructor(
+    @VisibleForTesting(otherwise = PRIVATE)
+    internal val noteDao: NoteDao
+) {
 
     val notes: LiveData<List<NoteEntry>> by lazy {
         Transformations.map(noteDao.getAllNotes()) {
@@ -35,9 +39,7 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
      * @param idList list of ids of notes to be deleted
      */
     suspend fun deleteNotes(idList: List<Int>) {
-        withContext(Dispatchers.IO) {
-            noteDao.deleteSomeNotes(idList)
-        }
+        noteDao.deleteSomeNotes(idList)
     }
 
     /**
@@ -46,9 +48,7 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
      * @param noteList list of notes to be inserted
      */
     suspend fun insertNotes(noteList: List<NoteEntry>) {
-        withContext(Dispatchers.IO) {
-            noteDao.insertNotesList(noteList.toDatabaseList())
-        }
+        noteDao.insertNotesList(noteList.toDatabaseList())
     }
 
     /**
@@ -57,7 +57,7 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
      * @param noteId id of the note to be retrieved
      * @return a single note via a flow collector
      */
-    suspend fun getNote(noteId: Int): Flow<NoteEntry?> {
+    fun getNote(noteId: Int): Flow<NoteEntry?> {
         return flow {
             emit(noteDao.get(noteId).asDomainModelEntry())
         }.flowOn(Dispatchers.IO)
@@ -68,7 +68,7 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
      *
      * @return the latest inserted note via a flow collector
      */
-    suspend fun getLatestNote(): Flow<NoteEntry?> {
+    fun getLatestNote(): Flow<NoteEntry?> {
         return flow {
             emit(noteDao.getNote().asDomainModelEntry())
         }.flowOn(Dispatchers.IO)
@@ -80,9 +80,7 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
      * @param note the note to be inserted
      */
     suspend fun insertNote(note: NoteEntry) {
-        withContext(Dispatchers.IO) {
-            noteDao.insert(toDatabaseEntry(note))
-        }
+        noteDao.insert(toDatabaseEntry(note))
     }
 
     /**
@@ -91,9 +89,7 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
      * @param note the note to be updated
      */
     suspend fun updateNote(note: NoteEntry) {
-        withContext(Dispatchers.IO) {
-            noteDao.update(toDatabaseEntry(note))
-        }
+        noteDao.update(toDatabaseEntry(note))
     }
 
     /**
@@ -102,8 +98,6 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
      * @param id id of the note to be deleted
      */
     suspend fun deleteNote(id: Int) {
-        withContext(Dispatchers.IO) {
-            noteDao.deleteNote(id)
-        }
+        noteDao.deleteNote(id)
     }
 }
