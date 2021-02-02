@@ -40,12 +40,12 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private val layout get() = _layout!!
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         setHasOptionsMenu(true)
         requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
-                .setDrawerLockMode(LOCK_MODE_UNLOCKED)
+            .setDrawerLockMode(LOCK_MODE_UNLOCKED)
         _binding = FragmentNoteListBinding.inflate(inflater, container, false)
 
         adapter = NotesAdapter { list, action ->
@@ -57,7 +57,7 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     binding.fab.show()
                 }
                 ACTION_SHARE -> {
-                    shareNote(list[0])
+                    shareNote(list.first())
                 }
                 ACTION_DELETE -> {
                     noteListViewModel.setNotesToDelete(list)
@@ -73,23 +73,26 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
             uiState = noteListViewModel.uiState
             noteList.adapter = adapter
             noteList.layoutManager =
-                    GridLayoutManager(context, calculateNoOfColumns(requireContext(), 180))
+                GridLayoutManager(context, calculateNoOfColumns(requireContext(), 180))
         }
         return binding.root
     }
 
     private fun observeViewModel() {
-        noteListViewModel.filteredNotes.observe(viewLifecycleOwner) { noteList ->
-            noteList?.let {
-                if (noteList.isNotEmpty()) {
-                    noteListViewModel.uiState.set(UIState.HAS_DATA)
-                } else {
-                    noteListViewModel.uiState.set(UIState.EMPTY)
+        with(noteListViewModel) {
+            filteredNotes.observe(viewLifecycleOwner) { noteList ->
+                noteList?.let {
+                    if (noteList.isNotEmpty()) {
+                        uiState.set(UIState.HAS_DATA)
+                    } else {
+                        uiState.set(UIState.EMPTY)
+                    }
+                    adapter.submitToList(noteList)
+                    activity?.invalidateOptionsMenu()
                 }
-                adapter.submitToList(noteList)
-                activity?.invalidateOptionsMenu()
             }
         }
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -99,9 +102,9 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
 
         ArrayAdapter.createFromResource(
-                activity?.baseContext!!,
-                R.array.filter_array,
-                R.layout.spinner_item,
+            activity?.baseContext!!,
+            R.array.filter_array,
+            R.layout.spinner_item,
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.spinnerNoteFilter.apply {
@@ -117,27 +120,30 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private fun openAlertDialog() {
         AlertDialog.Builder(requireContext())
-                .setTitle(
-                        resources.getQuantityString(
-                                R.plurals.delete_dialog_title,
-                                noteListViewModel.notesToDelete.value!!.size,
-                                noteListViewModel.notesToDelete.value!!.size
-                        )
+            .setTitle(
+                resources.getQuantityString(
+                    R.plurals.delete_dialog_title,
+                    noteListViewModel.notesToDelete.value!!.size,
+                    noteListViewModel.notesToDelete.value!!.size
                 )
-                .setMessage(getString(R.string.undo_delete_snackbar))
-                .setNegativeButton(getString(R.string.cancel), null)
-                .setPositiveButton(getString(R.string.delete)) { _, _ ->
-                    deleteNotes()
-                    undoDeleteNotes()
-                }
-                .show()
+            )
+            .setMessage(getString(R.string.undo_delete_snackbar))
+            .setNegativeButton(getString(R.string.cancel), null)
+            .setPositiveButton(getString(R.string.delete)) { _, _ ->
+                deleteNotes()
+                undoDeleteNotes()
+            }
+            .show()
     }
 
     private fun undoDeleteNotes() {
-        layout.longSnackbar(resources.getQuantityString(
+        layout.longSnackbar(
+            resources.getQuantityString(
                 R.plurals.undo_delete_snackbar_message,
                 noteListViewModel.notesToDelete.value!!.size,
-                noteListViewModel.notesToDelete.value!!.size), getString(R.string.undo)) {
+                noteListViewModel.notesToDelete.value!!.size
+            ), getString(R.string.undo)
+        ) {
             insertNotes()
         }
     }
@@ -145,11 +151,14 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private fun insertNotes() {
         uiScope.launch {
             withContext(Dispatchers.Main) {
-                if (noteListViewModel.notesToDelete.value!!.size == 1) {
-                    noteListViewModel.insertNote()
-                } else {
-                    noteListViewModel.insertNotes()
+                with(noteListViewModel) {
+                    if (notesToDelete.value!!.size == 1) {
+                        insertNote()
+                    } else {
+                        insertNotes()
+                    }
                 }
+
             }
         }
     }
@@ -157,10 +166,12 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private fun deleteNotes() {
         uiScope.launch {
             withContext(Dispatchers.Main) {
-                if (noteListViewModel.notesToDelete.value!!.size == 1) {
-                    noteListViewModel.deleteNote()
-                } else {
-                    noteListViewModel.deleteNotes()
+                with(noteListViewModel) {
+                    if (notesToDelete.value!!.size == 1) {
+                        deleteNote()
+                    } else {
+                        deleteNotes()
+                    }
                 }
                 adapter.actionMode?.finish()
             }
