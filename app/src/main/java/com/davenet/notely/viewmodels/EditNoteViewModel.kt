@@ -8,8 +8,8 @@ import com.davenet.notely.database.DatabaseNote.Companion.toDatabaseEntry
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.repository.NoteRepository
 import com.davenet.notely.ui.editnote.EditNoteFragment
-import com.davenet.notely.util.ReminderCompletion
-import com.davenet.notely.util.ReminderState
+import com.davenet.notely.util.ReminderAvailableState
+import com.davenet.notely.util.ReminderCompletionState
 import com.davenet.notely.util.currentDate
 import com.davenet.notely.util.selectColor
 import com.davenet.notely.work.cancelAlarm
@@ -24,16 +24,16 @@ import kotlinx.coroutines.runBlocking
  * The ViewModel for [EditNoteFragment]
  */
 class EditNoteViewModel @AssistedInject constructor(
-        private val context: Context,
-        private val noteRepository: NoteRepository,
-        @Assisted private val selectedNoteId: Int?
+    private val context: Context,
+    private val noteRepository: NoteRepository,
+    @Assisted private val selectedNoteId: Int?
 ) :
-        ViewModel() {
+    ViewModel() {
     private lateinit var selectedNote: NoteEntry
     private lateinit var scheduledNote: NoteEntry
 
-    val reminderState = ObservableField(ReminderState.NO_REMINDER)
-    val reminderCompletion = ObservableField(ReminderCompletion.ONGOING)
+    val reminderAvailableState = ObservableField(ReminderAvailableState.NO_REMINDER)
+    val reminderCompletionState = ObservableField(ReminderCompletionState.ONGOING)
 
     private var _noteBeingModified = MutableLiveData<NoteEntry?>()
     val noteBeingModified: LiveData<NoteEntry?> get() = _noteBeingModified
@@ -45,12 +45,12 @@ class EditNoteViewModel @AssistedInject constructor(
         if (selectedNoteId == -1) {
             onNewNote()
             selectedNote = noteRepository.emptyNote
-            _noteBeingModified.value = selectedNote
+            _noteBeingModified.postValue(selectedNote)
         } else {
             onNoteInserted()
             viewModelScope.launch {
                 noteRepository.getNote(selectedNoteId!!).collect { noteEntry ->
-                    _noteBeingModified.value = noteEntry
+                    _noteBeingModified.postValue(noteEntry)
                     selectedNote = toDatabaseEntry(noteEntry!!).asDomainModelEntry()
                 }
             }
@@ -75,7 +75,7 @@ class EditNoteViewModel @AssistedInject constructor(
      * @param dateTime the date for the reminder
      */
     fun setDateTime(dateTime: Long) {
-        _noteBeingModified.value = _noteBeingModified.value!!.copy(reminder = dateTime)
+        _noteBeingModified.postValue(_noteBeingModified.value!!.copy(reminder = dateTime))
     }
 
     /**
@@ -104,7 +104,7 @@ class EditNoteViewModel @AssistedInject constructor(
                 createSchedule(context, scheduledNote)
                 updateNote(scheduledNote)
             }
-            reminderCompletion.set(ReminderCompletion.ONGOING)
+            reminderCompletionState.set(ReminderCompletionState.ONGOING)
         }
     }
 
@@ -125,7 +125,12 @@ class EditNoteViewModel @AssistedInject constructor(
      * Cancel an active reminder associated with a note.
      */
     fun cancelReminder() {
-        _noteBeingModified.value = _noteBeingModified.value!!.copy(reminder = null, started = false)
+        _noteBeingModified.postValue(
+            _noteBeingModified.value!!.copy(
+                reminder = null,
+                started = false
+            )
+        )
         cancelAlarm(context, _noteBeingModified.value!!)
     }
 
@@ -182,8 +187,8 @@ class EditNoteViewModel @AssistedInject constructor(
 
     companion object {
         fun provideFactory(
-                assistedFactory: AssistedFactory,
-                selectedNoteId: Int?
+            assistedFactory: AssistedFactory,
+            selectedNoteId: Int?
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
