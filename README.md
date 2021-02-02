@@ -21,6 +21,7 @@ The following Android Architecture components, tools and patterns are used in th
 * Single-activity architecture
 * MVVM (Model-View-ViewModel) architecture pattern
 * Dependency Injection with Dagger and Hilt
+* Unit Testing (WIP)
 
 ## Installation
 To get started with this project, clone this repository and import into Android Studio
