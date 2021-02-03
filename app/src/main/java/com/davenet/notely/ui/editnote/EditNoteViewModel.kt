@@ -1,4 +1,4 @@
-package com.davenet.notely.viewmodels
+package com.davenet.notely.ui.editnote
 
 import android.app.Activity
 import android.content.Context
@@ -7,7 +7,6 @@ import androidx.lifecycle.*
 import com.davenet.notely.database.DatabaseNote.Companion.toDatabaseEntry
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.repository.NoteRepository
-import com.davenet.notely.ui.editnote.EditNoteFragment
 import com.davenet.notely.util.ReminderAvailableState
 import com.davenet.notely.util.ReminderCompletionState
 import com.davenet.notely.util.currentDate

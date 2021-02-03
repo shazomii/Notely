@@ -1,4 +1,4 @@
-package com.davenet.notely.viewmodels
+package com.davenet.notely.ui.notelist
 
 import android.content.Context
 import android.text.format.DateUtils
@@ -12,7 +12,6 @@ import com.davenet.notely.database.asDomainModel
 import com.davenet.notely.database.toDatabaseList
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.repository.NoteRepository
-import com.davenet.notely.ui.notelist.NoteListFragment
 import com.davenet.notely.util.UIState
 import com.davenet.notely.util.currentDate
 import com.davenet.notely.work.cancelAlarm

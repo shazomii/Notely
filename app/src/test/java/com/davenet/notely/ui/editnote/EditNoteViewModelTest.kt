@@ -1,4 +1,4 @@
-package com.davenet.notely.viewmodels
+package com.davenet.notely.ui.editnote
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.davenet.notely.repository.NoteRepository

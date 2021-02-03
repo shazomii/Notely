@@ -6,7 +6,7 @@
 
         <variable
             name="editviewmodel"
-            type="com.davenet.notely.viewmodels.EditNoteViewModel" />
+            type="com.davenet.notely.ui.editnote.EditNoteViewModel" />
 
         <import type="com.davenet.notely.util.UtilKt" />
 

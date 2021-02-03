@@ -22,7 +22,6 @@ import com.davenet.notely.util.ReminderAvailableState
 import com.davenet.notely.util.ReminderCompletionState
 import com.davenet.notely.util.currentDate
 import com.davenet.notely.util.hideKeyboard
-import com.davenet.notely.viewmodels.EditNoteViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

@@ -19,7 +19,6 @@ import com.davenet.notely.databinding.FragmentNoteListBinding
 import com.davenet.notely.domain.NoteEntry
 import com.davenet.notely.util.UIState
 import com.davenet.notely.util.calculateNoOfColumns
-import com.davenet.notely.viewmodels.NoteListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import org.jetbrains.anko.design.longSnackbar

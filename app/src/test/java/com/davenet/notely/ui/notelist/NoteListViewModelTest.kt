@@ -1,4 +1,4 @@
-package com.davenet.notely.viewmodels
+package com.davenet.notely.ui.notelist
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
