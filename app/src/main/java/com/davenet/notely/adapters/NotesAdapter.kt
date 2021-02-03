@@ -38,26 +38,27 @@ class NotesAdapter(private val callback: ((List<NoteEntry>, action: String) -> U
     }
 
     override fun bind(binding: NoteItemBinding, item: NoteEntry, position: Int) {
-        binding.apply {
+        with(binding) {
             note = item
             if (cardList.size > 0) cardList.clear()
             repeat(allNotes.size) {
-                cardList.add(binding.checkedImage)
+                cardList.add(checkedImage)
             }
-            binding.checkedImage.isVisible = selectedItems.contains(item)
+            checkedImage.isVisible = selectedItems.contains(item)
+
             root.setOnClickListener {
-                binding.note?.let { note ->
-                    selectItem(note, binding.checkedImage, it)
+                note?.let { note ->
+                    selectItem(note, checkedImage, it)
                 }
             }
             root.setOnLongClickListener {
                 actionMode = it.startActionMode(ActionModeCallback())
-                binding.note?.let { note ->
+                note?.let { note ->
                     callback?.invoke(
                         listOf(),
                         ACTION_FAB_HIDE
                     )
-                    selectItem(note, binding.checkedImage, it)
+                    selectItem(note, checkedImage, it)
                 }
                 return@setOnLongClickListener true
             }
@@ -66,23 +67,25 @@ class NotesAdapter(private val callback: ((List<NoteEntry>, action: String) -> U
 
     private fun selectItem(note: NoteEntry?, checkCircle: ImageView?, view: View?) {
         if (multiSelect) {
-            if (selectedItems.contains(note)) {
-                selectedItems.remove(note)
-                checkCircle?.isVisible = false
-                if (selectedItems.size == 0) {
-                    callback?.invoke(listOf(), ACTION_FAB_SHOW)
+            with(selectedItems) {
+                if (contains(note)) {
+                    remove(note)
                     checkCircle?.isVisible = false
-                    actionMode?.finish()
+                    if (size == 0) {
+                        callback?.invoke(listOf(), ACTION_FAB_SHOW)
+                        checkCircle?.isVisible = false
+                        actionMode?.finish()
+                    }
+                } else {
+                    add(note!!)
+                    checkCircle?.isVisible = true
                 }
-            } else {
-                selectedItems.add(note!!)
-                checkCircle?.isVisible = true
+                if (size > 0) {
+                    actionMode?.title = size.toString()
+                }
+                showAddAllIcon = allNotes.size != size
+                actionMode?.invalidate()
             }
-            if (selectedItems.size > 0) {
-                actionMode?.title = selectedItems.size.toString()
-            }
-            showAddAllIcon = allNotes.size != selectedItems.size
-            actionMode?.invalidate()
         } else {
             navigateToNote(note?.id, view!!)
         }
